@@ -3,7 +3,6 @@
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\UploadVideoCommand;
-use App\Exception\InvalidVideoMimeTypeException;
 use App\Service\UploadVideoServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

@@ -9,8 +9,10 @@ final class CreateStreamCommand
     public function __construct(
         public readonly Uuid $uuid,
         public readonly string $fileName,
+        public readonly string $originalName,
         public readonly string $mimeType,
         public readonly int $size,
+        public readonly Uuid $userId,
     ) {
     }
 }

@@ -35,7 +35,7 @@ abstract class AbstractRepository extends ServiceEntityRepository
      */
     public function save(object $entity, bool $persist = false): void
     {
-        if ($entity->getId() === null || $persist) {
+        if (null === $entity->getId() || $persist) {
             $this->getEntityManager()->persist($entity);
         }
 

@@ -6,6 +6,6 @@ class UnauthorizedHttpException extends BusinessException
 {
     public function __construct()
     {
-        parent::__construct("Unauthorized", 400);
+        parent::__construct('Unauthorized', 400);
     }
 }

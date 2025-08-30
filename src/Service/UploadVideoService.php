@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Exception\InvalidVideoMimeTypeException;
 use App\Exception\UnauthorizedHttpException;
 use App\Exception\UploadVideoException;
-use Doctrine\DBAL\Types\Exception\InvalidFormat;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -67,8 +66,10 @@ class UploadVideoService implements UploadVideoServiceInterface
             $this->messageBus->dispatch(new CreateStreamCommand(
                 uuid: $uuid,
                 fileName: $fileName,
+                originalName: $file->getClientOriginalName(),
                 mimeType: $file->getMimeType(),
                 size: $file->getSize(),
+                userId: $user->getId(),
             ), [new AmqpStamp('async-high')]);
         } catch (\Exception $_) {
             throw new UploadVideoException('Unable to write file');

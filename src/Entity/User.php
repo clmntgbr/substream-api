@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[Groups(['user:read'])]
-    public function getId(): string
+    public function getId(): Uuid
     {
         return $this->id;
     }
