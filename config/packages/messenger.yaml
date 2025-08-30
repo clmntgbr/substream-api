@@ -1,7 +1,11 @@
 framework:
     messenger:
+        buses:
+            command.bus:
+                middleware:
+                    - App\Messenger\Middleware\BusinessExceptionMiddleware
         transports:
-            default:
+            async-high:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 options:
                     exchange:
@@ -9,6 +13,36 @@ framework:
                         type: direct
                     auto_setup: true
                     queues:
-                        default:
-                            binding_keys: [default]
+                        async-high:
+                            binding_keys: [async-high]
+                retry_strategy:
+                    max_retries: 1
+            async-medium:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    exchange:
+                        name: messages
+                        type: direct
+                    auto_setup: true
+                    queues:
+                        async-medium:
+                            binding_keys: [async-medium]
+                retry_strategy:
+                    max_retries: 1
+            async-low:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    exchange:
+                        name: messages
+                        type: direct
+                    auto_setup: true
+                    queues:
+                        async-low:
+                            binding_keys: [async-low]
+                retry_strategy:
+                    max_retries: 1
+            sync: "sync://"
+
         routing:
+            'App\Application\Command\CreateStreamCommand': async-high
+            'App\Application\Command\UploadVideoCommand': sync

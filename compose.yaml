@@ -77,7 +77,7 @@ services:
             tail -f /dev/null"
     
     minio:
-        container_name: ${PROJECT_NAME}-s3
+        container_name: ${PROJECT_NAME}-minio
         image: minio/minio:latest
         env_file:
             - .env
@@ -94,21 +94,20 @@ services:
             MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
             MINIO_BROWSER: "on"
    
-    minio-init:
-        container_name: ${PROJECT_NAME}-minio
+    minio-setup:
+        container_name: ${PROJECT_NAME}-minio-setup
         image: minio/mc:latest
         depends_on:
             - minio
         env_file:
             - .env
+        volumes:
+            - ./scripts:/scripts
         entrypoint: >
             /bin/sh -c "
+            chmod +x /scripts/setup-minio.sh;
             sleep 10;
-            mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-            mc admin user add myminio ${S3_USER} ${S3_PASSWORD};
-            mc admin policy attach myminio readwrite --user ${S3_USER};
-            mc admin accesskey create myminio ${S3_USER};
-            exit 0;
+            /scripts/setup-minio.sh;
             "
         networks:
             - api_network
@@ -124,3 +123,4 @@ volumes:
     database_data:
     rabbitmq_data:
     minio_data:
+    minio_setup_data:
