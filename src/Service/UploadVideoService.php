@@ -3,10 +3,14 @@
 namespace App\Service;
 
 use App\Application\Command\CreateStreamCommand;
+use App\Entity\Stream;
 use App\Entity\User;
 use App\Exception\InvalidVideoMimeTypeException;
+use App\Exception\StreamNotFoundException;
 use App\Exception\UnauthorizedHttpException;
 use App\Exception\UploadVideoException;
+use App\Repository\StreamRepository;
+use App\Repository\UserRepository;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -21,63 +25,65 @@ class UploadVideoService implements UploadVideoServiceInterface
     public function __construct(
         private ValidatorInterface $validator,
         private FilesystemOperator $awsStorage,
-        private Security $security,
+        private UserRepository $userRepository,
+        private StreamRepository $streamRepository,
         private MessageBusInterface $messageBus,
     ) {
     }
 
-    public function upload(UploadedFile $file): void
+    public function upload(UploadedFile $file, Uuid $userId, Uuid $streamId): void
     {
-        $constraints = new File([
-            'mimeTypes' => [
-                'video/mp4',
-            ],
-            'mimeTypesMessage' => 'Please upload a valid video file (MP4).',
-        ]);
+        /** @var ?User $user */
+        $user = $this->userRepository->find($userId);
 
-        $violations = $this->validator->validate($file, $constraints);
-
-        if (count($violations) > 0) {
-            throw new InvalidVideoMimeTypeException($file->getMimeType());
-        }
-
-        $user = $this->security->getUser();
-
-        if (!$user instanceof User) {
+        if (null === $user) {
             throw new UnauthorizedHttpException();
         }
 
+        /** @var ?Stream $stream */
+        $stream = $this->streamRepository->find($streamId);
+        if (null === $stream) {
+            throw new StreamNotFoundException();
+        }
+
         try {
-            $uuid = Uuid::v4();
             $fileName = Uuid::v4()->toString().'.'.$file->guessExtension();
-            $path = $uuid.'/'.$fileName;
+            $path = $streamId.'/'.$fileName;
 
-            $stream = fopen($file->getPathname(), 'r');
+            $handle = fopen($file->getPathname(), 'r');
 
-            $this->awsStorage->writeStream($path, $stream, [
+            $this->awsStorage->writeStream($path, $handle, [
                 'visibility' => 'public',
                 'mimetype' => $file->getMimeType(),
             ]);
 
-            if (is_resource($stream)) {
-                fclose($stream);
+            if (is_resource($handle)) {
+                fclose($handle);
             }
 
-            $this->messageBus->dispatch(new CreateStreamCommand(
-                uuid: $uuid,
-                fileName: $fileName,
-                originalName: $file->getClientOriginalName(),
-                mimeType: $file->getMimeType(),
-                size: $file->getSize(),
-                userId: $user->getId(),
-            ), [new AmqpStamp('async-high')]);
+            $stream->markAsUploaded($fileName, $file->getClientOriginalName(), $file->getMimeType(), $file->getSize());
         } catch (\Exception $_) {
-            throw new UploadVideoException('Unable to write file');
+            $stream->markAsFailed($file->getClientOriginalName(), $file->getMimeType(), $file->getSize());
+        } finally {
+            $this->streamRepository->save($stream);
         }
     }
 
-    public function uploadByUrl(string $url): void
+    public function uploadByUrl(string $url, Uuid $userId, Uuid $streamId): void
     {
+        /** @var ?User $user */
+        $user = $this->userRepository->find($userId);
+
+        if (null === $user) {
+            throw new UnauthorizedHttpException();
+        }
+        
+        /** @var ?Stream $stream */
+        $stream = $this->streamRepository->find($streamId);
+        if (null === $stream) {
+            throw new StreamNotFoundException();
+        }
+
         throw new \Exception('Not implemented');
     }
 }

@@ -30,27 +30,27 @@ class Stream
     use UuidTrait;
     use TimestampableEntity;
 
-    #[ORM\Column(type: Types::STRING)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private string $fileName;
+    private ?string $fileName = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $originalName = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $mimeType = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?int $size = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['stream:read'])]
-    private string $originalName;
-
-    #[ORM\Column(type: Types::STRING)]
-    #[Groups(['stream:read'])]
-    private string $mimeType;
-
-    #[ORM\Column(type: Types::INTEGER)]
-    #[Groups(['stream:read'])]
-    private int $size;
-
-    #[ORM\Column(type: Types::STRING, nullable: false)]
     #[Groups(['clip.read'])]
     private string $status;
 
-    #[ORM\Column(type: Types::JSON, nullable: false)]
+    #[ORM\Column(type: Types::JSON)]
     private array $statuses = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -59,39 +59,56 @@ class Stream
 
     public function __construct()
     {
-        $this->status = StreamStatusEnum::UPLOADED->value;
-        $this->statuses = [StreamStatusEnum::UPLOADED->value];
+        $this->status = StreamStatusEnum::UPLOADING->value;
+        $this->statuses = [StreamStatusEnum::UPLOADING->value];
     }
 
-    public function create(Uuid $uuid, string $fileName, string $originalName, string $mimeType, int $size, User $user): self
+    public function create(Uuid $uuid, User $user): self
     {
         $this->id = $uuid;
-        $this->fileName = $fileName;
-        $this->originalName = $originalName;
-        $this->mimeType = $mimeType;
-        $this->size = $size;
         $this->user = $user;
 
         return $this;
     }
 
+    public function markAsUploaded(string $fileName, string $originalName, string $mimeType, int $size): self
+    {
+        $this->fileName = $fileName;
+        $this->originalName = $originalName;
+        $this->mimeType = $mimeType;
+        $this->size = $size;
+        $this->setStatus(StreamStatusEnum::UPLOADED->value);
+
+        return $this;
+    }
+
+    public function markAsFailed(string $originalName, string $mimeType, int $size): self
+    {
+        $this->originalName = $originalName;
+        $this->mimeType = $mimeType;
+        $this->size = $size;
+        $this->setStatus(StreamStatusEnum::FAILED->value);
+
+        return $this;
+    }
+
     #[Groups(['stream:read'])]
-    public function getId(): string
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getFileName(): string
+    public function getFileName(): ?string
     {
         return $this->fileName;
     }
 
-    public function getMimeType(): string
+    public function getMimeType(): ?string
     {
         return $this->mimeType;
     }
 
-    public function getSize(): int
+    public function getSize(): ?int
     {
         return $this->size;
     }

@@ -16,6 +16,6 @@ final class UploadVideoCommandHandler
 
     public function __invoke(UploadVideoCommand $command): void
     {
-        $this->uploadVideoService->upload($command->file);
+        $this->uploadVideoService->upload($command->file, $command->userId, $command->streamId);
     }
 }

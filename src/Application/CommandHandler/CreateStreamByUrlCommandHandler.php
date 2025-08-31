@@ -2,30 +2,28 @@
 
 namespace App\Application\CommandHandler;
 
-use App\Application\Command\CreateStreamCommand;
-use App\Application\Command\UploadVideoCommand;
+use App\Application\Command\CreateStreamByUrlCommand;
+use App\Application\Command\UploadVideoByUrlCommand;
 use App\Entity\Stream;
 use App\Exception\UserNotFoundException;
 use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
-use App\Service\UploadVideoServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-final class CreateStreamCommandHandler
+final class CreateStreamByUrlCommandHandler
 {
     public function __construct(
         private StreamRepository $streamRepository,
         private UserRepository $userRepository,
         private MessageBusInterface $messageBus,
-        private UploadVideoServiceInterface $uploadVideoService,
 
     ) {
     }
 
-    public function __invoke(CreateStreamCommand $command): void
+    public function __invoke(CreateStreamByUrlCommand $command): void
     {
         $user = $this->userRepository->find($command->userId);
         if (null === $user) {
@@ -39,10 +37,10 @@ final class CreateStreamCommandHandler
 
         $this->streamRepository->save($stream, true);
 
-        $this->messageBus->dispatch(new UploadVideoCommand(
+        $this->messageBus->dispatch(new UploadVideoByUrlCommand(
             userId: $command->userId,
             streamId: $stream->getId(),
-            file: $command->file,
-        ));
+            url: $command->url,
+        ), [new AmqpStamp('async-high')]);
     }
 }

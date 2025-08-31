@@ -44,5 +44,7 @@ framework:
             sync: "sync://"
 
         routing:
-            'App\Application\Command\CreateStreamCommand': async-high
+            'App\Application\Command\CreateStreamCommand': sync
+            'App\Application\Command\CreateStreamByUrlCommand': sync
             'App\Application\Command\UploadVideoCommand': sync
+            'App\Application\Command\UploadVideoByUrlCommand': async-high
