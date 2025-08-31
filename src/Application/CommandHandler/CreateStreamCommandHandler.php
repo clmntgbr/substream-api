@@ -27,7 +27,7 @@ final class CreateStreamCommandHandler
 
     public function __invoke(CreateStreamCommand $command): void
     {
-        $user = $this->userRepository->find($command->userId);
+        $user = $this->userRepository->findOneBy(['id' => $command->userId]);
         if (null === $user) {
             throw new UserNotFoundException();
         }

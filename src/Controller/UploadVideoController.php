@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -50,19 +51,19 @@ class UploadVideoController extends AbstractController
             uuid: Uuid::v4(),
             userId: $user->getId(),
             file: $video,
-        ), [new AmqpStamp('async-high')]);
+        ));
         
         return new JsonResponse(['message' => 'Video is being uploaded']);
     }
 
     #[Route('/video/url', name: 'video_url', methods: ['POST'])]
-    public function uploadVideoByUrl(UploadVideoByUrl $dto, #[CurrentUser] User $user): JsonResponse
+    public function uploadVideoByUrl(#[MapRequestPayload] UploadVideoByUrl $dto, #[CurrentUser] User $user): JsonResponse
     {
         $this->messageBus->dispatch(new CreateStreamByUrlCommand(
             uuid: Uuid::v4(),
             userId: $user->getId(),
             url: $dto->url,
-        ), [new AmqpStamp('async-high')]);
+        ));
 
         return new JsonResponse(['message' => 'Video is being downloaded']);
     }

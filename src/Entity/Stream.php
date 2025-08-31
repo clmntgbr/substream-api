@@ -42,6 +42,10 @@ class Stream
     #[Groups(['stream:read'])]
     private ?string $mimeType = null;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $url = null;
+
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['stream:read'])]
     private ?int $size = null;
@@ -63,11 +67,12 @@ class Stream
         $this->statuses = [StreamStatusEnum::UPLOADING->value];
     }
 
-    public function create(Uuid $uuid, User $user): self
+    public function create(Uuid $uuid, User $user, ?string $url = null): self
     {
         $this->id = $uuid;
         $this->user = $user;
-
+        $this->url = $url;
+        
         return $this;
     }
 
@@ -82,7 +87,7 @@ class Stream
         return $this;
     }
 
-    public function markAsFailed(string $originalName, string $mimeType, int $size): self
+    public function markAsFailed(?string $originalName = null, ?string $mimeType = null, ?int $size = null): self
     {
         $this->originalName = $originalName;
         $this->mimeType = $mimeType;
@@ -174,5 +179,17 @@ class Stream
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): self
+    {
+        $this->url = $url;
+
+        return $this;
     }
 }

@@ -3,6 +3,9 @@
 namespace App\Service;
 
 use App\Application\Command\CreateStreamCommand;
+use App\Client\Processor\GetVideoByUrlProcessor;
+use App\Client\Processor\GetVideoByUrlProcessorInterface;
+use App\Dto\Processor\GetVideoByUrl;
 use App\Entity\Stream;
 use App\Entity\User;
 use App\Exception\InvalidVideoMimeTypeException;
@@ -28,20 +31,21 @@ class UploadVideoService implements UploadVideoServiceInterface
         private UserRepository $userRepository,
         private StreamRepository $streamRepository,
         private MessageBusInterface $messageBus,
+        private GetVideoByUrlProcessorInterface $getVideoByUrlProcessor,
     ) {
     }
 
     public function upload(UploadedFile $file, Uuid $userId, Uuid $streamId): void
     {
         /** @var ?User $user */
-        $user = $this->userRepository->find($userId);
+        $user = $this->userRepository->findOneBy(['id' => $userId]);
 
         if (null === $user) {
             throw new UnauthorizedHttpException();
         }
 
         /** @var ?Stream $stream */
-        $stream = $this->streamRepository->find($streamId);
+        $stream = $this->streamRepository->findOneBy(['id' => $streamId]);
         if (null === $stream) {
             throw new StreamNotFoundException();
         }
@@ -72,18 +76,26 @@ class UploadVideoService implements UploadVideoServiceInterface
     public function uploadByUrl(string $url, Uuid $userId, Uuid $streamId): void
     {
         /** @var ?User $user */
-        $user = $this->userRepository->find($userId);
+        $user = $this->userRepository->findOneBy(['id' => $userId]);
 
         if (null === $user) {
             throw new UnauthorizedHttpException();
         }
         
         /** @var ?Stream $stream */
-        $stream = $this->streamRepository->find($streamId);
+        $stream = $this->streamRepository->findOneBy(['id' => $streamId]);
         if (null === $stream) {
             throw new StreamNotFoundException();
         }
 
-        throw new \Exception('Not implemented');
+        try {
+            ($this->getVideoByUrlProcessor)(
+                new GetVideoByUrl($stream)
+            );
+        } catch (\Exception $_) {
+            $stream->markAsFailed();
+        } finally {
+            $this->streamRepository->save($stream);
+        }
     }
 }

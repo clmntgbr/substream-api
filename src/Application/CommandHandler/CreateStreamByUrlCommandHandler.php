@@ -25,7 +25,7 @@ final class CreateStreamByUrlCommandHandler
 
     public function __invoke(CreateStreamByUrlCommand $command): void
     {
-        $user = $this->userRepository->find($command->userId);
+        $user = $this->userRepository->findOneBy(['id' => $command->userId]);
         if (null === $user) {
             throw new UserNotFoundException();
         }
@@ -33,6 +33,7 @@ final class CreateStreamByUrlCommandHandler
         $stream = (new Stream())->create(
             uuid: $command->uuid,
             user: $user,
+            url: $command->url,
         );
 
         $this->streamRepository->save($stream, true);

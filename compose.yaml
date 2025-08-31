@@ -114,8 +114,8 @@ services:
 
 networks:
   api_network:
-    name: api_network
-    driver: bridge
+    name: substream-network
+    external: true
 
 volumes:
     caddy_data:
