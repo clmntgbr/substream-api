@@ -47,7 +47,7 @@ class Stream
     private ?int $size = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['clip.read'])]
+    #[Groups(['stream:read'])]
     private string $status;
 
     #[ORM\Column(type: Types::JSON)]
