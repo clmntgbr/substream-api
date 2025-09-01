@@ -9,6 +9,7 @@ use App\Dto\Processor\GetVideoByUrl;
 use App\Entity\Stream;
 use App\Entity\User;
 use App\Exception\InvalidVideoMimeTypeException;
+use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Exception\UnauthorizedHttpException;
 use App\Exception\UploadVideoException;
@@ -92,7 +93,7 @@ class UploadVideoService implements UploadVideoServiceInterface
             ($this->getVideoByUrlProcessor)(
                 new GetVideoByUrl($stream)
             );
-        } catch (\Exception $_) {
+        } catch (ProcessorException $exception) {
             $stream->markAsFailed();
         } finally {
             $this->streamRepository->save($stream);

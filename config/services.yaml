@@ -4,6 +4,8 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            string $processorToken: "%env(resolve:PROCESSOR_TOKEN)%"
 
     App\:
         resource: '../src/'

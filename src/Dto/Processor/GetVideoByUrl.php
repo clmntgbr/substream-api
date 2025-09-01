@@ -15,7 +15,7 @@ final class GetVideoByUrl implements \JsonSerializable
     {
         return [
             'url' => $this->stream->getUrl(),
-            'streamId' => (string) $this->stream->getId(),
+            'stream_id' => (string) $this->stream->getId(),
         ];
     }
 }

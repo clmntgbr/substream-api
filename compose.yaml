@@ -4,7 +4,7 @@ services:
         image: ${IMAGES_PREFIX:-}app-php
         restart: unless-stopped
         networks:
-            - api_network
+            - substream-network
         depends_on:
             - database
             - rabbitmq
@@ -33,7 +33,7 @@ services:
         image: postgres:latest
         container_name: ${PROJECT_NAME}-db
         networks:
-            - api_network
+            - substream-network
         env_file:
             - .env
         volumes:
@@ -48,7 +48,7 @@ services:
         image: rabbitmq:3-management
         hostname: rabbitmq
         networks:
-            - api_network
+            - substream-network
         environment:
             RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
             RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
@@ -85,7 +85,7 @@ services:
             - '9004:9000'
             - '9005:9001'
         networks:
-            - api_network
+            - substream-network
         volumes:
             - minio_data:/data/minio
         command: 'minio server /data/minio --console-address ":9001"'
@@ -110,11 +110,10 @@ services:
             /scripts/setup-minio.sh;
             "
         networks:
-            - api_network
+            - substream-network
 
 networks:
-  api_network:
-    name: substream-network
+  substream-network:
     external: true
 
 volumes:
