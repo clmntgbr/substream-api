@@ -23,6 +23,12 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             jwt: ~
+        processor:
+            pattern: ^/processor
+            lazy: true
+            stateless: true
+            custom_authenticators:
+                - App\Security\ProcessorAuthenticator
         main:
             lazy: true
             provider: app_user_provider
@@ -36,7 +42,6 @@ security:
         - { path: ^/api/docs, roles: PUBLIC_ACCESS, methods: GET }
         - { path: ^/api/token, roles: PUBLIC_ACCESS, methods: POST }
         - { path: ^/api/status, roles: PUBLIC_ACCESS, methods: GET }
-        - { path: ^/processor, roles: PUBLIC_ACCESS, methods: POST }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api, roles: ROLE_USER }
 
