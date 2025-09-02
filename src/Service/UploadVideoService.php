@@ -38,14 +38,11 @@ class UploadVideoService implements UploadVideoServiceInterface
 
     public function upload(UploadedFile $file, Uuid $userId, Uuid $streamId): void
     {
-        /** @var ?User $user */
         $user = $this->userRepository->findOneBy(['id' => $userId]);
-
         if (null === $user) {
             throw new UnauthorizedHttpException();
         }
 
-        /** @var ?Stream $stream */
         $stream = $this->streamRepository->findOneBy(['id' => $streamId]);
         if (null === $stream) {
             throw new StreamNotFoundException();
@@ -76,14 +73,11 @@ class UploadVideoService implements UploadVideoServiceInterface
 
     public function uploadByUrl(string $url, Uuid $userId, Uuid $streamId): void
     {
-        /** @var ?User $user */
         $user = $this->userRepository->findOneBy(['id' => $userId]);
-
         if (null === $user) {
             throw new UnauthorizedHttpException();
         }
         
-        /** @var ?Stream $stream */
         $stream = $this->streamRepository->findOneBy(['id' => $streamId]);
         if (null === $stream) {
             throw new StreamNotFoundException();

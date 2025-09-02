@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
@@ -38,10 +39,8 @@ class ProcessorController extends AbstractController
     }
 
     #[Route('/get-video', name: 'get_video', methods: ['POST'])]
-    public function getVideo(#[MapRequestPayload] GetVideoResponse $response): void
+    public function getVideo(#[MapRequestPayload] GetVideoResponse $response): Response
     {
-        $this->logger->info('Get video request', ['stream_id' => $response->streamId, 'file_name' => $response->fileName, 'original_name' => $response->originalName, 'mime_type' => $response->mimeType, 'size' => $response->size]);
-        
         $stream = $this->streamRepository->findOneBy(['id' => $response->streamId]);
         if (null === $stream) {
             throw new StreamNotFoundException();
@@ -49,10 +48,11 @@ class ProcessorController extends AbstractController
 
         $stream->markAsUploaded($response->fileName, $response->originalName, $response->mimeType, $response->size);
         $this->streamRepository->save($stream);
+        return new Response();
     }
 
     #[Route('/get-video-failure', name: 'get_video_failure', methods: ['POST'])]
-    public function getVideoFailure(#[MapRequestPayload] GetVideoFailureResponse $response): void
+    public function getVideoFailure(#[MapRequestPayload] GetVideoFailureResponse $response): Response
     {
         $stream = $this->streamRepository->findOneBy(['id' => $response->streamId]);
         if (null === $stream) {
@@ -61,5 +61,6 @@ class ProcessorController extends AbstractController
 
         $stream->markAsFailed();
         $this->streamRepository->save($stream);
+        return new Response();
     }
 }
