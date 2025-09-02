@@ -5,9 +5,7 @@ namespace App\Controller;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class StatusController extends AbstractController
 {
@@ -20,6 +18,7 @@ class StatusController extends AbstractController
     public function status(): JsonResponse
     {
         $this->logger->error('Status request');
+
         return new JsonResponse(['status' => 'ok']);
     }
 }

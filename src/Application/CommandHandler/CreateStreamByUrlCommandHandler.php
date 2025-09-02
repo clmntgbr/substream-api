@@ -19,7 +19,6 @@ final class CreateStreamByUrlCommandHandler
         private StreamRepository $streamRepository,
         private UserRepository $userRepository,
         private MessageBusInterface $messageBus,
-
     ) {
     }
 

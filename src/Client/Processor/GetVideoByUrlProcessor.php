@@ -2,14 +2,13 @@
 
 namespace App\Client\Processor;
 
-use App\Client\AsyncProcessorClientInterface;
 use App\Dto\Processor\GetVideoByUrl;
 use App\Exception\ProcessorException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class GetVideoByUrlProcessor implements GetVideoByUrlProcessorInterface
 {
-    const GET_VIDEO_BY_URL_URL = '/api/download/video/url';
+    public const GET_VIDEO_BY_URL_URL = '/api/download/video/url';
 
     public function __construct(
         private HttpClientInterface $processorClient,
@@ -29,7 +28,7 @@ final class GetVideoByUrlProcessor implements GetVideoByUrlProcessorInterface
             ],
         ]);
 
-        if ($response->getStatusCode() !== 200) {
+        if (200 !== $response->getStatusCode()) {
             throw new ProcessorException('Failed to get video by url');
         }
     }

@@ -2,26 +2,17 @@
 
 namespace App\Service;
 
-use App\Application\Command\CreateStreamCommand;
-use App\Client\Processor\GetVideoByUrlProcessor;
 use App\Client\Processor\GetVideoByUrlProcessorInterface;
 use App\Dto\Processor\GetVideoByUrl;
-use App\Entity\Stream;
-use App\Entity\User;
-use App\Exception\InvalidVideoMimeTypeException;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Exception\UnauthorizedHttpException;
-use App\Exception\UploadVideoException;
 use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
 use League\Flysystem\FilesystemOperator;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UploadVideoService implements UploadVideoServiceInterface
@@ -77,7 +68,7 @@ class UploadVideoService implements UploadVideoServiceInterface
         if (null === $user) {
             throw new UnauthorizedHttpException();
         }
-        
+
         $stream = $this->streamRepository->findOneBy(['id' => $streamId]);
         if (null === $stream) {
             throw new StreamNotFoundException();

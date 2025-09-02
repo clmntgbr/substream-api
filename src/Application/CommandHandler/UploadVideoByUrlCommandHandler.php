@@ -3,13 +3,10 @@
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\UploadVideoByUrlCommand;
+use App\Client\Processor\GetVideoByUrlProcessor;
+use App\Repository\StreamRepository;
 use App\Service\UploadVideoServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use App\Client\Processor\GetVideoByUrlProcessor;
-use App\Dto\Processor\GetVideoByUrl;
-use App\Entity\Stream;
-use App\Exception\StreamNotFoundException;
-use App\Repository\StreamRepository;
 
 #[AsMessageHandler]
 final class UploadVideoByUrlCommandHandler

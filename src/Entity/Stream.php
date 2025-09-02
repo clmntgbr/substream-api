@@ -72,7 +72,7 @@ class Stream
         $this->id = $uuid;
         $this->user = $user;
         $this->url = $url;
-        
+
         return $this;
     }
 

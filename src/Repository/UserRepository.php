@@ -10,12 +10,12 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @extends AbstractRepository<User>
- * 
+ *
  * @method User|null findOneBy(array $criteria, ?array $orderBy = null)
- * @method User[] findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
- * @method User find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method User findOneBy(array $criteria, ?array $orderBy = null)
- * @method User[] findAll()
+ * @method User[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
+ * @method User      find($id, ?int $lockMode = null, ?int $lockVersion = null)
+ * @method User      findOneBy(array $criteria, ?array $orderBy = null)
+ * @method User[]    findAll()
  */
 class UserRepository extends AbstractRepository implements PasswordUpgraderInterface
 {

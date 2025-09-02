@@ -10,7 +10,6 @@ use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
 use App\Service\UploadVideoServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
@@ -21,7 +20,6 @@ final class CreateStreamCommandHandler
         private UserRepository $userRepository,
         private MessageBusInterface $messageBus,
         private UploadVideoServiceInterface $uploadVideoService,
-
     ) {
     }
 
