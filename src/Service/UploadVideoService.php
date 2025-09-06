@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Client\Processor\GetVideoByUrlProcessorInterface;
 use App\Dto\Processor\GetVideoByUrl;
+use App\Enum\StreamStatusEnum;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Exception\UnauthorizedHttpException;
@@ -40,7 +41,7 @@ class UploadVideoService implements UploadVideoServiceInterface
         }
 
         try {
-            $fileName = Uuid::v4()->toString().'.'.$file->guessExtension();
+            $fileName = $streamId .'.'.$file->guessExtension();
             $path = $streamId.'/'.$fileName;
 
             $handle = fopen($file->getPathname(), 'r');
@@ -56,7 +57,10 @@ class UploadVideoService implements UploadVideoServiceInterface
 
             $stream->markAsUploaded($fileName, $file->getClientOriginalName(), $file->getMimeType(), $file->getSize());
         } catch (\Exception $_) {
-            $stream->markAsFailed($file->getClientOriginalName(), $file->getMimeType(), $file->getSize());
+            $stream->markAsFailed(StreamStatusEnum::UPLOAD_FAILED);
+            $stream->setOriginalName($file->getClientOriginalName());
+            $stream->setMimeType($file->getMimeType());
+            $stream->setSize($file->getSize());
         } finally {
             $this->streamRepository->save($stream);
         }
@@ -79,7 +83,7 @@ class UploadVideoService implements UploadVideoServiceInterface
                 new GetVideoByUrl($stream)
             );
         } catch (ProcessorException $exception) {
-            $stream->markAsFailed();
+            $stream->markAsFailed(StreamStatusEnum::UPLOAD_FAILED);
         } finally {
             $this->streamRepository->save($stream);
         }

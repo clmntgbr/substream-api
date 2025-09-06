@@ -3,14 +3,15 @@
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\CreateStreamCommand;
+use App\Application\Command\GetVideoSuccessCommand;
 use App\Application\Command\UploadVideoCommand;
 use App\Entity\Stream;
 use App\Exception\UserNotFoundException;
 use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
+use App\Service\MessageBusInterface;
 use App\Service\UploadVideoServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class CreateStreamCommandHandler
@@ -37,10 +38,15 @@ final class CreateStreamCommandHandler
 
         $this->streamRepository->save($stream, true);
 
-        $this->messageBus->dispatch(new UploadVideoCommand(
-            userId: $command->userId,
-            streamId: $stream->getId(),
-            file: $command->file,
-        ));
+        $this->messageBus->dispatchs([
+            new UploadVideoCommand(
+                userId: $command->userId,
+                streamId: $stream->getId(),
+                file: $command->file,
+            ),
+            new GetVideoSuccessCommand(
+                streamId: $stream->getId(),
+            ),
+        ]);
     }
 }

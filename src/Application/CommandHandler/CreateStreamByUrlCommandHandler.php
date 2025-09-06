@@ -8,9 +8,8 @@ use App\Entity\Stream;
 use App\Exception\UserNotFoundException;
 use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
+use App\Service\MessageBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class CreateStreamByUrlCommandHandler
@@ -41,6 +40,6 @@ final class CreateStreamByUrlCommandHandler
             userId: $command->userId,
             streamId: $stream->getId(),
             url: $command->url,
-        ), [new AmqpStamp('async-high')]);
+        ));
     }
 }

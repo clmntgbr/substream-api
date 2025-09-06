@@ -2,21 +2,18 @@
 
 namespace App\Application\Command;
 
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Uid\Uuid;
 
-final class UploadVideoCommand implements CommandInterface
+final class GenerateSubtitlesSuccessCommand implements CommandInterface
 {
     public function __construct(
-        public readonly Uuid $userId,
         public readonly Uuid $streamId,
-        public readonly UploadedFile $file,
     ) {
     }
 
     public function getAmqpStamp(): ?AmqpStamp
     {
-        return null;
+        return new AmqpStamp('async-high');
     }
 }

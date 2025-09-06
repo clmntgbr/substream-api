@@ -16,6 +16,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
 #[ApiResource(
+    order: ['updatedAt' => 'DESC'],
     operations: [
         new Get(
             normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read']],
@@ -55,7 +56,20 @@ class Stream
     private string $status;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['stream:read'])]
     private array $statuses = [];
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[Groups(['stream:read'])]
+    private array $audioFiles = [];
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $subtitle = null;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[Groups(['stream:read'])]
+    private array $subtitleFiles = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -76,6 +90,20 @@ class Stream
         return $this;
     }
 
+    public function markAsExtractingSoundProcessing(): self
+    {
+        $this->setStatus(StreamStatusEnum::EXTRACTING_SOUND_PROCESSING->value);
+
+        return $this;
+    }
+
+    public function markAsGeneratingSubtitlesProcessing(): self
+    {
+        $this->setStatus(StreamStatusEnum::GENERATING_SUBTITLES_PROCESSING->value);
+
+        return $this;
+    }
+
     public function markAsUploaded(string $fileName, string $originalName, string $mimeType, int $size): self
     {
         $this->fileName = $fileName;
@@ -87,12 +115,26 @@ class Stream
         return $this;
     }
 
-    public function markAsFailed(?string $originalName = null, ?string $mimeType = null, ?int $size = null): self
+    public function markAsFailed(StreamStatusEnum $status): self
     {
-        $this->originalName = $originalName;
-        $this->mimeType = $mimeType;
-        $this->size = $size;
-        $this->setStatus(StreamStatusEnum::FAILED->value);
+        $this->setStatus($status->value);
+
+        return $this;
+    }
+
+    public function markAsGeneratedSubtitles(string $subtitle, array $subtitleFiles): self
+    {
+        $this->subtitle = $subtitle;
+        $this->subtitleFiles = $subtitleFiles;
+        $this->setStatus(StreamStatusEnum::GENERATED_SUBTITLES->value);
+
+        return $this;
+    }
+
+    public function markAsExtractedSound(array $audioFiles): self
+    {
+        $this->audioFiles = $audioFiles;
+        $this->setStatus(StreamStatusEnum::EXTRACTED_SOUND->value);
 
         return $this;
     }
@@ -101,6 +143,18 @@ class Stream
     public function getId(): Uuid
     {
         return $this->id;
+    }
+
+    #[Groups(['stream:read'])]
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    #[Groups(['stream:read'])]
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
     }
 
     public function getFileName(): ?string
@@ -191,5 +245,20 @@ class Stream
         $this->url = $url;
 
         return $this;
+    }
+
+    public function getAudioFiles(): array
+    {
+        return $this->audioFiles;
+    }
+
+    public function getSubtitle(): ?string
+    {
+        return $this->subtitle;
+    }
+
+    public function getSubtitleFiles(): array
+    {
+        return $this->subtitleFiles;
     }
 }
