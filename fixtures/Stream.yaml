@@ -1,0 +1,29 @@
+App\Entity\Stream:
+  transforming_subtitles_processing:
+    id: "<uuid(9729a410-e822-4026-97a8-f99fb0b92778)>"
+    fileName: "9729a410-e822-4026-97a8-f99fb0b92778.mp4"
+    originalName: "J'ai nagé avec des requins au Mexique ! (une des meilleurs expérience de ma vie vrmt !!).mp4"
+    mimeType: "video/mp4"
+    url: "https://www.youtube.com/watch?v=aX3z61QftVY"
+    size: 308822028
+    status: "generating_subtitles_processing"
+    statuses:
+      - "uploading"
+      - "uploaded"
+      - "extracting_sound_processing"
+      - "extracted_sound"
+      - "generating_subtitles_processing"
+    audioFiles:
+      - "9729a410-e822-4026-97a8-f99fb0b92778_1.wav"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_2.wav"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_3.wav"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_4.wav"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_5.wav"
+    subtitleSrtFile: "9729a410-e822-4026-97a8-f99fb0b92778.srt"
+    subtitleSrtFiles:
+      - "9729a410-e822-4026-97a8-f99fb0b92778_1.srt"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_2.srt"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_3.srt"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_4.srt"
+      - "9729a410-e822-4026-97a8-f99fb0b92778_5.srt"
+    user: "@user_1"

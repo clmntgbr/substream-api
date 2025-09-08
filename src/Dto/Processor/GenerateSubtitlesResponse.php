@@ -13,19 +13,19 @@ final class GenerateSubtitlesResponse
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         public readonly string $streamId,
-        #[SerializedName('subtitle_file')]
+        #[SerializedName('subtitle_srt_file')]
         #[Assert\NotBlank]
         #[Assert\Type('string')]
         #[Assert\Length(max: 255)]
-        public readonly string $subtitle,
-        #[SerializedName('subtitle_files')]
+        public readonly string $subtitleSrtFile,
+        #[SerializedName('subtitle_srt_files')]
         #[Assert\NotBlank]
         #[Assert\All([
             new Assert\NotBlank,
             new Assert\Type('string'),
             new Assert\Length(max: 255),
         ])]
-        public readonly array $subtitleFiles,
+        public readonly array $subtitleSrtFiles,
     ) {
     }
 }

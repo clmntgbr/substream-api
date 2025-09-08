@@ -3,12 +3,12 @@
 namespace App\Application\Command;
 
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
-use Symfony\Component\Uid\Uuid;
 
 final class ExtractSoundSuccessCommand implements CommandInterface
 {
     public function __construct(
-        public readonly Uuid $streamId,
+        public readonly string $streamId,
+        public readonly array $audioFiles,
     ) {
     }
 

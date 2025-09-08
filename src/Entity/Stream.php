@@ -65,11 +65,11 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $subtitle = null;
+    private ?string $subtitleSrtFile = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     #[Groups(['stream:read'])]
-    private array $subtitleFiles = [];
+    private array $subtitleSrtFiles = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -93,6 +93,13 @@ class Stream
     public function markAsExtractingSoundProcessing(): self
     {
         $this->setStatus(StreamStatusEnum::EXTRACTING_SOUND_PROCESSING->value);
+
+        return $this;
+    }
+
+    public function markAsTransformingSubtitlesProcessing(): self
+    {
+        $this->setStatus(StreamStatusEnum::TRANSFORMING_SUBTITLES_PROCESSING->value);
 
         return $this;
     }
@@ -122,10 +129,10 @@ class Stream
         return $this;
     }
 
-    public function markAsGeneratedSubtitles(string $subtitle, array $subtitleFiles): self
+    public function markAsGeneratedSubtitles(string $subtitleSrtFile, array $subtitleSrtFiles): self
     {
-        $this->subtitle = $subtitle;
-        $this->subtitleFiles = $subtitleFiles;
+        $this->subtitleSrtFile = $subtitleSrtFile;
+        $this->subtitleSrtFiles = $subtitleSrtFiles;
         $this->setStatus(StreamStatusEnum::GENERATED_SUBTITLES->value);
 
         return $this;
@@ -218,6 +225,13 @@ class Stream
         return $this;
     }
 
+    public function initStatuses(): self
+    {
+        $this->statuses = [];
+
+        return $this;
+    }
+
     public function setStatuses(array $statuses): self
     {
         $this->statuses = $statuses;
@@ -252,13 +266,41 @@ class Stream
         return $this->audioFiles;
     }
 
-    public function getSubtitle(): ?string
+    public function getSubtitleSrtFile(): ?string
     {
-        return $this->subtitle;
+        return $this->subtitleSrtFile;
     }
 
-    public function getSubtitleFiles(): array
+    public function getSubtitleSrtFiles(): array
     {
-        return $this->subtitleFiles;
+        return $this->subtitleSrtFiles;
+    }
+
+    public function setSubtitleSrtFile(string $subtitleSrtFile): self
+    {
+        $this->subtitleSrtFile = $subtitleSrtFile;
+
+        return $this;
+    }
+    
+    public function setSubtitleSrtFiles(array $subtitleSrtFiles): self
+    {
+        $this->subtitleSrtFiles = $subtitleSrtFiles;
+
+        return $this;
+    }
+
+    public function setAudioFiles(array $audioFiles): self
+    {
+        $this->audioFiles = $audioFiles;
+
+        return $this;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

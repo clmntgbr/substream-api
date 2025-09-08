@@ -8,7 +8,9 @@ use Symfony\Component\Uid\Uuid;
 final class GenerateSubtitlesSuccessCommand implements CommandInterface
 {
     public function __construct(
-        public readonly Uuid $streamId,
+        public readonly array $subtitleSrtFiles,
+        public readonly string $subtitleSrtFile,
+        public readonly string $streamId,
     ) {
     }
 

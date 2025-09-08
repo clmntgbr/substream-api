@@ -8,7 +8,11 @@ use Symfony\Component\Uid\Uuid;
 final class GetVideoSuccessCommand implements CommandInterface
 {
     public function __construct(
-        public readonly Uuid $streamId,
+        public readonly string $streamId,
+        public readonly string $fileName,
+        public readonly string $originalName,
+        public readonly string $mimeType,
+        public readonly int $size,
     ) {
     }
 

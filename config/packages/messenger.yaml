@@ -16,7 +16,7 @@ framework:
                         async-high:
                             binding_keys: [async-high]
                 retry_strategy:
-                    max_retries: 1
+                    max_retries: 0
             async-medium:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 options:
@@ -28,7 +28,7 @@ framework:
                         async-medium:
                             binding_keys: [async-medium]
                 retry_strategy:
-                    max_retries: 1
+                    max_retries: 0
             async-low:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 options:
@@ -40,15 +40,20 @@ framework:
                         async-low:
                             binding_keys: [async-low]
                 retry_strategy:
-                    max_retries: 1
+                    max_retries: 0
             sync: "sync://"
 
         routing:
             'App\Application\Command\CreateStreamCommand': sync
             'App\Application\Command\CreateStreamByUrlCommand': sync
+
             'App\Application\Command\UploadVideoCommand': sync
             'App\Application\Command\UploadVideoByUrlCommand': async-high
+
             'App\Application\Command\ExtractSoundCommand': async-high
             'App\Application\Command\ExtractSoundSuccessCommand': async-high
+
             'App\Application\Command\GenerateSubtitlesCommand': async-high
             'App\Application\Command\GenerateSubtitlesSuccessCommand': async-high
+
+            'App\Application\Command\TransformSubtitlesCommand': async-high
