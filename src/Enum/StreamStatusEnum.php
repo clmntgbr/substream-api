@@ -19,4 +19,8 @@ enum StreamStatusEnum: string
     case TRANSFORMING_SUBTITLES_PROCESSING = 'transforming_subtitles_processing';
     case TRANSFORMED_SUBTITLES = 'transformed_subtitles';
     case TRANSFORMED_SUBTITLES_FAILED = 'transformed_subtitles_failed';
+
+    case TRANSFORMING_VIDEO_PROCESSING = 'transforming_video_processing';
+    case TRANSFORMED_VIDEO = 'transformed_video';
+    case TRANSFORMED_VIDEO_FAILED = 'transformed_video_failed';
 }

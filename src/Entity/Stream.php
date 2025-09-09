@@ -117,6 +117,13 @@ class Stream
         return $this;
     }
 
+    public function markAsTransformingVideoProcessing(): self
+    {
+        $this->setStatus(StreamStatusEnum::TRANSFORMING_VIDEO_PROCESSING->value);
+
+        return $this;
+    }
+
     public function markAsGeneratingSubtitlesProcessing(): self
     {
         $this->setStatus(StreamStatusEnum::GENERATING_SUBTITLES_PROCESSING->value);
