@@ -57,3 +57,4 @@ framework:
             'App\Application\Command\GenerateSubtitlesSuccessCommand': async-high
 
             'App\Application\Command\TransformSubtitlesCommand': async-high
+            'App\Application\Command\TransformSubtitlesSuccessCommand': async-high

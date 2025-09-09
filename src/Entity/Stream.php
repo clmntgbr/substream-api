@@ -68,6 +68,10 @@ class Stream
     #[Groups(['stream:read'])]
     private ?string $subtitleSrtFile = null;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $subtitleAssFile = null;
+
     #[ORM\Column(type: Types::JSON, nullable: true)]
     #[Groups(['stream:read'])]
     private array $subtitleSrtFiles = [];
@@ -140,6 +144,14 @@ class Stream
     public function markAsFailed(StreamStatusEnum $status): self
     {
         $this->setStatus($status->value);
+
+        return $this;
+    }
+
+    public function markAsTransformedSubtitles(string $subtitleAssFile): self
+    {
+        $this->subtitleAssFile = $subtitleAssFile;
+        $this->setStatus(StreamStatusEnum::TRANSFORMED_SUBTITLES->value);
 
         return $this;
     }
@@ -329,5 +341,10 @@ class Stream
     public function getOptions(): Options
     {
         return $this->options;
+    }
+
+    public function getSubtitleAssFile(): ?string
+    {
+        return $this->subtitleAssFile;
     }
 }
