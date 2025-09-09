@@ -24,7 +24,9 @@ final class GetVideoSuccessCommandHandler
             return;
         }
 
-        $stream->markAsUploaded($command->fileName, $command->originalName, $command->mimeType, $command->size);
+        $stream->updateStream($command->fileName, $command->originalName, $command->mimeType, $command->size);
+        $stream->markAsUploaded();
+
         $this->streamRepository->save($stream);
 
         $this->messageBus->dispatch(new ExtractSoundCommand(

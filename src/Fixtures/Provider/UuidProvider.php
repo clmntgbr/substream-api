@@ -2,7 +2,6 @@
 
 namespace App\Fixtures\Provider;
 
-use App\Entity\ValueObject\Email;
 use Symfony\Component\Uid\Uuid;
 
 class UuidProvider

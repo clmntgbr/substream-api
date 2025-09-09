@@ -31,22 +31,32 @@ final class CreateStreamCommandHandler
             throw new UserNotFoundException();
         }
 
-        $stream = (new Stream())->create(
+        $stream = Stream::create(
             uuid: $command->uuid,
             user: $user,
+            options: $command->options,
         );
 
         $this->streamRepository->save($stream, true);
 
-        $this->messageBus->dispatchs([
+        $this->messageBus->dispatch(
             new UploadVideoCommand(
                 userId: $command->userId,
                 streamId: $stream->getId(),
                 file: $command->file,
-            ),
+            )
+        );
+
+        $stream = $this->streamRepository->refresh($stream);
+
+        $this->messageBus->dispatch(
             new GetVideoSuccessCommand(
                 streamId: $stream->getId(),
-            ),
-        ]);
+                fileName: $stream->getFileName(),
+                originalName: $stream->getOriginalName(),
+                mimeType: $stream->getMimeType(),
+                size: $stream->getSize(),
+            )
+        );
     }
 }

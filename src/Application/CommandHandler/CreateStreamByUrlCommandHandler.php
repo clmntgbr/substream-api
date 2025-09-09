@@ -32,6 +32,7 @@ final class CreateStreamByUrlCommandHandler
             uuid: $command->uuid,
             user: $user,
             url: $command->url,
+            options: $command->options,
         );
 
         $this->streamRepository->save($stream, true);

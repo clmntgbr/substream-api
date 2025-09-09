@@ -16,7 +16,7 @@ final class ExtractSoundResponse
         #[SerializedName('audio_files')]
         #[Assert\NotBlank]
         #[Assert\All([
-            new Assert\NotBlank,
+            new Assert\NotBlank(),
             new Assert\Type('string'),
             new Assert\Length(max: 255),
         ])]

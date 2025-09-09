@@ -2,7 +2,6 @@
 
 namespace App\Application\CommandHandler;
 
-use App\Application\Command\ExtractSoundCommand;
 use App\Application\Command\GenerateSubtitlesCommand;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;

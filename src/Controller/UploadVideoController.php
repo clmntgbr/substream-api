@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Application\Command\CreateStreamByUrlCommand;
 use App\Application\Command\CreateStreamCommand;
 use App\Dto\UploadVideoByUrl;
+use App\Dto\UploadVideoOptions;
 use App\Entity\User;
 use App\Exception\InvalidVideoMimeTypeException;
 use App\Service\MessageBusInterface;
@@ -29,7 +30,7 @@ class UploadVideoController extends AbstractController
     }
 
     #[Route('/video', name: 'video', methods: ['POST'])]
-    public function uploadVideo(#[MapUploadedFile] UploadedFile $video, #[CurrentUser] User $user): JsonResponse
+    public function uploadVideo(#[MapRequestPayload] UploadVideoOptions $options, #[MapUploadedFile] UploadedFile $video, #[CurrentUser] User $user): JsonResponse
     {
         $constraints = new File([
             'mimeTypes' => [
@@ -48,18 +49,20 @@ class UploadVideoController extends AbstractController
             uuid: Uuid::v4(),
             userId: $user->getId(),
             file: $video,
+            options: $options,
         ));
 
         return new JsonResponse(['message' => 'Video is being uploaded']);
     }
 
     #[Route('/video/url', name: 'video_url', methods: ['POST'])]
-    public function uploadVideoByUrl(#[MapRequestPayload] UploadVideoByUrl $dto, #[CurrentUser] User $user): JsonResponse
+    public function uploadVideoByUrl(#[MapRequestPayload] UploadVideoByUrl $upload, #[CurrentUser] User $user): JsonResponse
     {
         $this->messageBus->dispatch(new CreateStreamByUrlCommand(
             uuid: Uuid::v4(),
             userId: $user->getId(),
-            url: $dto->url,
+            url: $upload->url,
+            options: $upload->options,
         ));
 
         return new JsonResponse(['message' => 'Video is being downloaded']);

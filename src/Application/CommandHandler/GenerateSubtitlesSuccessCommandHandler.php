@@ -2,13 +2,9 @@
 
 namespace App\Application\CommandHandler;
 
-use App\Application\Command\ExtractSoundCommand;
-use App\Application\Command\GenerateSubtitlesCommand;
 use App\Application\Command\GenerateSubtitlesSuccessCommand;
 use App\Application\Command\TransformSubtitlesCommand;
-use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
-use App\Service\GenerateSubtitlesServiceInterface;
 use App\Service\MessageBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

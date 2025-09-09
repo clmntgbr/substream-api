@@ -7762,7 +7762,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Symfony\\Component\\OptionsResolver\\": ""
+                    "Symfony\\Component\\OptionssResolver\\": ""
                 },
                 "exclude-from-classmap": [
                     "/Tests/"

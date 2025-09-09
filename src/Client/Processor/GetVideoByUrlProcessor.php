@@ -21,14 +21,18 @@ final class GetVideoByUrlProcessor implements GetVideoByUrlProcessorInterface
      */
     public function __invoke(GetVideoByUrl $dto): void
     {
-        $response = $this->processorClient->request('POST', self::GET_VIDEO_BY_URL_URL, [
-            'json' => $dto->jsonSerialize(),
-            'headers' => [
-                'Authorization' => $this->processorToken,
-            ],
-        ]);
+        try {
+            $response = $this->processorClient->request('POST', self::GET_VIDEO_BY_URL_URL, [
+                'json' => $dto->jsonSerialize(),
+                'headers' => [
+                    'Authorization' => $this->processorToken,
+                ],
+            ]);
 
-        if (200 !== $response->getStatusCode()) {
+            if (200 !== $response->getStatusCode()) {
+                throw new \Exception();
+            }
+        } catch (\Exception $_) {
             throw new ProcessorException('Failed to get video by url');
         }
     }

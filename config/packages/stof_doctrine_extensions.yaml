@@ -5,3 +5,4 @@ stof_doctrine_extensions:
             timestampable: true
             blameable: true
             sluggable: true
+            tree: false  # Disable tree extension to avoid reflFields deprecation

@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Dto\UploadVideoOptions;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
@@ -19,10 +20,10 @@ use Symfony\Component\Uid\Uuid;
     order: ['updatedAt' => 'DESC'],
     operations: [
         new Get(
-            normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read']],
+            normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read', 'option:read']],
         ),
         new GetCollection(
-            normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read']],
+            normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read', 'option:read']],
         ),
     ]
 )]
@@ -75,19 +76,27 @@ class Stream
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
+    #[ORM\ManyToOne(targetEntity: Options::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['stream:read', 'option:read'])]
+    private Options $options;
+
     public function __construct()
     {
+        $this->options = new Options();
         $this->status = StreamStatusEnum::UPLOADING->value;
         $this->statuses = [StreamStatusEnum::UPLOADING->value];
     }
 
-    public function create(Uuid $uuid, User $user, ?string $url = null): self
+    public static function create(Uuid $uuid, User $user, UploadVideoOptions $options, ?string $url = null): self
     {
-        $this->id = $uuid;
-        $this->user = $user;
-        $this->url = $url;
+        $stream = new self();
+        $stream->id = $uuid;
+        $stream->user = $user;
+        $stream->url = $url;
+        $stream->options = Options::create($options);
 
-        return $this;
+        return $stream;
     }
 
     public function markAsExtractingSoundProcessing(): self
@@ -111,12 +120,18 @@ class Stream
         return $this;
     }
 
-    public function markAsUploaded(string $fileName, string $originalName, string $mimeType, int $size): self
+    public function updateStream(string $fileName, string $originalName, string $mimeType, int $size): self
     {
         $this->fileName = $fileName;
         $this->originalName = $originalName;
         $this->mimeType = $mimeType;
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function markAsUploaded(): self
+    {
         $this->setStatus(StreamStatusEnum::UPLOADED->value);
 
         return $this;
@@ -282,7 +297,7 @@ class Stream
 
         return $this;
     }
-    
+
     public function setSubtitleSrtFiles(array $subtitleSrtFiles): self
     {
         $this->subtitleSrtFiles = $subtitleSrtFiles;
@@ -302,5 +317,17 @@ class Stream
         $this->user = $user;
 
         return $this;
+    }
+
+    public function setOptions(Options $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function getOptions(): Options
+    {
+        return $this->options;
     }
 }

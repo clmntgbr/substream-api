@@ -7,7 +7,7 @@ enum StreamStatusEnum: string
     case UPLOADING = 'uploading';
     case UPLOADED = 'uploaded';
     case UPLOAD_FAILED = 'upload_failed';
-    
+
     case EXTRACTING_SOUND_PROCESSING = 'extracting_sound_processing';
     case EXTRACTED_SOUND = 'extracted_sound';
     case EXTRACTED_SOUND_FAILED = 'extracted_sound_failed';

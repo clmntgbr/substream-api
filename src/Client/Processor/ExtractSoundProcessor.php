@@ -21,14 +21,18 @@ final class ExtractSoundProcessor implements ExtractSoundProcessorInterface
      */
     public function __invoke(ExtractSound $dto): void
     {
-        $response = $this->processorClient->request('POST', self::EXTRACT_SOUND_URL, [
-            'json' => $dto->jsonSerialize(),
-            'headers' => [
-                'Authorization' => $this->processorToken,
-            ],
-        ]);
+        try {
+            $response = $this->processorClient->request('POST', self::EXTRACT_SOUND_URL, [
+                'json' => $dto->jsonSerialize(),
+                'headers' => [
+                    'Authorization' => $this->processorToken,
+                ],
+            ]);
 
-        if (200 !== $response->getStatusCode()) {
+            if (200 !== $response->getStatusCode()) {
+                throw new \Exception();
+            }
+        } catch (\Exception $_) {
             throw new ProcessorException('Failed to extract sound');
         }
     }

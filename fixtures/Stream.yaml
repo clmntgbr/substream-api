@@ -27,3 +27,4 @@ App\Entity\Stream:
       - "9729a410-e822-4026-97a8-f99fb0b92778_4.srt"
       - "9729a410-e822-4026-97a8-f99fb0b92778_5.srt"
     user: "@user_1"
+    options: "@options"

@@ -10,8 +10,10 @@ final class UploadVideoByUrl
         #[Assert\NotBlank]
         #[Assert\Url]
         #[Assert\Length(max: 2048)]
-        #[Assert\Regex(pattern: '/^https?:\/\/.+$/i')]
+        #[Assert\Regex(pattern: '/^https?:\/\/.+$/i', message: 'Invalid URL')]
         public readonly string $url,
+        #[Assert\Valid]
+        public readonly UploadVideoOptions $options,
     ) {
     }
 }

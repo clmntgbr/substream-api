@@ -1,0 +1,15 @@
+App\Entity\Options:
+  options:
+    subtitleFont: "Arial"
+    subtitleSize: 18
+    subtitleColor: "#FFFFFF"
+    subtitleBold: false
+    subtitleItalic: false
+    subtitleUnderline: false
+    subtitleOutlineColor: "#000000"
+    subtitleOutlineThickness: 0
+    subtitleShadow: 0
+    subtitleShadowColor: "#000000"
+    videoFormat: "srt"
+    videoParts: 1
+    yAxisAlignment: 0.0

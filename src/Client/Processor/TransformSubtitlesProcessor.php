@@ -3,7 +3,6 @@
 namespace App\Client\Processor;
 
 use App\Dto\Processor\TransformSubtitles;
-use App\Dto\Processor\GenerateSubtitles;
 use App\Exception\ProcessorException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -20,16 +19,20 @@ final class TransformSubtitlesProcessor implements TransformSubtitlesProcessorIn
     /**
      * @throws ProcessorException
      */
-    public function __invoke(TransformSubtitles $dto): void
+    public function __invoke(TransformSubtitles $payload): void
     {
-        $response = $this->processorClient->request('POST', self::TRANSFORM_SUBTITLES_URL, [
-            'json' => $dto->jsonSerialize(),
-            'headers' => [
-                'Authorization' => $this->processorToken,
-            ],
-        ]);
+        try {
+            $response = $this->processorClient->request('POST', self::TRANSFORM_SUBTITLES_URL, [
+                'json' => $payload->jsonSerialize(),
+                'headers' => [
+                    'Authorization' => $this->processorToken,
+                ],
+            ]);
 
-        if (200 !== $response->getStatusCode()) {
+            if (200 !== $response->getStatusCode()) {
+                throw new \Exception();
+            }
+        } catch (\Exception $_) {
             throw new ProcessorException('Failed to transform subtitles');
         }
     }

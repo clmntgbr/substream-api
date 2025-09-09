@@ -2,7 +2,6 @@
 
 namespace App\Client\Processor;
 
-use App\Dto\Processor\ExtractSound;
 use App\Dto\Processor\GenerateSubtitles;
 use App\Exception\ProcessorException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -22,14 +21,18 @@ final class GenerateSubtitlesProcessor implements GenerateSubtitlesProcessorInte
      */
     public function __invoke(GenerateSubtitles $dto): void
     {
-        $response = $this->processorClient->request('POST', self::GENERATE_SUBTITLES_URL, [
-            'json' => $dto->jsonSerialize(),
-            'headers' => [
-                'Authorization' => $this->processorToken,
-            ],
-        ]);
+        try {
+            $response = $this->processorClient->request('POST', self::GENERATE_SUBTITLES_URL, [
+                'json' => $dto->jsonSerialize(),
+                'headers' => [
+                    'Authorization' => $this->processorToken,
+                ],
+            ]);
 
-        if (200 !== $response->getStatusCode()) {
+            if (200 !== $response->getStatusCode()) {
+                throw new \Exception();
+            }
+        } catch (\Exception $_) {
             throw new ProcessorException('Failed to generate subtitles');
         }
     }
