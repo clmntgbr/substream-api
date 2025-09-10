@@ -2,7 +2,7 @@ App\Entity\Stream:
   transforming_subtitles_processing:
     id: "<uuid(9729a410-e822-4026-97a8-f99fb0b92778)>"
     videoFileName: "9729a410-e822-4026-97a8-f99fb0b92778.mp4"
-    originalName: "J'ai nagé avec des requins au Mexique ! (une des meilleurs expérience de ma vie vrmt !!).mp4"
+    originalFileName: "J'ai nagé avec des requins au Mexique ! (une des meilleurs expérience de ma vie vrmt !!).mp4"
     mimeType: "video/mp4"
     url: "https://www.youtube.com/watch?v=aX3z61QftVY"
     size: 308822028

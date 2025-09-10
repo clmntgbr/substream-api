@@ -42,7 +42,7 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $originalName = null;
+    private ?string $originalFileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
@@ -135,10 +135,10 @@ class Stream
         return $this;
     }
 
-    public function updateStream(string $videoFileName, string $originalName, string $mimeType, int $size): self
+    public function updateStream(string $videoFileName, string $originalFileName, string $mimeType, int $size): self
     {
         $this->videoFileName = $videoFileName;
-        $this->originalName = $originalName;
+        $this->originalFileName = $originalFileName;
         $this->mimeType = $mimeType;
         $this->size = $size;
 
@@ -225,9 +225,16 @@ class Stream
         return $this->size;
     }
 
-    public function getOriginalName(): string
+    public function getOriginalFileName(): string
     {
-        return $this->originalName;
+        return $this->originalFileName;
+    }
+
+    public function setOriginalFileName(string $originalFileName): self
+    {
+        $this->originalFileName = $originalFileName;
+
+        return $this;
     }
 
     public function setVideoFileName(string $videoFileName): self
@@ -242,9 +249,9 @@ class Stream
         return $this->videoFileNameTransformed;
     }
 
-    public function setOriginalName(string $originalName): self
+    public function setOriginalName(string $originalFileName): self
     {
-        $this->originalName = $originalName;
+        $this->originalFileName = $originalFileName;
 
         return $this;
     }

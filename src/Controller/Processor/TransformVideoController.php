@@ -2,10 +2,7 @@
 
 namespace App\Controller\Processor;
 
-use App\Application\Command\TransformSubtitleSuccessCommand;
 use App\Application\Command\TransformVideoSuccessCommand;
-use App\Dto\Processor\TransformSubtitleFailureResponse;
-use App\Dto\Processor\TransformSubtitleResponse;
 use App\Dto\Processor\TransformVideoFailureResponse;
 use App\Dto\Processor\TransformVideoResponse;
 use App\Enum\StreamStatusEnum;

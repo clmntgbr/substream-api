@@ -53,7 +53,7 @@ final class CreateStreamCommandHandler
             new GetVideoSuccessCommand(
                 streamId: $stream->getId(),
                 videoFileName: $stream->getVideoFileName(),
-                originalName: $stream->getOriginalName(),
+                originalFileName: $stream->getOriginalFileName(),
                 mimeType: $stream->getMimeType(),
                 size: $stream->getSize(),
             )

@@ -2,8 +2,8 @@
 
 namespace App\Application\CommandHandler;
 
-use App\Application\Command\TransformVideoCommand;
 use App\Application\Command\TransformSubtitleSuccessCommand;
+use App\Application\Command\TransformVideoCommand;
 use App\Repository\StreamRepository;
 use App\Service\MessageBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

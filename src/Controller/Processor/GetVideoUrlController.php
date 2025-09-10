@@ -32,7 +32,7 @@ class GetVideoUrlController extends AbstractController
     {
         $this->messageBus->dispatch(new GetVideoSuccessCommand(
             videoFileName: $response->videoFileName,
-            originalName: $response->originalName,
+            originalFileName: $response->originalFileName,
             mimeType: $response->mimeType,
             size: $response->size,
             streamId: $response->streamId,
