@@ -2,13 +2,13 @@
 
 namespace App\Client\Processor;
 
-use App\Dto\Processor\TransformSubtitles;
+use App\Dto\Processor\TransformSubtitle;
 use App\Exception\ProcessorException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class TransformSubtitlesProcessor implements TransformSubtitlesProcessorInterface
+final class TransformSubtitleProcessor implements TransformSubtitleProcessorInterface
 {
-    public const TRANSFORM_SUBTITLES_URL = '/api/transform-subtitles';
+    public const TRANSFORM_SUBTITLE_URL = '/api/transform-subtitle';
 
     public function __construct(
         private HttpClientInterface $processorClient,
@@ -19,10 +19,10 @@ final class TransformSubtitlesProcessor implements TransformSubtitlesProcessorIn
     /**
      * @throws ProcessorException
      */
-    public function __invoke(TransformSubtitles $payload): void
+    public function __invoke(TransformSubtitle $payload): void
     {
         try {
-            $response = $this->processorClient->request('POST', self::TRANSFORM_SUBTITLES_URL, [
+            $response = $this->processorClient->request('POST', self::TRANSFORM_SUBTITLE_URL, [
                 'json' => $payload->jsonSerialize(),
                 'headers' => [
                     'Authorization' => $this->processorToken,
@@ -33,7 +33,7 @@ final class TransformSubtitlesProcessor implements TransformSubtitlesProcessorIn
                 throw new \Exception();
             }
         } catch (\Exception $_) {
-            throw new ProcessorException('Failed to transform subtitles');
+            throw new ProcessorException('Failed to transform subtitle');
         }
     }
 }

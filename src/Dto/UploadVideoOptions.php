@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Enum\SubtitleFontEnum;
+use App\Enum\VideoFormatEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UploadVideoOptions
@@ -38,7 +39,8 @@ class UploadVideoOptions
         #[Assert\Regex(pattern: '/^#[0-9A-Fa-f]{6}$/', message: 'Invalid subtitle shadow color')]
         public readonly string $subtitleShadowColor = '#000000',
         #[Assert\Length(max: 20)]
-        public readonly string $videoFormat = 'srt',
+        #[Assert\Choice(choices: [VideoFormatEnum::ORIGINAL->value, VideoFormatEnum::ZOOMED_916->value, VideoFormatEnum::NORMAL_916_WITH_BORDERS->value, VideoFormatEnum::DUPLICATED_BLURRED_916->value], message: 'Invalid video format')]
+        public readonly string $videoFormat = VideoFormatEnum::ORIGINAL->value,
         #[Assert\Positive]
         public readonly int $videoParts = 1,
         #[Assert\PositiveOrZero]

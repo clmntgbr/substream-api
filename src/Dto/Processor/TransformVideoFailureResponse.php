@@ -5,7 +5,7 @@ namespace App\Dto\Processor;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class TransformSubtitlesFailureResponse
+final class TransformVideoFailureResponse
 {
     public function __construct(
         #[SerializedName('stream_id')]

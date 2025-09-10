@@ -4,7 +4,7 @@ namespace App\Dto\Processor;
 
 use App\Entity\Stream;
 
-final class TransformSubtitles implements \JsonSerializable
+final class TransformSubtitle implements \JsonSerializable
 {
     public function __construct(
         public readonly Stream $stream,
@@ -27,8 +27,6 @@ final class TransformSubtitles implements \JsonSerializable
                 'subtitle_outline_thickness' => $this->stream->getOptions()->getSubtitleOutlineThickness(),
                 'subtitle_shadow' => $this->stream->getOptions()->getSubtitleShadow(),
                 'subtitle_shadow_color' => $this->stream->getOptions()->getSubtitleShadowColor(),
-                'video_format' => $this->stream->getOptions()->getVideoFormat(),
-                'video_parts' => $this->stream->getOptions()->getVideoParts(),
                 'y_axis_alignment' => $this->stream->getOptions()->getYAxisAlignment(),
             ],
         ];

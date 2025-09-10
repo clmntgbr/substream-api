@@ -2,22 +2,22 @@
 
 namespace App\Application\CommandHandler;
 
-use App\Application\Command\TransformSubtitlesCommand;
+use App\Application\Command\TransformSubtitleCommand;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
-use App\Service\TransformSubtitlesServiceInterface;
+use App\Service\TransformSubtitleServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class TransformSubtitlesCommandHandler
+final class TransformSubtitleCommandHandler
 {
     public function __construct(
         private StreamRepository $streamRepository,
-        private TransformSubtitlesServiceInterface $transformSubtitlesService,
+        private TransformSubtitleServiceInterface $transformSubtitleService,
     ) {
     }
 
-    public function __invoke(TransformSubtitlesCommand $command): void
+    public function __invoke(TransformSubtitleCommand $command): void
     {
         $stream = $this->streamRepository->findOneBy(['id' => $command->streamId]);
         if (null === $stream) {
@@ -25,6 +25,6 @@ final class TransformSubtitlesCommandHandler
         }
 
         $stream->markAsTransformingSubtitlesProcessing();
-        $this->transformSubtitlesService->transformSubtitles($stream);
+        $this->transformSubtitleService->transformSubtitle($stream);
     }
 }

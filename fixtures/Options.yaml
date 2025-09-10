@@ -10,6 +10,6 @@ App\Entity\Options:
     subtitleOutlineThickness: 0
     subtitleShadow: 0
     subtitleShadowColor: "#000000"
-    videoFormat: "srt"
+    videoFormat: "original"
     videoParts: 1
     yAxisAlignment: 0.0

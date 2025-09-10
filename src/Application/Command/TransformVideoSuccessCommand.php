@@ -4,10 +4,10 @@ namespace App\Application\Command;
 
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 
-final class TransformSubtitlesSuccessCommand implements CommandInterface
+final class TransformVideoSuccessCommand implements CommandInterface
 {
     public function __construct(
-        public readonly string $subtitleAssFile,
+        public readonly string $videoFileTransformed,
         public readonly string $streamId,
     ) {
     }

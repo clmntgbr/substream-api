@@ -2,14 +2,14 @@
 
 namespace App\Application\CommandHandler;
 
-use App\Application\Command\GenerateSubtitlesSuccessCommand;
-use App\Application\Command\TransformSubtitleCommand;
+use App\Application\Command\TransformVideoCommand;
+use App\Application\Command\TransformSubtitleSuccessCommand;
 use App\Repository\StreamRepository;
 use App\Service\MessageBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class GenerateSubtitlesSuccessCommandHandler
+final class TransformSubtitleSuccessCommandHandler
 {
     public function __construct(
         private MessageBusInterface $messageBus,
@@ -17,17 +17,17 @@ final class GenerateSubtitlesSuccessCommandHandler
     ) {
     }
 
-    public function __invoke(GenerateSubtitlesSuccessCommand $command): void
+    public function __invoke(TransformSubtitleSuccessCommand $command): void
     {
         $stream = $this->streamRepository->findOneBy(['id' => $command->streamId]);
         if (null === $stream) {
             return;
         }
 
-        $stream->markAsGeneratedSubtitles($command->subtitleSrtFile, $command->subtitleSrtFiles);
+        $stream->markAsTransformedSubtitles($command->subtitleAssFile);
         $this->streamRepository->save($stream);
 
-        $this->messageBus->dispatch(new TransformSubtitleCommand(
+        $this->messageBus->dispatch(new TransformVideoCommand(
             streamId: $stream->getId(),
         ));
     }

@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Dto\UploadVideoOptions;
+use App\Enum\SubtitleFontEnum;
+use App\Enum\VideoFormatEnum;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\OptionsRepository;
 use Doctrine\DBAL\Types\Types;
@@ -115,6 +117,8 @@ class Options
     public function __construct()
     {
         $this->id = Uuid::v4();
+        $this->videoFormat = VideoFormatEnum::ORIGINAL->value;
+        $this->subtitleFont = SubtitleFontEnum::ARIAL->value;
     }
 
     public static function create(UploadVideoOptions $option): self

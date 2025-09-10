@@ -38,6 +38,10 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
+    private ?string $videoFileTransformed = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
     private ?string $originalName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
@@ -112,7 +116,7 @@ class Stream
 
     public function markAsTransformingSubtitlesProcessing(): self
     {
-        $this->setStatus(StreamStatusEnum::TRANSFORMING_SUBTITLES_PROCESSING->value);
+        $this->setStatus(StreamStatusEnum::TRANSFORMING_SUBTITLE_PROCESSING->value);
 
         return $this;
     }
@@ -158,7 +162,15 @@ class Stream
     public function markAsTransformedSubtitles(string $subtitleAssFile): self
     {
         $this->subtitleAssFile = $subtitleAssFile;
-        $this->setStatus(StreamStatusEnum::TRANSFORMED_SUBTITLES->value);
+        $this->setStatus(StreamStatusEnum::TRANSFORMED_SUBTITLE->value);
+
+        return $this;
+    }
+
+    public function markAsTransformedVideo(string $videoFileTransformed): self
+    {
+        $this->videoFileTransformed = $videoFileTransformed;
+        $this->setStatus(StreamStatusEnum::TRANSFORMED_VIDEO->value);
 
         return $this;
     }

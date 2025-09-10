@@ -15,21 +15,10 @@ final class TransformVideo implements \JsonSerializable
     {
         return [
             'stream_id' => (string) $this->stream->getId(),
-            'subtitle_ass_file' => $this->stream->getSubtitleAssFile(),
+            'video_file' => $this->stream->getFileName(),
             'options' => [
-                'subtitle_font' => $this->stream->getOptions()->getSubtitleFont(),
-                'subtitle_size' => $this->stream->getOptions()->getSubtitleSize(),
-                'subtitle_color' => $this->stream->getOptions()->getSubtitleColor(),
-                'subtitle_bold' => $this->stream->getOptions()->getSubtitleBold(),
-                'subtitle_italic' => $this->stream->getOptions()->getSubtitleItalic(),
-                'subtitle_underline' => $this->stream->getOptions()->getSubtitleUnderline(),
-                'subtitle_outline_color' => $this->stream->getOptions()->getSubtitleOutlineColor(),
-                'subtitle_outline_thickness' => $this->stream->getOptions()->getSubtitleOutlineThickness(),
-                'subtitle_shadow' => $this->stream->getOptions()->getSubtitleShadow(),
-                'subtitle_shadow_color' => $this->stream->getOptions()->getSubtitleShadowColor(),
                 'video_format' => $this->stream->getOptions()->getVideoFormat(),
                 'video_parts' => $this->stream->getOptions()->getVideoParts(),
-                'y_axis_alignment' => $this->stream->getOptions()->getYAxisAlignment(),
             ],
         ];
     }
