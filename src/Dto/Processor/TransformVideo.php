@@ -15,7 +15,7 @@ final class TransformVideo implements \JsonSerializable
     {
         return [
             'stream_id' => (string) $this->stream->getId(),
-            'video_file' => $this->stream->getFileName(),
+            'video_file_name' => $this->stream->getVideoFileName(),
             'options' => [
                 'video_format' => $this->stream->getOptions()->getVideoFormat(),
                 'video_parts' => $this->stream->getOptions()->getVideoParts(),

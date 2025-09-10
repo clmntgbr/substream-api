@@ -12,7 +12,7 @@ final class GetVideoResponse
         #[Assert\NotBlank]
         #[Assert\Length(max: 255)]
         #[Assert\Type('string')]
-        public readonly string $fileName,
+        public readonly string $videoFileName,
         #[SerializedName('original_name')]
         #[Assert\NotBlank]
         #[Assert\Length(max: 255)]

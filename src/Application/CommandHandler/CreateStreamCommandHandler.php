@@ -52,7 +52,7 @@ final class CreateStreamCommandHandler
         $this->messageBus->dispatch(
             new GetVideoSuccessCommand(
                 streamId: $stream->getId(),
-                fileName: $stream->getFileName(),
+                videoFileName: $stream->getVideoFileName(),
                 originalName: $stream->getOriginalName(),
                 mimeType: $stream->getMimeType(),
                 size: $stream->getSize(),

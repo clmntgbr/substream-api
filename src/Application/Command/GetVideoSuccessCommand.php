@@ -8,7 +8,7 @@ final class GetVideoSuccessCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $streamId,
-        public readonly string $fileName,
+        public readonly string $videoFileName,
         public readonly string $originalName,
         public readonly string $mimeType,
         public readonly int $size,

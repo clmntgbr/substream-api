@@ -24,7 +24,7 @@ final class TransformVideoSuccessCommandHandler
             return;
         }
 
-        $stream->markAsTransformedVideo($command->videoFileTransformed);
+        $stream->markAsTransformedVideo($command->videoFileNameTransformed);
         $this->streamRepository->save($stream);
 
         // $this->messageBus->dispatch(new TransformVideoCommand(
