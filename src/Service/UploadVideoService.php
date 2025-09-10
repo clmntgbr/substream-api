@@ -41,8 +41,8 @@ class UploadVideoService implements UploadVideoServiceInterface
         }
 
         try {
-            $videoFileName = $streamId.'.'.$file->guessExtension();
-            $path = $streamId.'/'.$videoFileName;
+            $fileName = $streamId.'.'.$file->guessExtension();
+            $path = $streamId.'/'.$fileName;
 
             $handle = fopen($file->getPathname(), 'r');
 
@@ -55,7 +55,7 @@ class UploadVideoService implements UploadVideoServiceInterface
                 fclose($handle);
             }
 
-            $stream->updateStream($videoFileName, $file->getClientOriginalName(), $file->getMimeType(), $file->getSize());
+            $stream->updateStream($fileName, $file->getClientOriginalName(), $file->getMimeType(), $file->getSize());
         } catch (\Exception $_) {
             $stream->markAsFailed(StreamStatusEnum::UPLOAD_FAILED);
             $stream->setOriginalName($file->getClientOriginalName());

@@ -13,11 +13,11 @@ final class TransformVideoResponse
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         public readonly string $streamId,
-        #[SerializedName('video_file_name_transformed')]
+        #[SerializedName('file_name_transformed')]
         #[Assert\NotBlank]
         #[Assert\Type('string')]
         #[Assert\Length(max: 255)]
-        public readonly string $videoFileNameTransformed,
+        public readonly string $fileNameTransformed,
     ) {
     }
 }

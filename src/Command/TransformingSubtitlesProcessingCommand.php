@@ -121,8 +121,8 @@ class TransformingSubtitlesProcessingCommand extends Command
 
     private function uploadVideoFile(Stream $stream): void
     {
-        $path = $stream->getId().'/'.$stream->getVideoFileName();
-        $handle = fopen('/app/public/debug/transforming_subtitles_processing/'.$stream->getVideoFileName(), 'r');
+        $path = $stream->getId().'/'.$stream->getFileName();
+        $handle = fopen('/app/public/debug/transforming_subtitles_processing/'.$stream->getFileName(), 'r');
 
         $this->awsStorage->writeStream($path, $handle, [
             'visibility' => 'public',

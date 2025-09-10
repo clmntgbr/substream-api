@@ -34,11 +34,11 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $videoFileName = null;
+    private ?string $fileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $videoFileNameTransformed = null;
+    private ?string $fileNameTransformed = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
@@ -135,9 +135,9 @@ class Stream
         return $this;
     }
 
-    public function updateStream(string $videoFileName, string $originalFileName, string $mimeType, int $size): self
+    public function updateStream(string $fileName, string $originalFileName, string $mimeType, int $size): self
     {
-        $this->videoFileName = $videoFileName;
+        $this->fileName = $fileName;
         $this->originalFileName = $originalFileName;
         $this->mimeType = $mimeType;
         $this->size = $size;
@@ -167,9 +167,9 @@ class Stream
         return $this;
     }
 
-    public function markAsTransformedVideo(string $videoFileNameTransformed): self
+    public function markAsTransformedVideo(string $fileNameTransformed): self
     {
-        $this->videoFileNameTransformed = $videoFileNameTransformed;
+        $this->fileNameTransformed = $fileNameTransformed;
         $this->setStatus(StreamStatusEnum::TRANSFORMED_VIDEO->value);
 
         return $this;
@@ -210,9 +210,9 @@ class Stream
         return $this->updatedAt;
     }
 
-    public function getVideoFileName(): ?string
+    public function getFileName(): ?string
     {
-        return $this->videoFileName;
+        return $this->fileName;
     }
 
     public function getMimeType(): ?string
@@ -237,16 +237,16 @@ class Stream
         return $this;
     }
 
-    public function setVideoFileName(string $videoFileName): self
+    public function setFileName(string $fileName): self
     {
-        $this->videoFileName = $videoFileName;
+        $this->fileName = $fileName;
 
         return $this;
     }
 
-    public function getVideoFileNameTransformed(): ?string
+    public function getFileNameTransformed(): ?string
     {
-        return $this->videoFileNameTransformed;
+        return $this->fileNameTransformed;
     }
 
     public function setOriginalName(string $originalFileName): self

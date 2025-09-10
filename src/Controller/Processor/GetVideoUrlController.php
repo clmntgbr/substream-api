@@ -31,7 +31,7 @@ class GetVideoUrlController extends AbstractController
     public function getVideoUrl(#[MapRequestPayload] GetVideoResponse $response): void
     {
         $this->messageBus->dispatch(new GetVideoSuccessCommand(
-            videoFileName: $response->videoFileName,
+            fileName: $response->fileName,
             originalFileName: $response->originalFileName,
             mimeType: $response->mimeType,
             size: $response->size,

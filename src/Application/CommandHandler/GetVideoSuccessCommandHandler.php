@@ -24,7 +24,7 @@ final class GetVideoSuccessCommandHandler
             return;
         }
 
-        $stream->updateStream($command->videoFileName, $command->originalFileName, $command->mimeType, $command->size);
+        $stream->updateStream($command->fileName, $command->originalFileName, $command->mimeType, $command->size);
         $stream->markAsUploaded();
 
         $this->streamRepository->save($stream);

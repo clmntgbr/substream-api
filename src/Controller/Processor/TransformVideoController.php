@@ -32,7 +32,7 @@ class TransformVideoController extends AbstractController
     public function transformVideo(#[MapRequestPayload] TransformVideoResponse $response): JsonResponse
     {
         $this->messageBus->dispatch(new TransformVideoSuccessCommand(
-            videoFileNameTransformed: $response->videoFileNameTransformed,
+            fileNameTransformed: $response->fileNameTransformed,
             streamId: $response->streamId,
         ));
 

@@ -14,7 +14,7 @@ final class ExtractSound implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'stream_video_file_name_name' => $this->stream->getVideoFileName(),
+            'file_name' => $this->stream->getFileName(),
             'stream_id' => (string) $this->stream->getId(),
         ];
     }
