@@ -99,7 +99,7 @@ dotenv:
 	$(PHP) php bin/console debug:dotenv
 
 php-cs-fixer:
-	$(QA) ./php-cs-fixer fix src --rules=@Symfony --verbose --diff
+	$(PHP) ./vendor/bin/php-cs-fixer fix src --rules=@Symfony --verbose --diff
 
 php-stan:
 	$(PHP) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1

@@ -87,17 +87,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstname.' '.$this->lastname;
     }
 
-    public function setEmail(string $email): static
-    {
-        if (null !== $this->email && $this->email !== $email) {
-            return $this;
-        }
-
-        $this->email = $email;
-
-        return $this;
-    }
-
     /**
      * @see UserInterface
      */
@@ -118,16 +107,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
      * @see PasswordAuthenticatedUserInterface
      */
     public function getPassword(): ?string
@@ -135,23 +114,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
-    }
-
-    public function setPlainPassword(string $password): static
-    {
-        $this->plainPassword = $password;
-
-        return $this;
     }
 
     /**
@@ -167,6 +132,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstname;
     }
 
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
     public function setFirstname(string $firstname): static
     {
         $this->firstname = $firstname;
@@ -174,14 +144,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getLastname(): ?string
-    {
-        return $this->lastname;
-    }
-
     public function setLastname(string $lastname): static
     {
         $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function setEmail(string $email): static
+    {
+        if (null !== $this->email && $this->email !== $email) {
+            return $this;
+        }
+
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function setPlainPassword(string $password): static
+    {
+        $this->plainPassword = $password;
+
+        return $this;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
 
         return $this;
     }
