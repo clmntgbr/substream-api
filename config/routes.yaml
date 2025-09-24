@@ -1,0 +1,9 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+token:
+    path: /api/token
+    methods: [ "POST" ]

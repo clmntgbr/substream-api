@@ -1,0 +1,7 @@
+App\Entity\User:
+  user_1:
+    email: "dummy@gmail.com"
+    plainPassword: "dummy"
+    roles: ["ROLE_ADMIN"]
+    firstname: 'dummy'
+    lastname: 'dummy'

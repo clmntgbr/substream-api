@@ -1,0 +1,34 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind: ~
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Util/iterator_functions.php'
+
+    app.event.authentication_success_listener:
+        class: App\Listener\AuthenticationSuccessListener
+        tags:
+            - {
+                  name: kernel.event_listener,
+                  event: lexik_jwt_authentication.on_authentication_success,
+                  method: onAuthenticationSuccessResponse,
+              }
+    
+    Aws\S3\S3Client:
+        arguments:
+            -   version: 'latest'
+                region: '%env(S3_REGION)%'
+                endpoint: '%env(S3_ENDPOINT)%'
+                use_path_style_endpoint: true
+                credentials:
+                    key: '%env(S3_ACCESS_KEY)%'
+                    secret: '%env(S3_SECRET_KEY)%'
