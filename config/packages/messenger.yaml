@@ -6,6 +6,13 @@ framework:
                 middleware:
                     - validation
                     - doctrine_transaction
+            sync.command.bus:
+                middleware:
+                    - validation
+                    - doctrine_transaction
+            async.command.bus:
+                middleware:
+                    - validation
             query.bus:
                 middleware:
                     - validation
@@ -16,3 +23,11 @@ framework:
                     allow_no_senders: true
                 middleware:
                     - validation
+        transports:
+            async_commands:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queues:
+                        async_commands: ~
+        routing:
+            'App\Core\Application\Command\CreateStreamCommand': async_commands
