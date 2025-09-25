@@ -6,20 +6,20 @@ namespace App\Core\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\ValueObject;
 
-class UploadVideoFileName extends ValueObject
+class UploadOriginalFileName extends ValueObject
 {
-    private function __construct(private mixed $fileName)
+    private function __construct(private mixed $name)
     {
     }
 
-    public static function create(mixed $fileName): self
+    public static function create(mixed $name): self
     {
-        return new self($fileName);
+        return new self($name);
     }
 
     public function value(): mixed
     {
-        return $this->fileName;
+        return $this->name;
     }
 
     public function dateValue(): ?\DateTimeInterface

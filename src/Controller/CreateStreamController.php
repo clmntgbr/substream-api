@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\UploadVideoCommand;
 use App\Core\Domain\Aggregate\UploadVideoModel;
 use App\Entity\User;
@@ -28,8 +29,10 @@ class CreateStreamController extends AbstractController
     {
         /** @var UploadVideoModel $uploadVideo */
         $uploadVideo = $this->commandBus->dispatch(new UploadVideoCommand($video));
+        // $stream = $this->commandBus->dispatch(new CreateStreamCommand($uploadVideo->fileName, $uploadVideo->id));
         dump($uploadVideo);
-        die;
+        exit;
+
         return Response::successResponse([]);
     }
 

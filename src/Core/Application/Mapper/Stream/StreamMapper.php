@@ -5,17 +5,11 @@ declare(strict_types=1);
 namespace App\Core\Application\Mapper\Stream;
 
 use App\Core\Domain\Aggregate\StreamModel;
-use App\Core\Domain\Aggregate\UploadVideoModel;
 use App\Core\Domain\ValueObject\StreamFileName;
 use App\Core\Domain\ValueObject\StreamId;
-use App\Core\Domain\ValueObject\UploadVideoFileName;
 use App\Core\Domain\ValueObject\StreamOriginalFileName;
 use App\Core\Domain\ValueObject\StreamUrl;
-use App\Core\Domain\ValueObject\UploadVideoUrl;
-use App\Core\Domain\ValueObject\UploadVideoId;
 use App\Entity\Stream;
-use Symfony\Component\Uid\Uuid;
-
 
 class StreamMapper implements StreamMapperInterface
 {

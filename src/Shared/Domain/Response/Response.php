@@ -12,18 +12,18 @@ class Response extends JsonResponse
     public static function successResponse(mixed $data, int $status = ResponseAlias::HTTP_OK, string $message = 'Success'): JsonResponse
     {
         return new JsonResponse([
-        'success' => true,
-        'data' => $data,
-        'message' => $message,
+            'success' => true,
+            'data' => $data,
+            'message' => $message,
         ], $status);
     }
 
     public static function errorResponse(string $message = 'Error', int $code = 0, ?array $details = null, int $status = ResponseAlias::HTTP_BAD_REQUEST): JsonResponse
     {
         $response = [
-        'success' => false,
-        'message' => $message,
-        'code' => $code,
+            'success' => false,
+            'message' => $message,
+            'code' => $code,
         ];
 
         if ($details) {

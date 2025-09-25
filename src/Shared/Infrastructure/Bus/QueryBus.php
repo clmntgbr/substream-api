@@ -9,7 +9,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 class QueryBus implements QueryBusInterface
-
 {
     public function __construct(private MessageBusInterface $queryBus)
     {

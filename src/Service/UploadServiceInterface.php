@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Core\Domain\Aggregate\UploadVideoModel;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Uid\Uuid;
 
 interface UploadServiceInterface
 {

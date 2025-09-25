@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Core\Domain\Aggregate\UploadVideoModel;
 use App\Core\Application\Mapper\UploadVideo\UploadVideoMapperInterface;
+use App\Core\Domain\Aggregate\UploadVideoModel;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Uuid;
@@ -35,6 +35,6 @@ class UploadService implements UploadServiceInterface
             fclose($handle);
         }
 
-        return $this->uploadVideoMapper->create($fileName, $uuid);
+        return $this->uploadVideoMapper->create($fileName, $file->getClientOriginalName(), (string) $uuid);
     }
 }

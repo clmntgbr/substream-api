@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
-use App\Core\Domain\Aggregate\StreamModel;
 use App\Core\Application\Mapper\Stream\StreamMapper;
+use App\Core\Domain\Aggregate\StreamModel;
 use App\Entity\Stream;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -16,7 +16,7 @@ class CreateStreamCommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private StreamMapper $mapper
+        private StreamMapper $mapper,
     ) {
     }
 

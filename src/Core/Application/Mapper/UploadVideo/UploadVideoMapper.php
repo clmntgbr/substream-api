@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Core\Application\Mapper\UploadVideo;
 
 use App\Core\Domain\Aggregate\UploadVideoModel;
-use App\Core\Domain\ValueObject\UploadVideoFileName;
-use Symfony\Component\Uid\Uuid;
+use App\Core\Domain\ValueObject\StreamId;
+use App\Core\Domain\ValueObject\UploadFileName;
+use App\Core\Domain\ValueObject\UploadOriginalFileName;
 
 class UploadVideoMapper implements UploadVideoMapperInterface
 {
@@ -14,11 +15,12 @@ class UploadVideoMapper implements UploadVideoMapperInterface
     ) {
     }
 
-    public function create(string $fileName, Uuid $id): UploadVideoModel
+    public function create(string $fileName, string $originalFileName, string $id): UploadVideoModel
     {
         return new UploadVideoModel(
-            fileName: UploadVideoFileName::create($fileName),
-            id: $id,
+            fileName: UploadFileName::create($fileName),
+            originalFileName: UploadOriginalFileName::create($originalFileName),
+            id: StreamId::create($id),
         );
     }
 }
