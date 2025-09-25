@@ -26,6 +26,9 @@ final class StreamFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
+                'fileName' => self::faker()->sentence(),
+                'originalFileName' => self::faker()->sentence(),
+                'url' => self::faker()->sentence(),
             ];
     }
 

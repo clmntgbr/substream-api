@@ -24,6 +24,9 @@ class CreateStreamCommandHandlerHandler
     public function __invoke(\App\Core\Application\Command\CreateStreamCommand $command): \App\Core\Domain\Aggregate\StreamModel
     {
         $entity = new Stream(
+            fileName: $command->fileName?->value(),
+            originalFileName: $command->originalFileName?->value(),
+            url: $command->url?->value(),
         );
 
         $this->entityManager->persist($entity);

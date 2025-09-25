@@ -13,6 +13,12 @@ abstract class StreamDTO
 {
     public function __construct(
         #[Groups(['default'])]
+        public ?string $fileName,
+        #[Groups(['default'])]
+        public ?string $originalFileName,
+        #[Groups(['default'])]
+        public ?string $url,
+        #[Groups(['default'])]
         public ?\Symfony\Component\Uid\Uuid $id,
     ) {
     }

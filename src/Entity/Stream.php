@@ -49,8 +49,15 @@ class Stream
     #[Groups(['stream:read'])]
     private array $statuses = [];
 
-    public function __construct()
+    public function __construct(
+        ?string $fileName,
+        ?string $originalFileName,
+        ?string $url,
+    )
     {
+        $this->fileName = $fileName;
+        $this->originalFileName = $originalFileName;
+        $this->url = $url;
     }
 
     public static function create(?string $fileName, ?string $originalFileName, ?string $url): self

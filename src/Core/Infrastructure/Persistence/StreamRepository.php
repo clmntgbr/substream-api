@@ -22,6 +22,9 @@ class StreamRepository implements StreamRepositoryInterface
     public function save(StreamModel $stream): StreamModel
     {
         $entity = new Stream(
+            fileName: $stream->fileName?->value(),
+            originalFileName: $stream->originalFileName?->value(),
+            url: $stream->url?->value(),
         );
 
         if (!$this->em->contains($entity)) {
@@ -38,6 +41,9 @@ class StreamRepository implements StreamRepositoryInterface
         $entity = $this->em->find(Stream::class, $id?->value());
 
         if ($entity) {
+            $entity->setFileName($stream->fileName?->value());
+            $entity->setOriginalFileName($stream->originalFileName?->value());
+            $entity->setUrl($stream->url?->value());
             $this->em->flush();
         }
 

@@ -52,6 +52,9 @@ class CreateStreamController extends \App\Shared\Presentation\Controller\BaseCon
         try {
             $command_model = $this->mapper->fromArray($data);
             $command = new \App\Core\Application\Command\CreateStreamCommand(
+                fileName: $command_model->fileName,
+                originalFileName: $command_model->originalFileName,
+                url: $command_model->url,
             );
             $model = $this->command_bus->dispatch($command);
             $responseDTO = $this->mapper->toArray($model);

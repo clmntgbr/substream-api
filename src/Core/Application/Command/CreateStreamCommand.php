@@ -10,6 +10,9 @@ namespace App\Core\Application\Command;
 class CreateStreamCommand
 {
     public function __construct(
+        public ?\App\Core\Domain\ValueObject\StreamFileName $fileName,
+        public ?\App\Core\Domain\ValueObject\StreamOriginalFileName $originalFileName,
+        public ?\App\Core\Domain\ValueObject\StreamUrl $url,
     ) {
     }
 }
