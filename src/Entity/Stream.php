@@ -35,27 +35,11 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $fileNameTransformed = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $originalFileName = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?array $fileNamesGenerated = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $mimeType = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
     private ?string $url = null;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?int $size = null;
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
@@ -65,34 +49,13 @@ class Stream
     #[Groups(['stream:read'])]
     private array $statuses = [];
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private array $audioFiles = [];
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $subtitleSrtFile = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $subtitleAssFile = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private array $subtitleSrtFiles = [];
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private User $user;
-
-    #[ORM\ManyToOne(targetEntity: Options::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['stream:read', 'option:read'])]
-    private Options $options;
-
     public function __construct()
     {
-        $this->options = new Options();
+    }
+
+    public static function create(?string $fileName, ?string $originalFileName, ?string $url): self
+    {
+        return new self($fileName, $originalFileName, $url);
     }
 
     public function getFileName(): ?string
@@ -100,9 +63,11 @@ class Stream
         return $this->fileName;
     }
 
-    public function getFileNameTransformed(): ?string
+    public function setFileName(?string $fileName): static
     {
-        return $this->fileNameTransformed;
+        $this->fileName = $fileName;
+
+        return $this;
     }
 
     public function getOriginalFileName(): ?string
@@ -110,14 +75,11 @@ class Stream
         return $this->originalFileName;
     }
 
-    public function getFileNamesGenerated(): ?array
+    public function setOriginalFileName(?string $originalFileName): static
     {
-        return $this->fileNamesGenerated;
-    }
+        $this->originalFileName = $originalFileName;
 
-    public function getMimeType(): ?string
-    {
-        return $this->mimeType;
+        return $this;
     }
 
     public function getUrl(): ?string
@@ -125,9 +87,11 @@ class Stream
         return $this->url;
     }
 
-    public function getSize(): ?int
+    public function setUrl(?string $url): static
     {
-        return $this->size;
+        $this->url = $url;
+
+        return $this;
     }
 
     public function getStatus(): ?string
@@ -135,38 +99,22 @@ class Stream
         return $this->status;
     }
 
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function getStatuses(): array
     {
         return $this->statuses;
     }
 
-    public function getAudioFiles(): ?array
+    public function setStatuses(array $statuses): static
     {
-        return $this->audioFiles;
-    }
+        $this->statuses = $statuses;
 
-    public function getSubtitleSrtFile(): ?string
-    {
-        return $this->subtitleSrtFile;
-    }
-
-    public function getSubtitleAssFile(): ?string
-    {
-        return $this->subtitleAssFile;
-    }
-
-    public function getSubtitleSrtFiles(): ?array
-    {
-        return $this->subtitleSrtFiles;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function getOptions(): ?Options
-    {
-        return $this->options;
+        return $this;
     }
 }
