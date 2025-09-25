@@ -13,7 +13,12 @@ trait UuidTrait
     #[ApiProperty(identifier: true)]
     private Uuid $id;
 
-    public function getId(): ?Uuid
+    public function getId(): ?string
+    {
+        return $this->id ? $this->id->toString() : null;
+    }
+
+    public function getIdValueObject(): ?Uuid
     {
         return $this->id;
     }

@@ -7,3 +7,6 @@ controllers:
 token:
     path: /api/token
     methods: [ "POST" ]
+Streams_routes:
+    resource: '../src/Core/Presentation/Controller/'
+    type: attribute

@@ -104,6 +104,7 @@
         }
     },
     "require-dev": {
+        "cnd/ddd-maker-bundle": "^1.0",
         "friendsofphp/php-cs-fixer": "^3.87",
         "symfony/maker-bundle": "^1.64"
     }

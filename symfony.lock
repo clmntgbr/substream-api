@@ -13,6 +13,9 @@
             "src/ApiResource/.gitignore"
         ]
     },
+    "cnd/ddd-maker-bundle": {
+        "version": "v1.0.2"
+    },
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
