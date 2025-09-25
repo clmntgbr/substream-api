@@ -98,6 +98,14 @@ command:
 dotenv:
 	$(PHP) php bin/console debug:dotenv
 
+## Test CQRS architecture
+test-cqrs:
+	$(PHP) php scripts/test-cqrs.php
+
+## Setup CQRS
+setup-cqrs: migrate fabric
+	@echo "CQRS architecture setup completed"
+
 php-cs-fixer:
 	$(PHP) ./vendor/bin/php-cs-fixer fix src --rules=@Symfony --verbose --diff
 

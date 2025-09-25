@@ -167,4 +167,82 @@ class Options
     {
         return $this->yAxisAlignment;
     }
+
+    public function setSubtitleFont(string $subtitleFont): static
+    {
+        $this->subtitleFont = $subtitleFont;
+        return $this;
+    }
+
+    public function setSubtitleSize(int $subtitleSize): static
+    {
+        $this->subtitleSize = $subtitleSize;
+        return $this;
+    }
+
+    public function setSubtitleColor(string $subtitleColor): static
+    {
+        $this->subtitleColor = $subtitleColor;
+        return $this;
+    }
+
+    public function setSubtitleBold(bool $subtitleBold): static
+    {
+        $this->subtitleBold = $subtitleBold;
+        return $this;
+    }
+
+    public function setSubtitleItalic(bool $subtitleItalic): static
+    {
+        $this->subtitleItalic = $subtitleItalic;
+        return $this;
+    }
+
+    public function setSubtitleUnderline(bool $subtitleUnderline): static
+    {
+        $this->subtitleUnderline = $subtitleUnderline;
+        return $this;
+    }
+
+    public function setSubtitleOutlineColor(string $subtitleOutlineColor): static
+    {
+        $this->subtitleOutlineColor = $subtitleOutlineColor;
+        return $this;
+    }
+
+    public function setSubtitleOutlineThickness(int $subtitleOutlineThickness): static
+    {
+        $this->subtitleOutlineThickness = $subtitleOutlineThickness;
+        return $this;
+    }
+
+    public function setSubtitleShadow(int $subtitleShadow): static
+    {
+        $this->subtitleShadow = $subtitleShadow;
+        return $this;
+    }
+
+    public function setSubtitleShadowColor(string $subtitleShadowColor): static
+    {
+        $this->subtitleShadowColor = $subtitleShadowColor;
+        return $this;
+    }
+
+    public function setVideoFormat(string $videoFormat): static
+    {
+        $this->videoFormat = $videoFormat;
+        return $this;
+    }
+
+    public function setVideoParts(int $videoParts): static
+    {
+        $this->videoParts = $videoParts;
+        return $this;
+    }
+
+    public function setYAxisAlignment(float $yAxisAlignment): static
+    {
+        $this->yAxisAlignment = $yAxisAlignment;
+        return $this;
+    }
 }

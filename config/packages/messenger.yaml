@@ -1,2 +1,40 @@
 framework:
-    messenger: ~
+    messenger:
+        failure_transport: failed
+        
+        transports:
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: commands
+                        type: direct
+                    queues:
+                        commands:
+                            binding_keys: [commands]
+            
+            sync:
+                dsn: 'sync://'
+            
+            failed: 'doctrine://default?queue_name=failed'
+        
+        buses:
+            command.bus:
+                default_middleware: allow_no_handlers
+                middleware:
+                    - App\CQRS\Middleware\CreateJobMiddleware
+                    - App\CQRS\Middleware\JobContextMiddleware
+                    - App\CQRS\Middleware\SyncExecutionMiddleware
+                    - App\CQRS\Middleware\BusinessExceptionMiddleware
+                    - validation
+                    - doctrine_transaction
+            
+            query.bus:
+                default_middleware: allow_no_handlers
+                middleware:
+                    - App\CQRS\Middleware\BusinessExceptionMiddleware
+                    - validation
+        
+        routing:
+            App\CQRS\Command\CommandMessage: async
+            App\CQRS\Query\QueryMessage: sync

@@ -32,3 +32,21 @@ services:
                 credentials:
                     key: '%env(S3_ACCESS_KEY)%'
                     secret: '%env(S3_SECRET_KEY)%'
+
+    App\CQRS\Command\:
+        resource: '../src/CQRS/Command/'
+        tags: ['messenger.message_handler']
+
+    App\CQRS\Query\:
+        resource: '../src/CQRS/Query/'
+        tags: ['messenger.message_handler']
+
+    # Services applicatifs
+    App\Service\:
+        resource: '../src/Service/'
+
+    command.bus:
+        alias: 'messenger.bus.command.bus'
+
+    query.bus:
+        alias: 'messenger.bus.query.bus'

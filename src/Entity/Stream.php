@@ -169,4 +169,94 @@ class Stream
     {
         return $this->options;
     }
+
+    public function setFileName(?string $fileName): static
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
+    public function setFileNameTransformed(?string $fileNameTransformed): static
+    {
+        $this->fileNameTransformed = $fileNameTransformed;
+        return $this;
+    }
+
+    public function setOriginalFileName(?string $originalFileName): static
+    {
+        $this->originalFileName = $originalFileName;
+        return $this;
+    }
+
+    public function setFileNamesGenerated(?array $fileNamesGenerated): static
+    {
+        $this->fileNamesGenerated = $fileNamesGenerated;
+        return $this;
+    }
+
+    public function setMimeType(?string $mimeType): static
+    {
+        $this->mimeType = $mimeType;
+        return $this;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    public function setSize(?int $size): static
+    {
+        $this->size = $size;
+        return $this;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function setStatuses(array $statuses): static
+    {
+        $this->statuses = $statuses;
+        return $this;
+    }
+
+    public function setAudioFiles(array $audioFiles): static
+    {
+        $this->audioFiles = $audioFiles;
+        return $this;
+    }
+
+    public function setSubtitleSrtFile(?string $subtitleSrtFile): static
+    {
+        $this->subtitleSrtFile = $subtitleSrtFile;
+        return $this;
+    }
+
+    public function setSubtitleAssFile(?string $subtitleAssFile): static
+    {
+        $this->subtitleAssFile = $subtitleAssFile;
+        return $this;
+    }
+
+    public function setSubtitleSrtFiles(array $subtitleSrtFiles): static
+    {
+        $this->subtitleSrtFiles = $subtitleSrtFiles;
+        return $this;
+    }
+
+    public function setUser(User $user): static
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function setOptions(Options $options): static
+    {
+        $this->options = $options;
+        return $this;
+    }
 }
