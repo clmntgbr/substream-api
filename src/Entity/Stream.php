@@ -5,12 +5,19 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Controller\Stream\CreateStreamUrlController;
+use App\Controller\Stream\CreateStreamVideoController;
 use App\Entity\Trait\UuidTrait;
+use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Uuid;
+use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
 #[ApiResource(
@@ -21,6 +28,14 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ),
         new GetCollection(
             normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read', 'option:read']],
+        ),
+        new Post(
+            uriTemplate: '/streams/video',
+            controller: CreateStreamVideoController::class,
+        ),
+        new Post(
+            uriTemplate: '/streams/url',
+            controller: CreateStreamUrlController::class,
         ),
     ]
 )]
@@ -35,27 +50,11 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $fileNameTransformed = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $originalFileName = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?array $fileNamesGenerated = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $mimeType = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
     private ?string $url = null;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?int $size = null;
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
@@ -65,108 +64,35 @@ class Stream
     #[Groups(['stream:read'])]
     private array $statuses = [];
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private array $audioFiles = [];
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $subtitleSrtFile = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $subtitleAssFile = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private array $subtitleSrtFiles = [];
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[ORM\ManyToOne(targetEntity: Options::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['stream:read', 'option:read'])]
-    private Options $options;
+    #[Groups(['stream:read'])]
+    public ?string $contentUrl = null;
 
-    public function __construct()
-    {
-        $this->options = new Options();
-    }
+    #[UploadableField(mapping: 'streams', fileNameProperty: 'filePath')]
+    public ?File $file = null;
 
-    public function getFileName(): ?string
-    {
-        return $this->fileName;
-    }
+    #[ORM\Column(nullable: true)]
+    public ?string $filePath = null;
 
-    public function getFileNameTransformed(): ?string
-    {
-        return $this->fileNameTransformed;
-    }
+    public static function create(
+        Uuid $id,
+        User $user,
+        ?string $fileName,
+        ?string $originalFileName,
+        ?string $url,
+    ): self {
+        $stream = new self();
+        $stream->id = $id;
+        $stream->fileName = $fileName;
+        $stream->originalFileName = $originalFileName;
+        $stream->url = $url;
+        $stream->status = StreamStatusEnum::CREATED->value;
+        $stream->statuses = [StreamStatusEnum::CREATED->value];
+        $stream->user = $user;
 
-    public function getOriginalFileName(): ?string
-    {
-        return $this->originalFileName;
-    }
-
-    public function getFileNamesGenerated(): ?array
-    {
-        return $this->fileNamesGenerated;
-    }
-
-    public function getMimeType(): ?string
-    {
-        return $this->mimeType;
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    public function getSize(): ?int
-    {
-        return $this->size;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function getStatuses(): array
-    {
-        return $this->statuses;
-    }
-
-    public function getAudioFiles(): ?array
-    {
-        return $this->audioFiles;
-    }
-
-    public function getSubtitleSrtFile(): ?string
-    {
-        return $this->subtitleSrtFile;
-    }
-
-    public function getSubtitleAssFile(): ?string
-    {
-        return $this->subtitleAssFile;
-    }
-
-    public function getSubtitleSrtFiles(): ?array
-    {
-        return $this->subtitleSrtFiles;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function getOptions(): ?Options
-    {
-        return $this->options;
+        return $stream;
     }
 }

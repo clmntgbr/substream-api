@@ -1,2 +1,32 @@
 framework:
-    messenger: ~
+    messenger:
+        default_bus: command.bus
+        buses:
+            command.bus:
+                middleware:
+                    - validation
+                    - doctrine_transaction
+                    - App\Shared\Infrastructure\Middleware\CreateJobMiddleware
+            sync.command.bus:
+                middleware:
+                    - validation
+                    - doctrine_transaction
+            async.command.bus:
+                middleware:
+                    - validation
+            query.bus:
+                middleware:
+                    - validation
+            event.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: false
+                    allow_no_senders: true
+                middleware:
+                    - validation
+        transports:
+            async_commands:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queues:
+                        async_commands: ~
