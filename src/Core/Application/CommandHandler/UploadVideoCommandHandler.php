@@ -6,9 +6,9 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\UploadVideoCommand;
-use App\Core\Domain\ValueObject\StreamFileName;
+use App\Core\Domain\ValueObject\FileName;
+use App\Core\Domain\ValueObject\OriginalFileName;
 use App\Core\Domain\ValueObject\StreamId;
-use App\Core\Domain\ValueObject\StreamOriginalFileName;
 use App\Service\UploadServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -43,9 +43,9 @@ class UploadVideoCommandHandler
         $uploadVideo = $this->uploadService->uploadVideo($command->file);
 
         $this->commandBus->dispatch(new CreateStreamCommand(
-            id: $uploadVideo->id,
-            fileName: StreamFileName::create($uploadVideo->fileName->value()),
-            originalFileName: StreamOriginalFileName::create($uploadVideo->originalFileName->value()),
+            streamId: $uploadVideo->id,
+            streamFileName: FileName::create($uploadVideo->fileName->value()),
+            streamOriginalFileName: OriginalFileName::create($uploadVideo->originalFileName->value()),
         ));
 
         return $uploadVideo->id;

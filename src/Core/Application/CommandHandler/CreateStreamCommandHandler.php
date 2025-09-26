@@ -6,31 +6,28 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\Stream\StreamMapper;
-use App\Core\Domain\Aggregate\StreamModel;
 use App\Entity\Stream;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\StreamRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class CreateStreamCommandHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private StreamRepository $streamRepository,
         private StreamMapper $mapper,
     ) {
     }
 
-    public function __invoke(CreateStreamCommand $command): StreamModel
+    public function __invoke(CreateStreamCommand $command): void
     {
         $entity = Stream::create(
-            fileName: $command->fileName?->value(),
-            originalFileName: $command->originalFileName?->value(),
-            url: $command->url?->value(),
+            id: $command->getStreamId()?->value(),
+            fileName: $command->getStreamFileName()?->value(),
+            originalFileName: $command->getStreamOriginalFileName()?->value(),
+            url: $command->getStreamUrl()?->value(),
         );
 
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
-
-        return $this->mapper->fromEntity($entity);
+        $this->streamRepository->save($entity, true);
     }
 }

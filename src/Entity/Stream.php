@@ -6,11 +6,13 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Trait\UuidTrait;
+use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
 #[ApiResource(
@@ -49,13 +51,19 @@ class Stream
     #[Groups(['stream:read'])]
     private array $statuses = [];
 
-    public function __construct()
+    public function __construct(string $id, ?string $fileName, ?string $originalFileName, ?string $url)
     {
+        $this->id = Uuid::fromString($id);
+        $this->fileName = $fileName;
+        $this->originalFileName = $originalFileName;
+        $this->url = $url;
+        $this->status = StreamStatusEnum::PENDING->value;
+        $this->statuses = [StreamStatusEnum::PENDING->value];
     }
 
-    public static function create(?string $fileName, ?string $originalFileName, ?string $url): self
+    public static function create(string $id, ?string $fileName, ?string $originalFileName, ?string $url): self
     {
-        return new self($fileName, $originalFileName, $url);
+        return new self($id, $fileName, $originalFileName, $url);
     }
 
     public function getFileName(): ?string

@@ -22,6 +22,11 @@ class StreamId extends ValueObject
         return $this->id;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->value();
+    }
+
     public function dateValue(): ?\DateTimeInterface
     {
         if (null === $this->value()) {

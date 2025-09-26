@@ -6,6 +6,7 @@ framework:
                 middleware:
                     - validation
                     - doctrine_transaction
+                    - App\Shared\Infrastructure\Middleware\CreateJobMiddleware
             sync.command.bus:
                 middleware:
                     - validation
@@ -29,5 +30,3 @@ framework:
                 options:
                     queues:
                         async_commands: ~
-        routing:
-            'App\Core\Application\Command\CreateStreamCommand': async_commands

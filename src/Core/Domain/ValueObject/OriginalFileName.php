@@ -6,7 +6,7 @@ namespace App\Core\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\ValueObject;
 
-class UploadOriginalFileName extends ValueObject
+class OriginalFileName extends ValueObject
 {
     private function __construct(private mixed $name)
     {
@@ -20,6 +20,11 @@ class UploadOriginalFileName extends ValueObject
     public function value(): mixed
     {
         return $this->name;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->value();
     }
 
     public function dateValue(): ?\DateTimeInterface

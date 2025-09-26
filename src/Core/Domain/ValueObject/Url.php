@@ -6,7 +6,7 @@ namespace App\Core\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\ValueObject;
 
-class StreamUrl extends ValueObject
+class Url extends ValueObject
 {
     private function __construct(private mixed $url)
     {
@@ -20,6 +20,11 @@ class StreamUrl extends ValueObject
     public function value(): mixed
     {
         return $this->url;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->value();
     }
 
     public function dateValue(): ?\DateTimeInterface

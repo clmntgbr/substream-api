@@ -2,19 +2,41 @@
 
 namespace App\Core\Application\Command;
 
-use App\Core\Domain\ValueObject\StreamFileName;
+use App\Core\Domain\ValueObject\FileName;
+use App\Core\Domain\ValueObject\OriginalFileName;
 use App\Core\Domain\ValueObject\StreamId;
-use App\Core\Domain\ValueObject\StreamOriginalFileName;
-use App\Core\Domain\ValueObject\StreamUrl;
+use App\Core\Domain\ValueObject\Url;
 use App\Shared\Application\Command\AsyncCommandInterface;
+use App\Shared\Application\Command\SyncCommandInterface;
+use App\Shared\Application\Middleware\TrackableCommandInterface;
 
-class CreateStreamCommand implements AsyncCommandInterface
+class CreateStreamCommand implements SyncCommandInterface, TrackableCommandInterface
 {
     public function __construct(
-        public ?StreamId $id,
-        public ?StreamFileName $fileName = null,
-        public ?StreamOriginalFileName $originalFileName = null,
-        public ?StreamUrl $url = null,
+        public ?StreamId $streamId,
+        private ?FileName $streamFileName = null,
+        private ?OriginalFileName $streamOriginalFileName = null,
+        private ?Url $streamUrl = null,
     ) {
+    }
+
+    public function getStreamId(): ?StreamId
+    {
+        return $this->streamId;
+    }
+
+    public function getStreamFileName(): ?FileName
+    {
+        return $this->streamFileName;
+    }
+
+    public function getStreamOriginalFileName(): ?OriginalFileName
+    {
+        return $this->streamOriginalFileName;
+    }
+    
+    public function getStreamUrl(): ?Url
+    {
+        return $this->streamUrl;
     }
 }

@@ -6,20 +6,25 @@ namespace App\Core\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\ValueObject;
 
-class StreamOriginalFileName extends ValueObject
+class FileName extends ValueObject
 {
-    private function __construct(private mixed $originalFileName)
+    private function __construct(private mixed $name)
     {
     }
 
-    public static function create(mixed $originalFileName): self
+    public static function create(mixed $name): self
     {
-        return new self($originalFileName);
+        return new self($name);
     }
 
     public function value(): mixed
     {
-        return $this->originalFileName;
+        return $this->name;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->value();
     }
 
     public function dateValue(): ?\DateTimeInterface
