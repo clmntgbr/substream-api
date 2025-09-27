@@ -8,5 +8,6 @@ use App\Entity\Stream;
 interface CreateStreamMapperInterface
 {
     public function fromEntity(Stream $entity): CreateStreamModel;
+
     public function toEntity(CreateStreamModel $model): Stream;
 }

@@ -3,9 +3,8 @@
 namespace App\Core\Application\Command;
 
 use App\Shared\Application\Command\SyncCommandInterface;
-use App\Shared\Application\Middleware\TrackableCommandInterface;
 
-class CreateStreamUrlCommand implements SyncCommandInterface, TrackableCommandInterface
+class CreateStreamUrlCommand implements SyncCommandInterface
 {
     public function __construct(
         public string $url,
