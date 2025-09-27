@@ -4,9 +4,10 @@ namespace App\Core\Application\Command;
 
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
+use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-class CreateStreamCommand implements SyncCommandInterface
+class CreateStreamCommand implements SyncCommandInterface, TrackableCommandInterface
 {
     public function __construct(
         public Uuid $streamId,
@@ -15,5 +16,15 @@ class CreateStreamCommand implements SyncCommandInterface
         public ?string $originalFileName = null,
         public ?string $url = null,
     ) {
+    }
+
+    public function getIdentifier(): string
+    {
+        return (string) $this->streamId;
+    }
+
+    public function supports(): bool
+    {
+        return true;
     }
 }

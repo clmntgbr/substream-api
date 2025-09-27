@@ -20,6 +20,10 @@ class CommandBus implements CommandBusInterface
 
     public function dispatch(object $command, array $stamps = []): mixed
     {
+        if (!$command instanceof SyncCommandInterface && !$command instanceof AsyncCommandInterface) {
+            throw new \RuntimeException('The message must implement SyncCommandInterface or  AsyncCommandInterface.');
+        }
+
         if ($command instanceof SyncCommandInterface) {
             return $this->dispatchSync($command, $stamps);
         }

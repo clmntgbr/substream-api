@@ -14,10 +14,8 @@ use App\Repository\StreamRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
-use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
 #[ApiResource(
@@ -70,12 +68,6 @@ class Stream
 
     #[Groups(['stream:read'])]
     public ?string $contentUrl = null;
-
-    #[UploadableField(mapping: 'streams', fileNameProperty: 'filePath')]
-    public ?File $file = null;
-
-    #[ORM\Column(nullable: true)]
-    public ?string $filePath = null;
 
     public static function create(
         Uuid $id,

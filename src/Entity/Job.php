@@ -6,14 +6,14 @@ namespace App\Entity;
 
 use App\Entity\Trait\UuidTrait;
 use App\Enum\JobStatusEnum;
+use App\Repository\JobRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
-#[ORM\Entity]
-#[ORM\Table(name: 'job')]
+#[ORM\Entity(repositoryClass: JobRepository::class)]
 class Job
 {
     use UuidTrait;
@@ -46,6 +46,16 @@ class Job
     public function __construct()
     {
         $this->id = Uuid::v4();
+    }
+
+    public static function create(object $message): self
+    {
+        $job = new self();
+        $job->setStatus(JobStatusEnum::RUNNING);
+        $job->setCommandClass(get_class($message));
+        $job->setCommandData([$message->getIdentifier()]);
+
+        return $job;
     }
 
     public function getStatus(): JobStatusEnum
