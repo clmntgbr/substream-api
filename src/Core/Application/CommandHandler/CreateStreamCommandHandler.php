@@ -14,7 +14,7 @@ use App\Service\JobContextService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class CreateStreamCommandHandler extends CommandHandlerAbstract
+class CreateStreamCommandHandler extends JobCommandHandlerAbstract
 {
     public function __construct(
         private StreamRepository $streamRepository,

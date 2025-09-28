@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsMessageHandler]
-class CreateStreamUrlCommandHandler extends CommandHandlerAbstract
+class CreateStreamUrlCommandHandler extends JobCommandHandlerAbstract
 {
     public function __construct(
         private UploadFileServiceInterface $uploadFileService,

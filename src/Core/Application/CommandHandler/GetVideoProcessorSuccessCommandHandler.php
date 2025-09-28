@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
+use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
 use App\Exception\JobNotFoundException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
 use App\Service\JobContextService;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class GetVideoProcessorSuccessCommandHandler extends CommandHandlerAbstract
+class GetVideoProcessorSuccessCommandHandler extends JobCommandHandlerAbstract
 {
     public function __construct(
         private StreamRepository $streamRepository,
+        private CommandBusInterface $commandBus,
         JobContextService $jobContextService,
         JobRepository $jobRepository,
     ) {
@@ -45,6 +48,10 @@ class GetVideoProcessorSuccessCommandHandler extends CommandHandlerAbstract
             $stream->markAsUploaded();
 
             $this->markJobAsSuccess();
+
+            $this->commandBus->dispatch(new ExtractSoundCommand(
+                streamId: $stream->getId(),
+            ));
         } catch (\Throwable $exception) {
             $stream->markAsUploadFailed();
             $this->markJobAsFailure($exception->getMessage());

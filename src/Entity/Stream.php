@@ -135,6 +135,14 @@ class Stream
         return $this;
     }
 
+    public function markAsExtractSoundFailed(): self
+    {
+        $this->status = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
+
+        return $this;
+    }
+
     public function markAsUploaded(): self
     {
         $this->status = StreamStatusEnum::UPLOADED->value;

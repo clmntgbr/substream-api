@@ -10,7 +10,7 @@ use App\Repository\JobRepository;
 use App\Service\JobContextService;
 use Symfony\Component\Uid\Uuid;
 
-abstract class CommandHandlerAbstract
+abstract class JobCommandHandlerAbstract
 {
     public function __construct(
         private JobContextService $jobContextService,

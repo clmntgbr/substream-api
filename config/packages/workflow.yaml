@@ -1,0 +1,29 @@
+framework:
+    workflows:
+        streams:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Stream
+            initial_marking: created
+            places:
+                - created
+                - failed
+                - completed
+                - uploaded
+                - upload_failed
+                - extracting_sound
+                - extracting_sound_failed
+                - extracting_sound_completed
+            transitions:
+                extract_sound:
+                    from: uploaded
+                    to:   extracting_sound
+                extract_sound_failed:
+                    from: extracting_sound
+                    to:   extracting_sound_failed
+                extract_sound_completed:
+                    from: extracting_sound
+                    to:   extracting_sound_completed
