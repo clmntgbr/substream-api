@@ -20,7 +20,7 @@ class JobContextMiddleware implements MiddlewareInterface
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
         $jobIdStamp = $envelope->last(JobIdStamp::class);
-        
+
         if ($jobIdStamp) {
             $this->jobContextService->setCurrentJobId($jobIdStamp->getJobId());
         }

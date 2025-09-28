@@ -25,7 +25,7 @@ class CreateStreamVideoController extends AbstractController
     {
         try {
             $createStreamModel = $this->commandBus->dispatch(new CreateStreamVideoCommand($video, $user));
-            
+
             return Response::successResponse([
                 'streamId' => $createStreamModel->streamId,
             ]);

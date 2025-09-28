@@ -7,12 +7,7 @@ namespace App\Core\Application\CommandHandler;
 use App\Client\Processor\GetVideoByUrlProcessorInterface;
 use App\Core\Application\Command\GetVideoByUrlCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
-use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Dto\GetVideoByUrl;
-use App\Entity\Job;
-use App\Entity\Stream;
-use App\Enum\JobStatusEnum;
-use App\Enum\StreamStatusEnum;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
@@ -37,7 +32,7 @@ class GetVideoByUrlCommandHandler extends CommandHandlerAbstract
     {
         $stream = $this->streamRepository->find($command->streamId);
 
-        if ($stream === null) {
+        if (null === $stream) {
             throw new StreamNotFoundException();
         }
 

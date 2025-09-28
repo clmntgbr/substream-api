@@ -24,7 +24,7 @@ class Job
     #[Groups(['job:read'])]
     private JobStatusEnum $status = JobStatusEnum::RUNNING;
 
-    #[ORM\Column(type: Types::JSON)]  
+    #[ORM\Column(type: Types::JSON)]
     #[Groups(['job:read'])]
     private array $statuses = [];
 
@@ -55,7 +55,6 @@ class Job
 
     /**
      * @param TrackableCommandInterface $message
-     * @return self
      */
     public static function create(object $message): self
     {

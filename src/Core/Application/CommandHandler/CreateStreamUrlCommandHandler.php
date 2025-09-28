@@ -2,8 +2,8 @@
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\CreateStreamUrlCommand;
 use App\Core\Application\Command\CreateStreamCommand;
+use App\Core\Application\Command\CreateStreamUrlCommand;
 use App\Core\Application\Command\GetVideoByUrlCommand;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Repository\JobRepository;

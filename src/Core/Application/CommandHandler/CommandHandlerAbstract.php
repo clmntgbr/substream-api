@@ -4,16 +4,10 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\CreateStreamCommand;
-use App\Core\Application\Mapper\CreateStreamMapperInterface;
-use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Job;
-use App\Entity\Stream;
 use App\Enum\JobStatusEnum;
 use App\Repository\JobRepository;
-use App\Repository\StreamRepository;
 use App\Service\JobContextService;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 abstract class CommandHandlerAbstract
 {
@@ -26,7 +20,7 @@ abstract class CommandHandlerAbstract
     protected function getCurrentJob(): ?Job
     {
         $jobId = $this->jobContextService->getCurrentJobId();
-        
+
         if (null === $jobId) {
             return null;
         }
