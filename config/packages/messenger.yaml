@@ -7,13 +7,18 @@ framework:
                     - validation
                     - doctrine_transaction
                     - App\Shared\Infrastructure\Middleware\CreateJobMiddleware
+                    - App\Shared\Infrastructure\Middleware\JobContextMiddleware
             sync.command.bus:
                 middleware:
                     - validation
                     - doctrine_transaction
+                    - App\Shared\Infrastructure\Middleware\CreateJobMiddleware
+                    - App\Shared\Infrastructure\Middleware\JobContextMiddleware
             async.command.bus:
                 middleware:
                     - validation
+                    - App\Shared\Infrastructure\Middleware\CreateJobMiddleware
+                    - App\Shared\Infrastructure\Middleware\JobContextMiddleware
             query.bus:
                 middleware:
                     - validation

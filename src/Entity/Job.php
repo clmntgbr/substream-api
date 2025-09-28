@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\JobStatusEnum;
 use App\Repository\JobRepository;
+use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -21,7 +22,11 @@ class Job
 
     #[ORM\Column(type: Types::STRING, enumType: JobStatusEnum::class)]
     #[Groups(['job:read'])]
-    private JobStatusEnum $status = JobStatusEnum::PENDING;
+    private JobStatusEnum $status = JobStatusEnum::RUNNING;
+
+    #[ORM\Column(type: Types::JSON)]  
+    #[Groups(['job:read'])]
+    private array $statuses = [];
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['job:read'])]
@@ -48,12 +53,16 @@ class Job
         $this->id = Uuid::v4();
     }
 
+    /**
+     * @param TrackableCommandInterface $message
+     * @return self
+     */
     public static function create(object $message): self
     {
         $job = new self();
         $job->setStatus(JobStatusEnum::RUNNING);
         $job->setCommandClass(get_class($message));
-        $job->setCommandData([$message->getIdentifier()]);
+        $job->setCommandData([$message->getData()]);
 
         return $job;
     }
@@ -65,6 +74,7 @@ class Job
 
     public function setStatus(JobStatusEnum $status): self
     {
+        $this->statuses[] = $status;
         $this->status = $status;
 
         return $this;

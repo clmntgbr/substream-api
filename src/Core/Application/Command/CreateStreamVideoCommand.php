@@ -15,9 +15,9 @@ class CreateStreamVideoCommand implements SyncCommandInterface, TrackableCommand
     ) {
     }
 
-    public function getIdentifier(): ?string
+    public function getData(): array
     {
-        return null;
+        return [];
     }
 
     public function supports(): bool

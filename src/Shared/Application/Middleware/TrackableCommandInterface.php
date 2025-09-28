@@ -6,7 +6,7 @@ namespace App\Shared\Application\Middleware;
 
 interface TrackableCommandInterface
 {
-    public function getIdentifier(): ?string;
+    public function getData(): array;
 
     public function supports(): bool;
 }

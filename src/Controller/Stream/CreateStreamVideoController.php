@@ -23,10 +23,14 @@ class CreateStreamVideoController extends AbstractController
 
     public function __invoke(#[MapUploadedFile] UploadedFile $video, #[CurrentUser] User $user): JsonResponse
     {
-        $createStreamModel = $this->commandBus->dispatch(new CreateStreamVideoCommand($video, $user));
-
-        return Response::successResponse([
-            'streamId' => $createStreamModel->streamId,
-        ]);
+        try {
+            $createStreamModel = $this->commandBus->dispatch(new CreateStreamVideoCommand($video, $user));
+            
+            return Response::successResponse([
+                'streamId' => $createStreamModel->streamId,
+            ]);
+        } catch (\Throwable $exception) {
+            return Response::errorResponse($exception->getMessage());
+        }
     }
 }
