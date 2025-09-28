@@ -41,14 +41,11 @@ class GetVideoProcessorController extends AbstractController
     #[Route('/processor/get-video-processor-failure', name: 'api_processor_get_video_processor_failure', methods: ['POST'])]
     public function getVideoProcessorFailure(#[MapRequestPayload] GetVideoProcessorFailure $getVideoProcessorFailure): JsonResponse
     {
-        $response = $this->commandBus->dispatch(new GetVideoProcessorFailureCommand(
+        $this->commandBus->dispatch(new GetVideoProcessorFailureCommand(
             streamId: $getVideoProcessorFailure->getStreamId(),
             jobId: $getVideoProcessorFailure->getJobId(),
             errorMessage: $getVideoProcessorFailure->getErrorMessage(),
         ));
-
-        dump($response);
-        die;
 
         return Response::successResponse([
             'stream_id' => $getVideoProcessorFailure->getStreamId(),

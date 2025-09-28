@@ -35,3 +35,6 @@ framework:
                 options:
                     queues:
                         async_commands: ~
+
+        routing:
+            'App\Shared\Application\Command\AsyncCommandInterface': async_commands
