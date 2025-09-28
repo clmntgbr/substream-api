@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Middleware;
 
+use App\Core\Application\Command\GetVideoCommand;
 use App\Entity\Job;
 use App\Repository\JobRepository;
 use App\Service\JobContextService;

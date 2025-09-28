@@ -127,6 +127,14 @@ class Stream
         return $this->user;
     }
 
+    public function setStatus(string $status): self
+    {
+        $this->status = StreamStatusEnum::from($status)->value;
+        $this->statuses[] = StreamStatusEnum::from($status)->value;
+
+        return $this;
+    }
+
     public function markAsUploadFailed(): self
     {
         $this->status = StreamStatusEnum::UPLOAD_FAILED->value;

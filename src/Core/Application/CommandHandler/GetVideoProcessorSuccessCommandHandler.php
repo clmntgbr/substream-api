@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
+use App\Core\Application\Trait\JobTrait;
 use App\Exception\JobNotFoundException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
@@ -15,15 +16,16 @@ use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class GetVideoProcessorSuccessCommandHandler extends JobCommandHandlerAbstract
+class GetVideoProcessorSuccessCommandHandler
 {
+    use JobTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
         private CommandBusInterface $commandBus,
-        JobContextService $jobContextService,
-        JobRepository $jobRepository,
+        private JobContextService $jobContextService,
+        private JobRepository $jobRepository,
     ) {
-        parent::__construct($jobContextService, $jobRepository);
     }
 
     public function __invoke(GetVideoProcessorSuccessCommand $command): void

@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
+use App\Core\Application\Trait\JobTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
 use App\Repository\JobRepository;
@@ -14,15 +15,16 @@ use App\Service\JobContextService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class CreateStreamCommandHandler extends JobCommandHandlerAbstract
+class CreateStreamCommandHandler
 {
+    use JobTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
         private CreateStreamMapperInterface $createStreamMapper,
-        JobContextService $jobContextService,
-        JobRepository $jobRepository,
+        private JobContextService $jobContextService,
+        private JobRepository $jobRepository,
     ) {
-        parent::__construct($jobContextService, $jobRepository);
     }
 
     public function __invoke(CreateStreamCommand $command): CreateStreamModel

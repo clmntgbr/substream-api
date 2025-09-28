@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Client\Processor\ExtractSoundProcessorInterface;
-use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\ExtractSoundCommand;
-use App\Core\Application\Mapper\CreateStreamMapperInterface;
-use App\Core\Domain\Aggregate\CreateStreamModel;
+use App\Core\Application\Trait\JobTrait;
+use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\ExtractSound;
-use App\Entity\Stream;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
@@ -20,16 +18,18 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class ExtractSoundCommandHandler extends JobCommandHandlerAbstract
+class ExtractSoundCommandHandler
 {
+    use WorkflowTrait;
+    use JobTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
         private ExtractSoundProcessorInterface $processor,
         private WorkflowInterface $streamsStateMachine,
-        JobContextService $jobContextService,
-        JobRepository $jobRepository,
+        private JobContextService $jobContextService,
+        private JobRepository $jobRepository,
     ) {
-        parent::__construct($jobContextService, $jobRepository);
     }
 
     public function __invoke(ExtractSoundCommand $command): void
@@ -50,6 +50,5 @@ class ExtractSoundCommandHandler extends JobCommandHandlerAbstract
         } finally {
             $this->streamRepository->save($stream);
         }
-
     }
 }

@@ -35,6 +35,8 @@ framework:
                 options:
                     queues:
                         async_commands: ~
+                retry_strategy:
+                    max_retries: 0
 
         routing:
             'App\Shared\Application\Command\AsyncCommandInterface': async_commands

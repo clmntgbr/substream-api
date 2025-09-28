@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler;
+namespace App\Core\Application\Trait;
 
 use App\Entity\Job;
 use App\Enum\JobStatusEnum;
@@ -10,7 +10,7 @@ use App\Repository\JobRepository;
 use App\Service\JobContextService;
 use Symfony\Component\Uid\Uuid;
 
-abstract class JobCommandHandlerAbstract
+trait JobTrait
 {
     public function __construct(
         private JobContextService $jobContextService,

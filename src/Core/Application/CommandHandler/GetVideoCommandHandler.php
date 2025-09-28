@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Client\Processor\GetVideoProcessorInterface;
 use App\Core\Application\Command\GetVideoCommand;
+use App\Core\Application\Trait\JobTrait;
 use App\Dto\GetVideo;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
@@ -15,15 +16,16 @@ use App\Service\JobContextService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class GetVideoCommandHandler extends JobCommandHandlerAbstract
+class GetVideoCommandHandler
 {
+    use JobTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
         private GetVideoProcessorInterface $processor,
-        JobContextService $jobContextService,
-        JobRepository $jobRepository,
+        private JobContextService $jobContextService,
+        private JobRepository $jobRepository,
     ) {
-        parent::__construct($jobContextService, $jobRepository);
     }
 
     public function __invoke(GetVideoCommand $command): void

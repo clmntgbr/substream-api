@@ -5,6 +5,7 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\CreateStreamVideoCommand;
 use App\Core\Application\Command\ExtractSoundCommand;
+use App\Core\Application\Trait\JobTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
@@ -17,17 +18,18 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsMessageHandler]
-class CreateStreamVideoCommandHandler extends JobCommandHandlerAbstract
+class CreateStreamVideoCommandHandler
 {
+    use JobTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
         private UploadFileServiceInterface $uploadFileService,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
-        JobContextService $jobContextService,
-        JobRepository $jobRepository,
+        private JobContextService $jobContextService,
+        private JobRepository $jobRepository,
     ) {
-        parent::__construct($jobContextService, $jobRepository);
     }
 
     public function __invoke(CreateStreamVideoCommand $command): CreateStreamModel

@@ -2,18 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler;
+namespace App\Core\Application\Trait;
 
-use App\Entity\Job;
 use App\Entity\Stream;
-use App\Enum\JobStatusEnum;
 use App\Enum\StreamStatusEnum;
-use App\Repository\JobRepository;
-use App\Service\JobContextService;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-abstract class WorkflowCommandHandlerAbstract
+trait WorkflowTrait
 {
     public function __construct(
         private WorkflowInterface $streamsStateMachine,
