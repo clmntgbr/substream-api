@@ -16,11 +16,10 @@ class UploadFileService implements UploadFileServiceInterface
     ) {
     }
 
-    public function uploadVideo(UploadedFile $file): UploadFileModel
+    public function uploadVideo(Uuid $streamId, UploadedFile $file): UploadFileModel
     {
-        $uuid = Uuid::v4();
-        $fileName = $uuid.'.'.$file->guessExtension();
-        $path = $uuid.'/'.$fileName;
+        $fileName = $streamId.'.'.$file->guessExtension();
+        $path = $streamId.'/'.$fileName;
 
         $handle = fopen($file->getPathname(), 'r');
 
@@ -36,7 +35,7 @@ class UploadFileService implements UploadFileServiceInterface
         return $this->uploadFileMapper->create(
             fileName: $fileName,
             originalFileName: $file->getClientOriginalName(),
-            id: $uuid,
+            id: $streamId,
         );
     }
 }

@@ -8,5 +8,6 @@ enum StreamStatusEnum: string
     case FAILED = 'failed';
     case COMPLETED = 'completed';
 
+    case UPLOADED = 'uploaded';
     case UPLOAD_FAILED = 'upload_failed';
 }

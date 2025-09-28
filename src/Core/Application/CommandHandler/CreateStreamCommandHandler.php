@@ -8,6 +8,7 @@ use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
+use App\Enum\StreamStatusEnum;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
 use App\Service\JobContextService;
@@ -34,6 +35,8 @@ class CreateStreamCommandHandler extends CommandHandlerAbstract
                 fileName: $command->fileName,
                 originalFileName: $command->originalFileName,
                 url: $command->url,
+                mimeType: $command->mimeType,
+                size: $command->size,
             );
 
             $this->streamRepository->save($stream, true);
@@ -41,7 +44,7 @@ class CreateStreamCommandHandler extends CommandHandlerAbstract
 
             return $this->createStreamMapper->fromEntity($stream);
         } catch (\Throwable $exception) {
-            $this->markJobAsFailure($exception);
+            $this->markJobAsFailure($exception->getMessage());
             throw $exception;
         }
     }

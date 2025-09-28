@@ -2,12 +2,14 @@
 
 namespace App\Dto;
 
+use App\Entity\Job;
 use App\Entity\Stream;
 
 final class GetVideoByUrl implements \JsonSerializable
 {
     public function __construct(
         public readonly Stream $stream,
+        public readonly Job $job,
     ) {
     }
 
@@ -16,6 +18,7 @@ final class GetVideoByUrl implements \JsonSerializable
         return [
             'url' => $this->stream->getUrl(),
             'stream_id' => (string) $this->stream->getId(),
+            'job_id' => (string) $this->job->getId(),
         ];
     }
 }

@@ -54,6 +54,14 @@ class Stream
     #[Groups(['stream:read'])]
     private ?string $url = null;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $mimeType = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?int $size = null;
+
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
     private string $status;
@@ -66,21 +74,22 @@ class Stream
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[Groups(['stream:read'])]
-    public ?string $contentUrl = null;
-
     public static function create(
         Uuid $id,
         User $user,
         ?string $fileName,
         ?string $originalFileName,
         ?string $url,
+        ?string $mimeType,
+        ?int $size
     ): self {
         $stream = new self();
         $stream->id = $id;
         $stream->fileName = $fileName;
         $stream->originalFileName = $originalFileName;
         $stream->url = $url;
+        $stream->mimeType = $mimeType;
+        $stream->size = $size;
         $stream->status = StreamStatusEnum::CREATED->value;
         $stream->statuses = [StreamStatusEnum::CREATED->value];
         $stream->user = $user;
@@ -118,16 +127,57 @@ class Stream
         return $this->user;
     }
 
-    public function getContentUrl(): ?string
-    {
-        return $this->contentUrl;
-    }
-
     public function markAsUploadFailed(): self
     {
         $this->status = StreamStatusEnum::UPLOAD_FAILED->value;
         $this->statuses[] = StreamStatusEnum::UPLOAD_FAILED->value;
 
         return $this;
+    }
+
+    public function markAsUploaded(): self
+    {
+        $this->status = StreamStatusEnum::UPLOADED->value;
+        $this->statuses[] = StreamStatusEnum::UPLOADED->value;
+
+        return $this;
+    }
+
+    public function setFileName(string $fileName): self
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    public function setOriginalFileName(string $originalFileName): self
+    {
+        $this->originalFileName = $originalFileName;
+
+        return $this;
+    }
+
+    public function setMimeType(string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function setSize(int $size): self
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+    
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
     }
 }

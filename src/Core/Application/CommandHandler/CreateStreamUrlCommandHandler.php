@@ -11,7 +11,6 @@ use App\Service\JobContextService;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsMessageHandler]
@@ -29,19 +28,19 @@ class CreateStreamUrlCommandHandler extends CommandHandlerAbstract
 
     public function __invoke(CreateStreamUrlCommand $command): CreateStreamModel
     {
-        $streamId = Uuid::v4();
-
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
-            user: $command->user,
-            streamId: $streamId,
+            user: $command->getUser(),
+            streamId: $command->getStreamId(),
             url: $command->url,
         ));
 
         $this->commandBus->dispatch(new GetVideoByUrlCommand(
-            streamId: $streamId,
-            user: $command->user,
+            streamId: $command->getStreamId(),
+            user: $command->getUser(),
             url: $command->url,
         ));
+
+        $this->markJobAsSuccess();
 
         return $createStreamModel;
     }

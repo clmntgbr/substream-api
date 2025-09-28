@@ -8,6 +8,7 @@ use App\Entity\Job;
 use App\Enum\JobStatusEnum;
 use App\Repository\JobRepository;
 use App\Service\JobContextService;
+use Symfony\Component\Uid\Uuid;
 
 abstract class CommandHandlerAbstract
 {
@@ -15,6 +16,18 @@ abstract class CommandHandlerAbstract
         private JobContextService $jobContextService,
         private JobRepository $jobRepository,
     ) {
+    }
+
+    protected function getJob(Uuid $jobId): ?Job
+    {
+        $job = $this->jobRepository->find($jobId);
+        if (null === $job) {
+            return null;
+        }
+
+        $this->jobContextService->setCurrentJobId($jobId);
+
+        return $job;
     }
 
     protected function getCurrentJob(): ?Job
@@ -28,13 +41,13 @@ abstract class CommandHandlerAbstract
         return $this->jobRepository->find($jobId);
     }
 
-    protected function markJobAsFailure(\Throwable $exception): void
+    protected function markJobAsFailure(?string $errorMessage = null): void
     {
         $job = $this->getCurrentJob();
         if ($job instanceof Job) {
             $job->setStatus(JobStatusEnum::FAILURE);
-            $job->setErrorMessage($exception->getMessage());
-            $job->setErrorTrace($exception->getTraceAsString());
+            $job->setErrorMessage($errorMessage);
+            $job->setErrorTrace($errorMessage);
             $this->jobRepository->save($job, true);
         }
     }
