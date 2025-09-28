@@ -31,15 +31,15 @@ class CreateStreamUrlCommandHandler extends CommandHandlerAbstract
     {
         $streamId = Uuid::v4();
 
-        $this->commandBus->dispatch(new GetVideoByUrlCommand(
-            streamId: $streamId,
-            user: $command->user,
-            url: $command->url,
-        ));
-
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
             user: $command->user,
             streamId: $streamId,
+            url: $command->url,
+        ));
+
+        $this->commandBus->dispatch(new GetVideoByUrlCommand(
+            streamId: $streamId,
+            user: $command->user,
             url: $command->url,
         ));
 

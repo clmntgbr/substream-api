@@ -87,4 +87,47 @@ class Stream
 
         return $stream;
     }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function getOriginalFileName(): ?string
+    {
+        return $this->originalFileName;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function getStatuses(): array
+    {
+        return $this->statuses;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getContentUrl(): ?string
+    {
+        return $this->contentUrl;
+    }
+
+    public function markAsUploadFailed(): self
+    {
+        $this->status = StreamStatusEnum::UPLOAD_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::UPLOAD_FAILED->value;
+
+        return $this;
+    }
 }
