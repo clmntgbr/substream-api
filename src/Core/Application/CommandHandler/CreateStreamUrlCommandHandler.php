@@ -36,13 +36,13 @@ class CreateStreamUrlCommandHandler
             url: $command->url,
         ));
 
+        $this->markJobAsSuccess();
+
         $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),
             user: $command->getUser(),
             url: $command->url,
         ));
-
-        $this->markJobAsSuccess();
 
         return $createStreamModel;
     }

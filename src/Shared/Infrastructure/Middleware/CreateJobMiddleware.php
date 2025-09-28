@@ -34,6 +34,7 @@ class CreateJobMiddleware implements MiddlewareInterface
 
         if (true === $message->supports()) {
             $job = $this->createJob($message);
+            dump($job);
             $this->jobRepository->save($job, true);
 
             $envelope = $envelope->with(new JobIdStamp($job->getId()));

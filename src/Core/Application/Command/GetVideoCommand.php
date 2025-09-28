@@ -9,6 +9,7 @@ use Symfony\Component\Uid\Uuid;
 
 class GetVideoCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
+    
     public function __construct(
         public Uuid $streamId,
         public User $user,
