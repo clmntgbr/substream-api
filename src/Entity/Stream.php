@@ -5,12 +5,17 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Controller\Stream\CreateStreamUrlController;
+use App\Controller\Stream\CreateStreamVideoController;
 use App\Entity\Trait\UuidTrait;
+use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
 #[ApiResource(
@@ -21,6 +26,14 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ),
         new GetCollection(
             normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read', 'option:read']],
+        ),
+        new Post(
+            uriTemplate: '/streams/video',
+            controller: CreateStreamVideoController::class,
+        ),
+        new Post(
+            uriTemplate: '/streams/url',
+            controller: CreateStreamUrlController::class,
         ),
     ]
 )]
@@ -35,23 +48,15 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $fileNameTransformed = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $originalFileName = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?array $fileNamesGenerated = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $mimeType = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
     private ?string $url = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $mimeType = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['stream:read'])]
@@ -65,59 +70,31 @@ class Stream
     #[Groups(['stream:read'])]
     private array $statuses = [];
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private array $audioFiles = [];
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $subtitleSrtFile = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
-    private ?string $subtitleAssFile = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
-    private array $subtitleSrtFiles = [];
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[ORM\ManyToOne(targetEntity: Options::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['stream:read', 'option:read'])]
-    private Options $options;
+    public static function create(
+        Uuid $id,
+        User $user,
+        ?string $fileName,
+        ?string $originalFileName,
+        ?string $url,
+        ?string $mimeType,
+        ?int $size
+    ): self {
+        $stream = new self();
+        $stream->id = $id;
+        $stream->fileName = $fileName;
+        $stream->originalFileName = $originalFileName;
+        $stream->url = $url;
+        $stream->mimeType = $mimeType;
+        $stream->size = $size;
+        $stream->status = StreamStatusEnum::CREATED->value;
+        $stream->statuses = [StreamStatusEnum::CREATED->value];
+        $stream->user = $user;
 
-    public function __construct()
-    {
-        $this->options = new Options();
-    }
-
-    public function getFileName(): ?string
-    {
-        return $this->fileName;
-    }
-
-    public function getFileNameTransformed(): ?string
-    {
-        return $this->fileNameTransformed;
-    }
-
-    public function getOriginalFileName(): ?string
-    {
-        return $this->originalFileName;
-    }
-
-    public function getFileNamesGenerated(): ?array
-    {
-        return $this->fileNamesGenerated;
-    }
-
-    public function getMimeType(): ?string
-    {
-        return $this->mimeType;
+        return $stream;
     }
 
     public function getUrl(): ?string
@@ -125,12 +102,17 @@ class Stream
         return $this->url;
     }
 
-    public function getSize(): ?int
+    public function getFileName(): ?string
     {
-        return $this->size;
+        return $this->fileName;
     }
 
-    public function getStatus(): ?string
+    public function getOriginalFileName(): ?string
+    {
+        return $this->originalFileName;
+    }
+
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -140,33 +122,62 @@ class Stream
         return $this->statuses;
     }
 
-    public function getAudioFiles(): ?array
-    {
-        return $this->audioFiles;
-    }
-
-    public function getSubtitleSrtFile(): ?string
-    {
-        return $this->subtitleSrtFile;
-    }
-
-    public function getSubtitleAssFile(): ?string
-    {
-        return $this->subtitleAssFile;
-    }
-
-    public function getSubtitleSrtFiles(): ?array
-    {
-        return $this->subtitleSrtFiles;
-    }
-
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function getOptions(): ?Options
+    public function markAsUploadFailed(): self
     {
-        return $this->options;
+        $this->status = StreamStatusEnum::UPLOAD_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::UPLOAD_FAILED->value;
+
+        return $this;
+    }
+
+    public function markAsUploaded(): self
+    {
+        $this->status = StreamStatusEnum::UPLOADED->value;
+        $this->statuses[] = StreamStatusEnum::UPLOADED->value;
+
+        return $this;
+    }
+
+    public function setFileName(string $fileName): self
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    public function setOriginalFileName(string $originalFileName): self
+    {
+        $this->originalFileName = $originalFileName;
+
+        return $this;
+    }
+
+    public function setMimeType(string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function setSize(int $size): self
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+    
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
     }
 }
