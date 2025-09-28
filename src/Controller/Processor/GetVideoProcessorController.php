@@ -25,7 +25,6 @@ class GetVideoProcessorController extends AbstractController
     {
         $this->commandBus->dispatch(new GetVideoProcessorSuccessCommand(
             streamId: $getVideoProcessorSuccess->getStreamId(),
-            jobId: $getVideoProcessorSuccess->getJobId(),
             fileName: $getVideoProcessorSuccess->getFileName(),
             originalFileName: $getVideoProcessorSuccess->getOriginalFileName(),
             mimeType: $getVideoProcessorSuccess->getMimeType(),
@@ -34,7 +33,6 @@ class GetVideoProcessorController extends AbstractController
 
         return Response::successResponse([
             'stream_id' => $getVideoProcessorSuccess->getStreamId(),
-            'job_id' => $getVideoProcessorSuccess->getJobId(),
         ]);
     }
 
@@ -43,13 +41,10 @@ class GetVideoProcessorController extends AbstractController
     {
         $this->commandBus->dispatch(new GetVideoProcessorFailureCommand(
             streamId: $getVideoProcessorFailure->getStreamId(),
-            jobId: $getVideoProcessorFailure->getJobId(),
-            errorMessage: $getVideoProcessorFailure->getErrorMessage(),
         ));
 
         return Response::successResponse([
             'stream_id' => $getVideoProcessorFailure->getStreamId(),
-            'job_id' => $getVideoProcessorFailure->getJobId(),
         ]);
     }
 }

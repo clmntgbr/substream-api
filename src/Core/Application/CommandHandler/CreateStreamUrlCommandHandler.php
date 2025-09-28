@@ -31,8 +31,6 @@ class CreateStreamUrlCommandHandler
             url: $command->url,
         ));
 
-        dump('createStreamUrlCommandHandler');
-
         $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),
             user: $command->getUser(),
