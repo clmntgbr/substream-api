@@ -8,7 +8,6 @@ use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
-use App\Enum\StreamStatusEnum;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
 use App\Service\JobContextService;

@@ -30,8 +30,6 @@ abstract class AbstractRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
-    
-
     /**
      * @param T $entity
      */

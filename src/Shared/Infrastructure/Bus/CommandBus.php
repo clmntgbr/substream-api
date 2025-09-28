@@ -7,7 +7,6 @@ namespace App\Shared\Infrastructure\Bus;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Command\AsyncCommandInterface;
 use App\Shared\Application\Command\SyncCommandInterface;
-use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 

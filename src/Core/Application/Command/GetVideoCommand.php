@@ -7,7 +7,7 @@ use App\Shared\Application\Command\AsyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-class GetVideoByUrlCommand implements AsyncCommandInterface, TrackableCommandInterface
+class GetVideoCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
     public function __construct(
         public Uuid $streamId,

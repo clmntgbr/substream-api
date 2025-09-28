@@ -3,7 +3,6 @@
 namespace App\Core\Application\Command;
 
 use App\Entity\User;
-use App\Enum\StreamStatusEnum;
 use App\Shared\Application\Command\SyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;

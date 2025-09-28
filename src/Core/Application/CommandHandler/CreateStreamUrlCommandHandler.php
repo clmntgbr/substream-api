@@ -4,7 +4,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\CreateStreamUrlCommand;
-use App\Core\Application\Command\GetVideoByUrlCommand;
+use App\Core\Application\Command\GetVideoCommand;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Repository\JobRepository;
 use App\Service\JobContextService;
@@ -34,7 +34,7 @@ class CreateStreamUrlCommandHandler extends CommandHandlerAbstract
             url: $command->url,
         ));
 
-        $this->commandBus->dispatch(new GetVideoByUrlCommand(
+        $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),
             user: $command->getUser(),
             url: $command->url,

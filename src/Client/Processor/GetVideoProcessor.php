@@ -2,13 +2,13 @@
 
 namespace App\Client\Processor;
 
-use App\Dto\GetVideoByUrl;
+use App\Dto\GetVideo;
 use App\Exception\ProcessorException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class GetVideoByUrlProcessor implements GetVideoByUrlProcessorInterface
+final class GetVideoProcessor implements GetVideoProcessorInterface
 {
-    public const PROCESSOR_GET_VIDEO_BY_URL = '/api/download/video/url';
+    public const GET_VIDEO = '/api/download/video';
 
     public function __construct(
         private HttpClientInterface $processorClient,
@@ -19,10 +19,10 @@ final class GetVideoByUrlProcessor implements GetVideoByUrlProcessorInterface
     /**
      * @throws ProcessorException
      */
-    public function __invoke(GetVideoByUrl $dto): void
+    public function __invoke(GetVideo $dto): void
     {
         try {
-            $response = $this->processorClient->request('POST', self::PROCESSOR_GET_VIDEO_BY_URL, [
+            $response = $this->processorClient->request('POST', self::GET_VIDEO, [
                 'json' => $dto->jsonSerialize(),
                 'headers' => [
                     'Authorization' => $this->processorToken,

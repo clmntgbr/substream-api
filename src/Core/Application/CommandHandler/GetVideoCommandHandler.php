@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Client\Processor\GetVideoByUrlProcessorInterface;
-use App\Core\Application\Command\GetVideoByUrlCommand;
-use App\Dto\GetVideoByUrl;
+use App\Client\Processor\GetVideoProcessorInterface;
+use App\Core\Application\Command\GetVideoCommand;
+use App\Dto\GetVideo;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
@@ -15,18 +15,18 @@ use App\Service\JobContextService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class GetVideoByUrlCommandHandler extends CommandHandlerAbstract
+class GetVideoCommandHandler extends CommandHandlerAbstract
 {
     public function __construct(
         private StreamRepository $streamRepository,
-        private GetVideoByUrlProcessorInterface $processor,
+        private GetVideoProcessorInterface $processor,
         JobContextService $jobContextService,
         JobRepository $jobRepository,
     ) {
         parent::__construct($jobContextService, $jobRepository);
     }
 
-    public function __invoke(GetVideoByUrlCommand $command): void
+    public function __invoke(GetVideoCommand $command): void
     {
         $job = $this->getCurrentJob();
         $stream = $this->streamRepository->find($command->streamId);
@@ -36,7 +36,7 @@ class GetVideoByUrlCommandHandler extends CommandHandlerAbstract
         }
 
         try {
-            ($this->processor)(new GetVideoByUrl($stream, $job));
+            ($this->processor)(new GetVideo($stream, $job));
         } catch (ProcessorException $exception) {
             $stream->markAsUploadFailed();
             $this->markJobAsFailure($exception->getMessage());

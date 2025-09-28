@@ -81,7 +81,7 @@ class Stream
         ?string $originalFileName,
         ?string $url,
         ?string $mimeType,
-        ?int $size
+        ?int $size,
     ): self {
         $stream = new self();
         $stream->id = $id;
@@ -170,7 +170,7 @@ class Stream
 
         return $this;
     }
-    
+
     public function getMimeType(): ?string
     {
         return $this->mimeType;

@@ -5,7 +5,6 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\CreateStreamVideoCommand;
 use App\Core\Domain\Aggregate\CreateStreamModel;
-use App\Enum\StreamStatusEnum;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
