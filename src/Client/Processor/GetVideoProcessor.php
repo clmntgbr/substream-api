@@ -21,7 +21,6 @@ final class GetVideoProcessor implements GetVideoProcessorInterface
      */
     public function __invoke(GetVideo $dto): void
     {
-        die;
         try {
             $response = $this->processorClient->request('POST', self::GET_VIDEO, [
                 'json' => $dto->jsonSerialize(),

@@ -8,9 +8,10 @@ use Symfony\Component\Uid\Uuid;
 
 class GetVideoProcessorSuccessCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
+    use JobCommandTrait;
+
     public function __construct(
         public Uuid $streamId,
-        public Uuid $jobId,
         public readonly string $fileName,
         public readonly string $originalFileName,
         public readonly string $mimeType,

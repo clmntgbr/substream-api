@@ -6,66 +6,52 @@ namespace App\Core\Application\Trait;
 
 use App\Entity\Job;
 use App\Enum\JobStatusEnum;
+use App\Exception\JobNotFoundException;
 use App\Repository\JobRepository;
 use App\Service\JobContextService;
-use Symfony\Component\Uid\Uuid;
 
 trait JobTrait
 {
     public function __construct(
-        private JobContextService $jobContextService,
         private JobRepository $jobRepository,
+        private JobContextService $jobContextService,
     ) {
     }
 
-    protected function getJob(Uuid $jobId): ?Job
+    public function getJob(): ?Job
     {
-        $job = $this->jobRepository->find($jobId);
-        if (null === $job) {
-            return null;
+        $jobId = $this->jobContextService->getCurrentJobId();
+        if (null === $jobId) {
+            dd('jobId is null');
+            throw new JobNotFoundException();
         }
 
-        $this->jobContextService->setCurrentJobId($jobId);
+        $job = $this->jobRepository->find($jobId);
+        if (null === $job) {
+            dd('job not found');
+            throw new JobNotFoundException();
+        }
 
         return $job;
     }
 
-    protected function getCurrentJob(): ?Job
-    {
-        $jobId = $this->jobContextService->getCurrentJobId();
-
-        if (null === $jobId) {
-            return null;
-        }
-
-        return $this->jobRepository->find($jobId);
-    }
-
-    protected function markJobAsFailure(?string $errorMessage = null): void
-    {
-        $job = $this->getCurrentJob();
-        if ($job instanceof Job) {
-            $job->setStatus(JobStatusEnum::FAILURE);
-            $job->setErrorMessage($errorMessage);
-            $job->setErrorTrace($errorMessage);
-            $this->jobRepository->save($job, true);
-        }
-    }
-
     protected function markJobAsSuccess(): void
     {
-        $job = $this->getCurrentJob();
+        dump('markJobAsSuccess');
+        $job = $this->getJob();
         if ($job instanceof Job) {
             $job->setStatus(JobStatusEnum::SUCCESS);
             $this->jobRepository->save($job, true);
         }
     }
 
-    protected function markJobAsRunning(): void
+    protected function markJobAsFailure(string $errorMessage): void
     {
-        $job = $this->getCurrentJob();
+        dump('markJobAsFailure');
+        $job = $this->getJob();
         if ($job instanceof Job) {
-            $job->setStatus(JobStatusEnum::RUNNING);
+            $job->setStatus(JobStatusEnum::FAILURE);
+            $job->setErrorMessage($errorMessage);
             $this->jobRepository->save($job, true);
         }
     }

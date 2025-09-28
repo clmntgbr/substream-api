@@ -6,23 +6,18 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
-use App\Core\Application\Trait\JobTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
-use App\Service\JobContextService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class CreateStreamCommandHandler
 {
-    use JobTrait;
-
     public function __construct(
         private StreamRepository $streamRepository,
         private CreateStreamMapperInterface $createStreamMapper,
-        private JobContextService $jobContextService,
         private JobRepository $jobRepository,
     ) {
     }
@@ -41,11 +36,9 @@ class CreateStreamCommandHandler
             );
 
             $this->streamRepository->save($stream, true);
-            $this->markJobAsSuccess();
 
             return $this->createStreamMapper->fromEntity($stream);
         } catch (\Throwable $exception) {
-            $this->markJobAsFailure($exception->getMessage());
             throw $exception;
         }
     }

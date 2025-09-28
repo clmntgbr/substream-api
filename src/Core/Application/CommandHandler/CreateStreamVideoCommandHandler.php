@@ -5,12 +5,10 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\CreateStreamVideoCommand;
 use App\Core\Application\Command\ExtractSoundCommand;
-use App\Core\Application\Trait\JobTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
-use App\Service\JobContextService;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -20,14 +18,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AsMessageHandler]
 class CreateStreamVideoCommandHandler
 {
-    use JobTrait;
-
     public function __construct(
         private StreamRepository $streamRepository,
         private UploadFileServiceInterface $uploadFileService,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
-        private JobContextService $jobContextService,
         private JobRepository $jobRepository,
     ) {
     }
@@ -64,7 +59,6 @@ class CreateStreamVideoCommandHandler
             throw new StreamNotFoundException();
         }
 
-        $this->markJobAsSuccess();
         $stream->markAsUploaded();
         $this->streamRepository->save($stream);
 

@@ -9,7 +9,8 @@ use Symfony\Component\Uid\Uuid;
 
 class GetVideoCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
-    
+    use JobCommandTrait;
+
     public function __construct(
         public Uuid $streamId,
         public User $user,

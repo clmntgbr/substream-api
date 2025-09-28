@@ -9,6 +9,8 @@ use Symfony\Component\Uid\Uuid;
 
 class CreateStreamUrlCommand implements SyncCommandInterface, TrackableCommandInterface
 {
+    use JobCommandTrait;
+
     private Uuid $streamId;
 
     public function __construct(

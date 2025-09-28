@@ -8,6 +8,8 @@ use Symfony\Component\Uid\Uuid;
 
 class ExtractSoundCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
+    use JobCommandTrait;
+
     public function __construct(
         public Uuid $streamId,
     ) {
