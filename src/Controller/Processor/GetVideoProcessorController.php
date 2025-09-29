@@ -25,6 +25,7 @@ class GetVideoProcessorController extends AbstractController
     {
         $this->commandBus->dispatch(new GetVideoProcessorSuccessCommand(
             streamId: $getVideoProcessorSuccess->getStreamId(),
+            jobId: $getVideoProcessorSuccess->getJobId(),
             fileName: $getVideoProcessorSuccess->getFileName(),
             originalFileName: $getVideoProcessorSuccess->getOriginalFileName(),
             mimeType: $getVideoProcessorSuccess->getMimeType(),
@@ -41,6 +42,7 @@ class GetVideoProcessorController extends AbstractController
     {
         $this->commandBus->dispatch(new GetVideoProcessorFailureCommand(
             streamId: $getVideoProcessorFailure->getStreamId(),
+            jobId: $getVideoProcessorFailure->getJobId(),
         ));
 
         return Response::successResponse([

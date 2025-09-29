@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
+use App\Enum\JobStatusEnum;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
@@ -24,6 +25,7 @@ class GetVideoProcessorSuccessCommandHandler
 
     public function __invoke(GetVideoProcessorSuccessCommand $command): void
     {
+        $job = $this->jobRepository->findByJobId($command->jobId);
         $stream = $this->streamRepository->find($command->streamId);
 
         if (null === $stream) {
@@ -40,9 +42,12 @@ class GetVideoProcessorSuccessCommandHandler
             $this->commandBus->dispatch(new ExtractSoundCommand(
                 streamId: $stream->getId(),
             ));
+            $job->setStatus(JobStatusEnum::SUCCESS);
         } catch (\Throwable $exception) {
+            $job->setStatus(JobStatusEnum::FAILURE);
             $stream->markAsUploadFailed();
         } finally {
+            $this->jobRepository->save($job, true);
             $this->streamRepository->save($stream, true);
         }
     }

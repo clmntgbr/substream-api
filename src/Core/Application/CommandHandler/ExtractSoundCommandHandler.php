@@ -8,6 +8,7 @@ use App\Client\Processor\ExtractSoundProcessorInterface;
 use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\ExtractSound;
+use App\Enum\JobStatusEnum;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
@@ -30,6 +31,7 @@ class ExtractSoundCommandHandler
 
     public function __invoke(ExtractSoundCommand $command): void
     {
+        $job = $this->jobRepository->findByJobId($command->getJobId());
         $stream = $this->streamRepository->find($command->streamId);
 
         if (null === $stream) {
@@ -41,7 +43,9 @@ class ExtractSoundCommandHandler
             ($this->processor)(new ExtractSound($stream, $command->getJobId()));
         } catch (ProcessorException $exception) {
             $stream->markAsExtractSoundFailed();
+            $job->setStatus(JobStatusEnum::FAILURE);
         } finally {
+            $this->jobRepository->save($job);
             $this->streamRepository->save($stream);
         }
     }

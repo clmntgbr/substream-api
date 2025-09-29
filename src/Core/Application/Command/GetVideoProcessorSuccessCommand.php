@@ -9,8 +9,6 @@ use Symfony\Component\Uid\Uuid;
 
 class GetVideoProcessorSuccessCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
-    private Uuid $jobId;
-
     public function getJobId(): Uuid
     {
         return $this->jobId;
@@ -25,12 +23,12 @@ class GetVideoProcessorSuccessCommand implements AsyncCommandInterface, Trackabl
 
     public function __construct(
         public Uuid $streamId,
+        public Uuid $jobId,
         public readonly string $fileName,
         public readonly string $originalFileName,
         public readonly string $mimeType,
         public readonly int $size,
     ) {
-        $this->jobId = Uuid::v4();
     }
 
     public function supports(): bool

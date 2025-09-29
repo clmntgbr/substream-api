@@ -11,6 +11,7 @@ use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
+use App\Enum\JobStatusEnum;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -25,6 +26,8 @@ class GetVideoCommandHandler
 
     public function __invoke(GetVideoCommand $command): void
     {
+        $job = $this->jobRepository->findByJobId($command->getJobId());
+
         $stream = $this->streamRepository->find($command->streamId);
 
         if (null === $stream) {
@@ -34,8 +37,10 @@ class GetVideoCommandHandler
         try {
             ($this->processor)(new GetVideo($stream, $command->getJobId()));
         } catch (ProcessorException $exception) {
+            $job->setStatus(JobStatusEnum::FAILURE);
             $stream->markAsUploadFailed();
         } finally {
+            $this->jobRepository->save($job, true);
             $this->streamRepository->save($stream);
         }
     }
