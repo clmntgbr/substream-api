@@ -32,10 +32,6 @@ class Job
     #[Groups(['job:read'])]
     private string $commandClass;
 
-    #[ORM\Column(type: 'uuid')]
-    #[Groups(['job:read'])]
-    private Uuid $commandId;
-
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -44,9 +40,9 @@ class Job
     public static function create(TrackableCommandInterface $message): self
     {
         $job = new self();
+        $job->setId($message->getJobId());
         $job->setStatus(JobStatusEnum::RUNNING);
         $job->setCommandClass(get_class($message));
-        $job->setCommandId($message->getCommandId());
 
         return $job;
     }
@@ -72,18 +68,6 @@ class Job
     public function setCommandClass(string $commandClass): self
     {
         $this->commandClass = $commandClass;
-
-        return $this;
-    }
-
-    public function getCommandId(): Uuid
-    {
-        return $this->commandId;
-    }
-
-    public function setCommandId(Uuid $commandId): self
-    {
-        $this->commandId = $commandId;
 
         return $this;
     }

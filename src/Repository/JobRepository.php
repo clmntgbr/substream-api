@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Job;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends AbstractRepository<Job>
@@ -19,5 +20,14 @@ class JobRepository extends AbstractRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Job::class);
+    }
+
+    /**
+     * @param Uuid $jobId
+     * @return Job|null
+     */
+    public function findByJobId(Uuid $jobId): ?Job
+    {
+        return $this->findOneBy(['id' => $jobId]);
     }
 }

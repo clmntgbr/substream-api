@@ -9,25 +9,25 @@ use Symfony\Component\Uid\Uuid;
 
 class GetVideoProcessorFailureCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
-    use CommandIdTrait;
+    private Uuid $jobId;
+
+    public function getJobId(): Uuid
+    {
+        return $this->jobId;
+    }
+
+    public function setJobId(Uuid $jobId): self
+    {
+        $this->jobId = $jobId;
+
+        return $this;
+    }
 
     public function __construct(
         public Uuid $streamId,
         public readonly ?string $errorMessage = null,
     ) {
-        $this->commandId = Uuid::v4();
-    }
-
-    public function getData(): array
-    {
-        return [
-            'streamId' => $this->streamId,
-        ];
-    }
-
-    public function getErrorMessage(): ?string
-    {
-        return $this->errorMessage;
+        $this->jobId = Uuid::v4();
     }
 
     public function supports(): bool

@@ -2,7 +2,6 @@
 
 namespace App\Core\Application\Command;
 
-use App\Core\Application\Trait\CommandIdTrait;
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
@@ -10,7 +9,7 @@ use Symfony\Component\Uid\Uuid;
 
 class CreateStreamCommand implements SyncCommandInterface, TrackableCommandInterface
 {
-    use CommandIdTrait;
+    private Uuid $jobId;
 
     public function __construct(
         public Uuid $streamId,
@@ -21,15 +20,19 @@ class CreateStreamCommand implements SyncCommandInterface, TrackableCommandInter
         public ?string $mimeType = null,
         public ?int $size = null,
     ) {
-        $this->commandId = Uuid::v4();
+        $this->jobId = Uuid::v4();
     }
 
-    public function getData(): array
+    public function getJobId(): Uuid
     {
-        return [
-            'streamId' => $this->streamId,
-            'user' => $this->user->getId(),
-        ];
+        return $this->jobId;
+    }
+
+    public function setJobId(Uuid $jobId): self
+    {
+        $this->jobId = $jobId;
+
+        return $this;
     }
 
     public function supports(): bool

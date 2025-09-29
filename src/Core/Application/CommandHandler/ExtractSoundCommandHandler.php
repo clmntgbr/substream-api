@@ -38,7 +38,7 @@ class ExtractSoundCommandHandler
 
         try {
             $this->streamsStateMachine->apply($stream, 'extract_sound');
-            ($this->processor)(new ExtractSound($stream));
+            ($this->processor)(new ExtractSound($stream, $command->getJobId()));
         } catch (ProcessorException $exception) {
             $stream->markAsExtractSoundFailed();
         } finally {

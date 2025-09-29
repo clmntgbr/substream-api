@@ -2,7 +2,6 @@
 
 namespace App\Core\Application\Command;
 
-use App\Core\Application\Trait\CommandIdTrait;
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
@@ -11,16 +10,27 @@ use Symfony\Component\Uid\Uuid;
 
 class CreateStreamVideoCommand implements SyncCommandInterface, TrackableCommandInterface
 {
-    use CommandIdTrait;
-
     private Uuid $streamId;
+    private Uuid $jobId;
+
+    public function getJobId(): Uuid
+    {
+        return $this->jobId;
+    }
+
+    public function setJobId(Uuid $jobId): self
+    {
+        $this->jobId = $jobId;
+
+        return $this;
+    }
 
     public function __construct(
         public UploadedFile $videoFile,
         public User $user,
     ) {
-        $this->commandId = Uuid::v4();
         $this->streamId = Uuid::v4();
+        $this->jobId = Uuid::v4();
     }
 
     public function getVideoFile(): UploadedFile
@@ -36,13 +46,6 @@ class CreateStreamVideoCommand implements SyncCommandInterface, TrackableCommand
     public function getStreamId(): Uuid
     {
         return $this->streamId;
-    }
-
-    public function getData(): array
-    {
-        return [
-            'streamId' => $this->getStreamId(),
-        ];
     }
 
     public function supports(): bool

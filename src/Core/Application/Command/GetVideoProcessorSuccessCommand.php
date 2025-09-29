@@ -9,7 +9,19 @@ use Symfony\Component\Uid\Uuid;
 
 class GetVideoProcessorSuccessCommand implements AsyncCommandInterface, TrackableCommandInterface
 {
-    use CommandIdTrait;
+    private Uuid $jobId;
+
+    public function getJobId(): Uuid
+    {
+        return $this->jobId;
+    }
+
+    public function setJobId(Uuid $jobId): self
+    {
+        $this->jobId = $jobId;
+
+        return $this;
+    }
 
     public function __construct(
         public Uuid $streamId,
@@ -18,14 +30,7 @@ class GetVideoProcessorSuccessCommand implements AsyncCommandInterface, Trackabl
         public readonly string $mimeType,
         public readonly int $size,
     ) {
-        $this->commandId = Uuid::v4();
-    }
-
-    public function getData(): array
-    {
-        return [
-            'streamId' => $this->streamId,
-        ];
+        $this->jobId = Uuid::v4();
     }
 
     public function supports(): bool

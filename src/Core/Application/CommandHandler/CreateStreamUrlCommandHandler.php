@@ -10,6 +10,7 @@ use App\Repository\JobRepository;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsMessageHandler]

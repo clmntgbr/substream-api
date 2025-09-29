@@ -8,11 +8,9 @@ use Symfony\Component\Uid\Uuid;
 
 interface TrackableCommandInterface
 {
-    public function getCommandId(): Uuid;
+    public function getJobId(): Uuid;
 
-    public function setCommandId(Uuid $commandId): self;
-
-    public function getData(): array;
+    public function setJobId(Uuid $jobId): self;
 
     public function supports(): bool;
 }

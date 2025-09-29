@@ -7,6 +7,7 @@ namespace App\Shared\Infrastructure\Middleware;
 use App\Entity\Job;
 use App\Repository\JobRepository;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
+use App\Shared\Infrastructure\Stamp\JobIdStamp;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
@@ -25,32 +26,23 @@ class CreateJobMiddleware implements MiddlewareInterface
         $message = $envelope->getMessage();
 
         if ($message instanceof TrackableCommandInterface && $message->supports()) {
-            $job = $this->getJob($message);
-            $this->jobRepository->save($job, true);
+            $this->createJob($message);
         }
 
         $envelope = $stack->next()->handle($envelope, $stack);
-
         return $envelope;
     }
 
-    private function getJob(TrackableCommandInterface $message): Job
+    private function createJob(TrackableCommandInterface $message): Job
     {
-        try {
-            $job = $this->jobRepository->findOneBy(['commandId' => $message->getCommandId()]);
-            if ($job instanceof Job) {
-                return $job;
-            }
-        } catch (\Throwable $exception) {
-            dd('error 1', $exception);
-            throw $exception;
+        $job = $this->jobRepository->findByJobId($message->getJobId());
+        if ($job instanceof Job) {
+            return $job;
         }
 
-        try {
-            return Job::create($message);
-        } catch (\Throwable $exception) {
-            dd('error 2', $exception);
-            throw $exception;
-        }
+        $job = Job::create($message);
+        $this->jobRepository->save($job, true);
+
+        return $job;
     }
 }

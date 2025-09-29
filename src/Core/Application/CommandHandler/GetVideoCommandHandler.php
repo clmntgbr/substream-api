@@ -32,7 +32,7 @@ class GetVideoCommandHandler
         }
 
         try {
-            ($this->processor)(new GetVideo($stream));
+            ($this->processor)(new GetVideo($stream, $command->getJobId()));
         } catch (ProcessorException $exception) {
             $stream->markAsUploadFailed();
         } finally {
