@@ -2,6 +2,7 @@
 
 namespace App\Core\Application\Command;
 
+use App\Core\Application\Trait\CommandIdTrait;
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\Uid\Uuid;
 
 class CreateStreamVideoCommand implements SyncCommandInterface, TrackableCommandInterface
 {
-    use JobCommandTrait;
+    use CommandIdTrait;
 
     private Uuid $streamId;
 
@@ -18,6 +19,7 @@ class CreateStreamVideoCommand implements SyncCommandInterface, TrackableCommand
         public UploadedFile $videoFile,
         public User $user,
     ) {
+        $this->commandId = Uuid::v4();
         $this->streamId = Uuid::v4();
     }
 

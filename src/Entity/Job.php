@@ -32,36 +32,21 @@ class Job
     #[Groups(['job:read'])]
     private string $commandClass;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(type: 'uuid')]
     #[Groups(['job:read'])]
-    private ?array $commandData = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['job:read'])]
-    private ?array $metadata = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['job:read'])]
-    private ?string $errorMessage = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['job:read'])]
-    private ?string $errorTrace = null;
+    private Uuid $commandId;
 
     public function __construct()
     {
         $this->id = Uuid::v4();
     }
 
-    /**
-     * @param TrackableCommandInterface $message
-     */
-    public static function create(object $message): self
+    public static function create(TrackableCommandInterface $message): self
     {
         $job = new self();
         $job->setStatus(JobStatusEnum::RUNNING);
         $job->setCommandClass(get_class($message));
-        $job->setCommandData([$message->getData()]);
+        $job->setCommandId($message->getCommandId());
 
         return $job;
     }
@@ -91,50 +76,14 @@ class Job
         return $this;
     }
 
-    public function getCommandData(): ?array
+    public function getCommandId(): Uuid
     {
-        return $this->commandData;
+        return $this->commandId;
     }
 
-    public function setCommandData(?array $commandData): self
+    public function setCommandId(Uuid $commandId): self
     {
-        $this->commandData = $commandData;
-
-        return $this;
-    }
-
-    public function getMetadata(): ?array
-    {
-        return $this->metadata;
-    }
-
-    public function setMetadata(?array $metadata): self
-    {
-        $this->metadata = $metadata;
-
-        return $this;
-    }
-
-    public function getErrorMessage(): ?string
-    {
-        return $this->errorMessage;
-    }
-
-    public function setErrorMessage(?string $errorMessage): self
-    {
-        $this->errorMessage = $errorMessage;
-
-        return $this;
-    }
-
-    public function getErrorTrace(): ?string
-    {
-        return $this->errorTrace;
-    }
-
-    public function setErrorTrace(?string $errorTrace): self
-    {
-        $this->errorTrace = $errorTrace;
+        $this->commandId = $commandId;
 
         return $this;
     }
