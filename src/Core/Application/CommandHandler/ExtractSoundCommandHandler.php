@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Client\Processor\ExtractSoundProcessorInterface;
 use App\Core\Application\Command\ExtractSoundCommand;
+use App\Core\Application\Trait\JobTrait;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\ExtractSound;
 use App\Enum\JobStatusEnum;
@@ -19,6 +20,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[AsMessageHandler]
 class ExtractSoundCommandHandler
 {
+    use JobTrait;
     use WorkflowTrait;
 
     public function __construct(
@@ -31,7 +33,7 @@ class ExtractSoundCommandHandler
 
     public function __invoke(ExtractSoundCommand $command): void
     {
-        $job = $this->jobRepository->findByJobId($command->getJobId());
+        $this->findByJobId($command->getJobId());
         $stream = $this->streamRepository->find($command->streamId);
 
         if (null === $stream) {
@@ -43,9 +45,8 @@ class ExtractSoundCommandHandler
             ($this->processor)(new ExtractSound($stream, $command->getJobId()));
         } catch (ProcessorException $exception) {
             $stream->markAsExtractSoundFailed();
-            $job->setStatus(JobStatusEnum::FAILURE);
+            $this->markJobAsFailure();
         } finally {
-            $this->jobRepository->save($job);
             $this->streamRepository->save($stream);
         }
     }

@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
+use App\Core\Application\Trait\JobTrait;
 use App\Enum\JobStatusEnum;
 use App\Exception\StreamNotFoundException;
 use App\Repository\JobRepository;
@@ -16,16 +17,19 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class GetVideoProcessorSuccessCommandHandler
 {
+    use JobTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
         private CommandBusInterface $commandBus,
         private JobRepository $jobRepository,
     ) {
+        $this->jobRepository = $jobRepository;
     }
 
     public function __invoke(GetVideoProcessorSuccessCommand $command): void
     {
-        $job = $this->jobRepository->findByJobId($command->jobId);
+        $this->findByJobId($command->jobId);
         $stream = $this->streamRepository->find($command->streamId);
 
         if (null === $stream) {
@@ -42,12 +46,11 @@ class GetVideoProcessorSuccessCommandHandler
             $this->commandBus->dispatch(new ExtractSoundCommand(
                 streamId: $stream->getId(),
             ));
-            $job->setStatus(JobStatusEnum::SUCCESS);
+            $this->markJobAsSuccess();
         } catch (\Throwable $exception) {
-            $job->setStatus(JobStatusEnum::FAILURE);
+            $this->markJobAsFailure();
             $stream->markAsUploadFailed();
         } finally {
-            $this->jobRepository->save($job, true);
             $this->streamRepository->save($stream, true);
         }
     }
