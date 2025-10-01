@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler;
+namespace App\Core\Application\CommandHandler\Sync;
 
-use App\Core\Application\Command\CreateStreamCommand;
+use App\Core\Application\Command\Sync\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
@@ -24,13 +24,13 @@ class CreateStreamCommandHandler
     {
         try {
             $stream = Stream::create(
-                id: $command->streamId,
-                user: $command->user,
-                fileName: $command->fileName,
-                originalFileName: $command->originalFileName,
-                url: $command->url,
-                mimeType: $command->mimeType,
-                size: $command->size,
+                id: $command->getStreamId(),
+                user: $command->getUser(),
+                fileName: $command->getFileName(),
+                originalFileName: $command->getOriginalFileName(),
+                url: $command->getUrl(),
+                mimeType: $command->getMimeType(),
+                size: $command->getSize(),
             );
 
             $this->streamRepository->save($stream, true);

@@ -1,0 +1,9 @@
+framework:
+  webhook:
+    routing:
+      GetVideoSuccess:
+        service: App\Webhook\GetVideoSuccessRequestParser
+        secret: '%env(PROCESSOR_TOKEN)%'
+      GetVideoFailure:
+        service: App\Webhook\GetVideoFailureRequestParser
+        secret: '%env(PROCESSOR_TOKEN)%'

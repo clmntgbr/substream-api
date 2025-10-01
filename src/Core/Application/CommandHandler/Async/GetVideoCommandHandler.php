@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler;
+namespace App\Core\Application\CommandHandler\Async;
 
 use App\Client\Processor\GetVideoProcessorInterface;
-use App\Core\Application\Command\GetVideoCommand;
+use App\Core\Application\Command\Async\GetVideoCommand;
 use App\Dto\GetVideo;
 use App\Exception\ProcessorException;
 use App\Exception\StreamNotFoundException;
@@ -24,7 +24,7 @@ class GetVideoCommandHandler
 
     public function __invoke(GetVideoCommand $command): void
     {
-        $stream = $this->streamRepository->find($command->streamId);
+        $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
             throw new StreamNotFoundException();

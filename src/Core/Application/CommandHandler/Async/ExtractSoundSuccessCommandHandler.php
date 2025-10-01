@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler;
+namespace App\Core\Application\CommandHandler\Async;
 
-use App\Core\Application\Command\ExtractSoundCommand;
-use App\Core\Application\Command\ExtractSoundProcessorSuccessCommand;
+use App\Core\Application\Command\Async\ExtractSoundSuccessCommand;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class ExtractSoundProcessorSuccessCommandHandler
+class ExtractSoundSuccessCommandHandler
 {
 
     public function __construct(
@@ -21,16 +20,16 @@ class ExtractSoundProcessorSuccessCommandHandler
     ) {
     }
 
-    public function __invoke(ExtractSoundProcessorSuccessCommand $command): void
+    public function __invoke(ExtractSoundSuccessCommand $command): void
     {
-        $stream = $this->streamRepository->find($command->streamId);
+        $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
             throw new StreamNotFoundException();
         }
 
         try {
-            $stream->setAudioFiles($command->audioFiles);
+            $stream->setAudioFiles($command->getAudioFiles());
             $stream->markAsExtractSoundCompleted();
         } catch (\Throwable $exception) {
             $stream->markAsExtractSoundFailed();

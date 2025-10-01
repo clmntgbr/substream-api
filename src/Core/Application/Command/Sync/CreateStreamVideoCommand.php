@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Application\Command;
+namespace App\Core\Application\Command\Sync;
 
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
@@ -8,13 +8,13 @@ use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Uuid;
 
-class CreateStreamVideoCommand implements SyncCommandInterface
+readonly class CreateStreamVideoCommand implements SyncCommandInterface
 {
     private Uuid $streamId;
 
     public function __construct(
-        public UploadedFile $videoFile,
-        public User $user,
+        private UploadedFile $videoFile,
+        private User $user,
     ) {
         $this->streamId = Uuid::v4();
     }

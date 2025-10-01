@@ -10,9 +10,9 @@ use Symfony\Component\Uid\Uuid;
 class UploadFileModel extends AggregateRoot
 {
     public function __construct(
-        public string $fileName,
-        public string $originalFileName,
-        public Uuid $id,
+        private string $fileName,
+        private string $originalFileName,
+        private Uuid $id,
     ) {
     }
 
@@ -26,5 +26,20 @@ class UploadFileModel extends AggregateRoot
             $originalFileName,
             $id,
         );
+    }
+
+    public function getFileName(): string
+    {
+        return $this->fileName;
+    }
+
+    public function getOriginalFileName(): string
+    {
+        return $this->originalFileName;
+    }
+
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Controller\Processor;
 
-use App\Core\Application\Command\GetVideoProcessorFailureCommand;
-use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
+use App\Core\Application\Command\GetVideoFailureCommand;
+use App\Core\Application\Command\GetVideoSuccessCommand;
 use App\Dto\Processor\GetVideoProcessorFailure;
 use App\Dto\Processor\GetVideoProcessorSuccess;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -23,7 +23,7 @@ class GetVideoProcessorController extends AbstractController
     #[Route('/processor/get-video-processor-success', name: 'api_processor_get_video_processor_success', methods: ['POST'])]
     public function getVideoProcessorSuccess(#[MapRequestPayload] GetVideoProcessorSuccess $response): JsonResponse
     {
-        $this->commandBus->dispatch(new GetVideoProcessorSuccessCommand(
+        $this->commandBus->dispatch(new GetVideoSuccessCommand(
             streamId: $response->getStreamId(),
             fileName: $response->getFileName(),
             originalFileName: $response->getOriginalFileName(),
@@ -39,7 +39,7 @@ class GetVideoProcessorController extends AbstractController
     #[Route('/processor/get-video-processor-failure', name: 'api_processor_get_video_processor_failure', methods: ['POST'])]
     public function getVideoProcessorFailure(#[MapRequestPayload] GetVideoProcessorFailure $response): JsonResponse
     {
-        $this->commandBus->dispatch(new GetVideoProcessorFailureCommand(
+        $this->commandBus->dispatch(new GetVideoFailureCommand(
             streamId: $response->getStreamId(),
         ));
 

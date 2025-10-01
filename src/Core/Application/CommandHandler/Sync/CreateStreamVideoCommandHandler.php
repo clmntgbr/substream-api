@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Core\Application\CommandHandler;
+namespace App\Core\Application\CommandHandler\Sync;
 
-use App\Core\Application\Command\CreateStreamCommand;
-use App\Core\Application\Command\CreateStreamVideoCommand;
-use App\Core\Application\Command\ExtractSoundCommand;
+use App\Core\Application\Command\Sync\CreateStreamCommand;
+use App\Core\Application\Command\Sync\CreateStreamVideoCommand;
+use App\Core\Application\Command\Async\ExtractSoundCommand;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
@@ -40,13 +40,16 @@ class CreateStreamVideoCommandHandler
             throw new \RuntimeException($command->getVideoFile()->getMimeType());
         }
 
-        $uploadFileModel = $this->uploadFileService->uploadVideo($command->getStreamId(), $command->getVideoFile());
+        $uploadFileModel = $this->uploadFileService->uploadVideo(
+            streamId: $command->getStreamId(),
+            video: $command->getVideoFile(),
+        );
 
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
             user: $command->getUser(),
             streamId: $command->getStreamId(),
-            fileName: $uploadFileModel->fileName,
-            originalFileName: $uploadFileModel->originalFileName,
+            fileName: $uploadFileModel->getFileName(),
+            originalFileName: $uploadFileModel->getOriginalFileName(),
             mimeType: $command->getVideoFile()->getMimeType(),
             size: $command->getVideoFile()->getSize(),
         ));
@@ -62,6 +65,7 @@ class CreateStreamVideoCommandHandler
 
         $this->commandBus->dispatch(new ExtractSoundCommand(
             streamId: $command->getStreamId(),
+            fileName: $uploadFileModel->getFileName(),
         ));
 
         return $createStreamModel;

@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Core\Application\Command;
+namespace App\Core\Application\Command\Sync;
 
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-class CreateStreamUrlCommand implements SyncCommandInterface
+readonly class CreateStreamUrlCommand implements SyncCommandInterface
 {
     private Uuid $streamId;
 
     public function __construct(
-        public string $url,
-        public User $user,
+        private string $url,
+        private User $user,
     ) {
         $this->streamId = Uuid::v4();
     }

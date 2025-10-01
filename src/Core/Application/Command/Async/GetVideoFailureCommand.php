@@ -1,16 +1,21 @@
 <?php
 
-namespace App\Core\Application\Command;
+namespace App\Core\Application\Command\Async;
 
 use App\Core\Application\Trait\CommandIdTrait;
 use App\Shared\Application\Command\AsyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-class ExtractSoundProcessorFailureCommand implements AsyncCommandInterface
+readonly class GetVideoFailureCommand implements AsyncCommandInterface
 {
     public function __construct(
-        public Uuid $streamId,
+        private Uuid $streamId,
     ) {
+    }   
+
+    public function getStreamId(): Uuid
+    {
+        return Uuid::fromString($this->streamId);
     }
 }

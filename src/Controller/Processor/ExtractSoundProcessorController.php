@@ -2,10 +2,10 @@
 
 namespace App\Controller\Processor;
 
-use App\Core\Application\Command\ExtractSoundProcessorFailureCommand;
-use App\Core\Application\Command\ExtractSoundProcessorSuccessCommand;
-use App\Core\Application\Command\GetVideoProcessorFailureCommand;
-use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
+use App\Core\Application\Command\ExtractSoundFailureCommand;
+use App\Core\Application\Command\ExtractSoundSuccessCommand;
+use App\Core\Application\Command\GetVideoFailureCommand;
+use App\Core\Application\Command\GetVideoSuccessCommand;
 use App\Dto\Processor\ExtractSoundProcessorFailure;
 use App\Dto\Processor\ExtractSoundProcessorSuccess;
 use App\Dto\Processor\GetVideoProcessorFailure;
@@ -27,7 +27,7 @@ class ExtractSoundProcessorController extends AbstractController
     #[Route('/processor/extract-sound-processor-success', name: 'api_processor_extract_sound_processor_success', methods: ['POST'])]
     public function extractSoundProcessorSuccess(#[MapRequestPayload] ExtractSoundProcessorSuccess $response): JsonResponse
     {
-        $this->commandBus->dispatch(new ExtractSoundProcessorSuccessCommand(
+        $this->commandBus->dispatch(new ExtractSoundSuccessCommand(
             streamId: $response->getStreamId(),
             audioFiles: $response->getAudioFiles(),
         ));
@@ -40,7 +40,7 @@ class ExtractSoundProcessorController extends AbstractController
     #[Route('/processor/extract-sound-processor-failure', name: 'api_processor_extract_sound_processor_failure', methods: ['POST'])]
     public function extractSoundProcessorFailure(#[MapRequestPayload] ExtractSoundProcessorFailure $response): JsonResponse
     {
-        $this->commandBus->dispatch(new ExtractSoundProcessorFailureCommand(
+        $this->commandBus->dispatch(new ExtractSoundFailureCommand(
             streamId: $response->getStreamId(),
         ));
 

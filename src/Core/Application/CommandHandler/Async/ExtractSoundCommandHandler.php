@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler;
+namespace App\Core\Application\CommandHandler\Async;
 
 use App\Client\Processor\ExtractSoundProcessorInterface;
-use App\Core\Application\Command\ExtractSoundCommand;
+use App\Core\Application\Command\Async\ExtractSoundCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\ExtractSound;
 use App\Exception\ProcessorException;
@@ -28,7 +28,7 @@ class ExtractSoundCommandHandler
 
     public function __invoke(ExtractSoundCommand $command): void
     {
-        $stream = $this->streamRepository->find($command->streamId);
+        $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
             throw new StreamNotFoundException();
@@ -36,7 +36,10 @@ class ExtractSoundCommandHandler
 
         try {
             $this->streamsStateMachine->apply($stream, 'extract_sound');
-            ($this->processor)(new ExtractSound($stream));
+            ($this->processor)(new ExtractSound(
+                stream: $stream,
+                fileName: $command->getFileName(),
+            ));
         } catch (ProcessorException $exception) {
             $stream->markAsExtractSoundFailed();
         } finally {
