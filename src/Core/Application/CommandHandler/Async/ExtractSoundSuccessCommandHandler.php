@@ -9,32 +9,32 @@ use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Psr\Log\LoggerInterface;
 
 #[AsMessageHandler]
 class ExtractSoundSuccessCommandHandler
 {
-
     public function __construct(
         private StreamRepository $streamRepository,
         private CommandBusInterface $commandBus,
+        private LoggerInterface $logger,
     ) {
     }
 
     public function __invoke(ExtractSoundSuccessCommand $command): void
     {
-        $stream = $this->streamRepository->find($command->getStreamId());
+        $stream = $this->streamRepository->findByUuid($command->getStreamId());
 
         if (null === $stream) {
-            throw new StreamNotFoundException();
+            $this->logger->error('Stream not found', [
+                'stream_id' => $command->getStreamId(),
+            ]);
+
+            return;
         }
 
-        try {
-            $stream->setAudioFiles($command->getAudioFiles());
-            $stream->markAsExtractSoundCompleted();
-        } catch (\Throwable $exception) {
-            $stream->markAsExtractSoundFailed();
-        } finally {
-            $this->streamRepository->save($stream, true);
-        }
+        $stream->setAudioFiles($command->getAudioFiles());
+        $stream->markAsExtractSoundCompleted();
+        $this->streamRepository->save($stream);
     }
 }

@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends AbstractRepository<User>
@@ -36,5 +37,10 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    public function findByUuid(Uuid $id): ?User
+    {
+        return $this->findOneBy(['id' => $id]);
     }
 }

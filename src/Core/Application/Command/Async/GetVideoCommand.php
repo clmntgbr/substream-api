@@ -2,10 +2,8 @@
 
 namespace App\Core\Application\Command\Async;
 
-use App\Core\Application\Trait\CommandIdTrait;
 use App\Entity\User;
 use App\Shared\Application\Command\AsyncCommandInterface;
-use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
 readonly class GetVideoCommand implements AsyncCommandInterface
@@ -21,7 +19,7 @@ readonly class GetVideoCommand implements AsyncCommandInterface
     {
         return Uuid::fromString($this->streamId);
     }
-    
+
     public function getUser(): User
     {
         return $this->user;

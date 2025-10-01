@@ -2,8 +2,8 @@
 
 namespace App\Controller\Stream;
 
-use App\Core\Application\Command\CreateStreamUrlCommand;
-use App\Dto\CreateStreamUrlParam;
+use App\Core\Application\Command\Sync\CreateStreamUrlCommand;
+use App\Dto\CreateStreamUrl;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Domain\Response\Response;
@@ -20,10 +20,15 @@ class CreateStreamUrlController extends AbstractController
     ) {
     }
 
-    public function __invoke(#[MapRequestPayload] CreateStreamUrlParam $param, #[CurrentUser] User $user)
+    public function __invoke(#[MapRequestPayload] CreateStreamUrl $param, #[CurrentUser] User $user)
     {
         try {
-            $createStreamModel = $this->commandBus->dispatch(new CreateStreamUrlCommand($param->url, $user));
+            $createStreamModel = $this->commandBus->dispatch(
+                new CreateStreamUrlCommand(
+                    url: $param->getUrl(),
+                    user: $user,
+                ),
+            );
 
             return Response::successResponse([
                 'streamId' => $createStreamModel->streamId,

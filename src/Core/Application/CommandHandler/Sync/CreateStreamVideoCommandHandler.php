@@ -2,9 +2,9 @@
 
 namespace App\Core\Application\CommandHandler\Sync;
 
+use App\Core\Application\Command\Async\ExtractSoundCommand;
 use App\Core\Application\Command\Sync\CreateStreamCommand;
 use App\Core\Application\Command\Sync\CreateStreamVideoCommand;
-use App\Core\Application\Command\Async\ExtractSoundCommand;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;

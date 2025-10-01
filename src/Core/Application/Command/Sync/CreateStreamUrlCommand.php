@@ -4,7 +4,6 @@ namespace App\Core\Application\Command\Sync;
 
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
-use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
 readonly class CreateStreamUrlCommand implements SyncCommandInterface

@@ -4,7 +4,6 @@ namespace App\Core\Application\Command\Sync;
 
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
-use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
 readonly class CreateStreamCommand implements SyncCommandInterface
@@ -24,7 +23,7 @@ readonly class CreateStreamCommand implements SyncCommandInterface
     {
         return Uuid::fromString($this->streamId);
     }
-    
+
     public function getUser(): User
     {
         return $this->user;
@@ -39,17 +38,17 @@ readonly class CreateStreamCommand implements SyncCommandInterface
     {
         return $this->originalFileName;
     }
-    
+
     public function getUrl(): ?string
     {
         return $this->url;
     }
-    
+
     public function getMimeType(): ?string
     {
         return $this->mimeType;
     }
-    
+
     public function getSize(): ?int
     {
         return $this->size;

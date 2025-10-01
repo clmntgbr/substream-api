@@ -18,9 +18,9 @@ final class GetVideoSuccessRequestParser extends AbstractRequestParser
     protected function getRequestMatcher(): RequestMatcherInterface
     {
         return new ChainRequestMatcher([
-                new MethodRequestMatcher('POST'),
-                new IsJsonRequestMatcher(),
-            ]);
+            new MethodRequestMatcher('POST'),
+            new IsJsonRequestMatcher(),
+        ]);
     }
 
     /**

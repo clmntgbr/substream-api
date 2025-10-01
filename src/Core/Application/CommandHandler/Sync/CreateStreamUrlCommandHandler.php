@@ -2,9 +2,9 @@
 
 namespace App\Core\Application\CommandHandler\Sync;
 
+use App\Core\Application\Command\Async\GetVideoCommand;
 use App\Core\Application\Command\Sync\CreateStreamCommand;
 use App\Core\Application\Command\Sync\CreateStreamUrlCommand;
-use App\Core\Application\Command\Async\GetVideoCommand;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;

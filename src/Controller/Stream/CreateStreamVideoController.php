@@ -2,7 +2,7 @@
 
 namespace App\Controller\Stream;
 
-use App\Core\Application\Command\CreateStreamVideoCommand;
+use App\Core\Application\Command\Sync\CreateStreamVideoCommand;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Domain\Response\Response;
@@ -24,7 +24,12 @@ class CreateStreamVideoController extends AbstractController
     public function __invoke(#[MapUploadedFile] UploadedFile $video, #[CurrentUser] User $user): JsonResponse
     {
         try {
-            $createStreamModel = $this->commandBus->dispatch(new CreateStreamVideoCommand($video, $user));
+            $createStreamModel = $this->commandBus->dispatch(
+                new CreateStreamVideoCommand(
+                    videoFile: $video,
+                    user: $user,
+                ),
+            );
 
             return Response::successResponse([
                 'streamId' => $createStreamModel->streamId,

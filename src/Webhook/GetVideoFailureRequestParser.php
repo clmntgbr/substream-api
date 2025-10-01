@@ -18,9 +18,9 @@ final class GetVideoFailureRequestParser extends AbstractRequestParser
     protected function getRequestMatcher(): RequestMatcherInterface
     {
         return new ChainRequestMatcher([
-                new IsJsonRequestMatcher(),
-                new MethodRequestMatcher('POST'),
-            ]);
+            new IsJsonRequestMatcher(),
+            new MethodRequestMatcher('POST'),
+        ]);
     }
 
     /**
