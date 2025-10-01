@@ -5,10 +5,8 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\CreateStreamVideoCommand;
 use App\Core\Application\Command\ExtractSoundCommand;
-use App\Core\Application\Trait\JobTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Exception\StreamNotFoundException;
-use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -19,22 +17,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AsMessageHandler]
 class CreateStreamVideoCommandHandler
 {
-    use JobTrait;
-
     public function __construct(
         private StreamRepository $streamRepository,
         private UploadFileServiceInterface $uploadFileService,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
-        private JobRepository $jobRepository,
     ) {
-        $this->jobRepository = $jobRepository;
     }
 
     public function __invoke(CreateStreamVideoCommand $command): CreateStreamModel
     {
-        $this->findByJobId($command->getJobId());
-        
         $constraints = new File([
             'mimeTypes' => [
                 'video/mp4',
@@ -72,7 +64,6 @@ class CreateStreamVideoCommandHandler
             streamId: $command->getStreamId(),
         ));
 
-        $this->markJobAsSuccess();
         return $createStreamModel;
     }
 }

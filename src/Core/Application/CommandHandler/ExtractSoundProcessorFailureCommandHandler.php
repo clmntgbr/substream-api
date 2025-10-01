@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\GetVideoProcessorFailureCommand;
+use App\Core\Application\Command\ExtractSoundProcessorFailureCommand;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class GetVideoProcessorFailureCommandHandler
+class ExtractSoundProcessorFailureCommandHandler
 {
-
     public function __construct(
         private StreamRepository $streamRepository,
     ) {
     }
 
-    public function __invoke(GetVideoProcessorFailureCommand $command): void
+    public function __invoke(ExtractSoundProcessorFailureCommand $command): void
     {
         $stream = $this->streamRepository->find($command->streamId);
 
@@ -26,7 +25,7 @@ class GetVideoProcessorFailureCommandHandler
             throw new StreamNotFoundException();
         }
 
-        $stream->markAsUploadFailed();
+        $stream->markAsExtractSoundFailed();
         $this->streamRepository->save($stream, true);
     }
 }

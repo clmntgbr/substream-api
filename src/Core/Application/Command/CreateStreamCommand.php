@@ -7,10 +7,8 @@ use App\Shared\Application\Command\SyncCommandInterface;
 use App\Shared\Application\Middleware\TrackableCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-class CreateStreamCommand implements SyncCommandInterface, TrackableCommandInterface
+class CreateStreamCommand implements SyncCommandInterface
 {
-    private Uuid $jobId;
-
     public function __construct(
         public Uuid $streamId,
         public User $user,
@@ -20,23 +18,5 @@ class CreateStreamCommand implements SyncCommandInterface, TrackableCommandInter
         public ?string $mimeType = null,
         public ?int $size = null,
     ) {
-        $this->jobId = Uuid::v4();
-    }
-
-    public function getJobId(): Uuid
-    {
-        return $this->jobId;
-    }
-
-    public function setJobId(Uuid $jobId): self
-    {
-        $this->jobId = $jobId;
-
-        return $this;
-    }
-
-    public function supports(): bool
-    {
-        return false;
     }
 }

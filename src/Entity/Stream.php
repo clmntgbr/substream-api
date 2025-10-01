@@ -62,6 +62,10 @@ class Stream
     #[Groups(['stream:read'])]
     private ?int $size = null;
 
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[Groups(['stream:read'])]
+    private array $audioFiles = [];
+
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
     private string $status;
@@ -159,6 +163,19 @@ class Stream
         return $this;
     }
 
+    public function markAsExtractSoundCompleted(): self
+    {
+        $this->status = StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value;
+        $this->statuses[] = StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value;
+
+        return $this;
+    }
+
+    public function getAudioFiles(): array
+    {
+        return $this->audioFiles;
+    }
+
     public function setFileName(string $fileName): self
     {
         $this->fileName = $fileName;
@@ -195,5 +212,12 @@ class Stream
     public function getSize(): ?int
     {
         return $this->size;
+    }
+
+    public function setAudioFiles(array $audioFiles): self
+    {
+        $this->audioFiles = $audioFiles;
+
+        return $this;
     }
 }

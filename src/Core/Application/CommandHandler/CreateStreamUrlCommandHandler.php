@@ -6,9 +6,6 @@ use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\CreateStreamUrlCommand;
 use App\Core\Application\Command\GetVideoCommand;
 use App\Core\Domain\Aggregate\CreateStreamModel;
-use App\Enum\JobStatusEnum;
-use App\Core\Application\Trait\JobTrait;
-use App\Repository\JobRepository;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -18,20 +15,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AsMessageHandler]
 class CreateStreamUrlCommandHandler
 {
-    use JobTrait; 
-
     public function __construct(
         private UploadFileServiceInterface $uploadFileService,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
-        private JobRepository $jobRepository,
     ) {
     }
 
     public function __invoke(CreateStreamUrlCommand $command): CreateStreamModel
     {
-        $this->findByJobId($command->getJobId());
-
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
             user: $command->getUser(),
             streamId: $command->getStreamId(),
@@ -44,7 +36,6 @@ class CreateStreamUrlCommandHandler
             url: $command->url,
         ));
 
-        $this->markJobAsSuccess();
         return $createStreamModel;
     }
 }

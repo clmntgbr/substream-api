@@ -8,7 +8,6 @@ use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
-use App\Repository\JobRepository;
 use App\Repository\StreamRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,7 +17,6 @@ class CreateStreamCommandHandler
     public function __construct(
         private StreamRepository $streamRepository,
         private CreateStreamMapperInterface $createStreamMapper,
-        private JobRepository $jobRepository,
     ) {
     }
 

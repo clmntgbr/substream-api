@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\ExtractSoundCommand;
-use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
+use App\Core\Application\Command\ExtractSoundProcessorSuccessCommand;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class GetVideoProcessorSuccessCommandHandler
+class ExtractSoundProcessorSuccessCommandHandler
 {
 
     public function __construct(
@@ -21,7 +21,7 @@ class GetVideoProcessorSuccessCommandHandler
     ) {
     }
 
-    public function __invoke(GetVideoProcessorSuccessCommand $command): void
+    public function __invoke(ExtractSoundProcessorSuccessCommand $command): void
     {
         $stream = $this->streamRepository->find($command->streamId);
 
@@ -30,17 +30,10 @@ class GetVideoProcessorSuccessCommandHandler
         }
 
         try {
-            $stream->setFileName($command->fileName);
-            $stream->setOriginalFileName($command->originalFileName);
-            $stream->setMimeType($command->mimeType);
-            $stream->setSize($command->size);
-            $stream->markAsUploaded();
-
-            $this->commandBus->dispatch(new ExtractSoundCommand(
-                streamId: $stream->getId(),
-            ));
+            $stream->setAudioFiles($command->audioFiles);
+            $stream->markAsExtractSoundCompleted();
         } catch (\Throwable $exception) {
-            $stream->markAsUploadFailed();
+            $stream->markAsExtractSoundFailed();
         } finally {
             $this->streamRepository->save($stream, true);
         }

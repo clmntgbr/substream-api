@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class GetVideoProcessorFailure
+final class ExtractSoundProcessorFailure
 {
     public function __construct(
         #[SerializedName('stream_id')]

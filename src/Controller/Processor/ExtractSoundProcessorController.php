@@ -2,8 +2,12 @@
 
 namespace App\Controller\Processor;
 
+use App\Core\Application\Command\ExtractSoundProcessorFailureCommand;
+use App\Core\Application\Command\ExtractSoundProcessorSuccessCommand;
 use App\Core\Application\Command\GetVideoProcessorFailureCommand;
 use App\Core\Application\Command\GetVideoProcessorSuccessCommand;
+use App\Dto\Processor\ExtractSoundProcessorFailure;
+use App\Dto\Processor\ExtractSoundProcessorSuccess;
 use App\Dto\Processor\GetVideoProcessorFailure;
 use App\Dto\Processor\GetVideoProcessorSuccess;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -13,22 +17,19 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
-class GetVideoProcessorController extends AbstractController
+class ExtractSoundProcessorController extends AbstractController
 {
     public function __construct(
         private CommandBusInterface $commandBus,
     ) {
     }
 
-    #[Route('/processor/get-video-processor-success', name: 'api_processor_get_video_processor_success', methods: ['POST'])]
-    public function getVideoProcessorSuccess(#[MapRequestPayload] GetVideoProcessorSuccess $response): JsonResponse
+    #[Route('/processor/extract-sound-processor-success', name: 'api_processor_extract_sound_processor_success', methods: ['POST'])]
+    public function extractSoundProcessorSuccess(#[MapRequestPayload] ExtractSoundProcessorSuccess $response): JsonResponse
     {
-        $this->commandBus->dispatch(new GetVideoProcessorSuccessCommand(
+        $this->commandBus->dispatch(new ExtractSoundProcessorSuccessCommand(
             streamId: $response->getStreamId(),
-            fileName: $response->getFileName(),
-            originalFileName: $response->getOriginalFileName(),
-            mimeType: $response->getMimeType(),
-            size: $response->getSize(),
+            audioFiles: $response->getAudioFiles(),
         ));
 
         return Response::successResponse([
@@ -36,10 +37,10 @@ class GetVideoProcessorController extends AbstractController
         ]);
     }
 
-    #[Route('/processor/get-video-processor-failure', name: 'api_processor_get_video_processor_failure', methods: ['POST'])]
-    public function getVideoProcessorFailure(#[MapRequestPayload] GetVideoProcessorFailure $response): JsonResponse
+    #[Route('/processor/extract-sound-processor-failure', name: 'api_processor_extract_sound_processor_failure', methods: ['POST'])]
+    public function extractSoundProcessorFailure(#[MapRequestPayload] ExtractSoundProcessorFailure $response): JsonResponse
     {
-        $this->commandBus->dispatch(new GetVideoProcessorFailureCommand(
+        $this->commandBus->dispatch(new ExtractSoundProcessorFailureCommand(
             streamId: $response->getStreamId(),
         ));
 
