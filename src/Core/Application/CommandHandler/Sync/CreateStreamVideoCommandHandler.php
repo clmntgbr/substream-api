@@ -5,7 +5,10 @@ namespace App\Core\Application\CommandHandler\Sync;
 use App\Core\Application\Command\Async\ExtractSoundCommand;
 use App\Core\Application\Command\Sync\CreateStreamCommand;
 use App\Core\Application\Command\Sync\CreateStreamVideoCommand;
+use App\Core\Application\Trait\WorkflowTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
+use App\Enum\StreamStatusEnum;
+use App\Enum\WorkflowTransitionEnum;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
 use App\Service\UploadFileServiceInterface;
@@ -13,15 +16,19 @@ use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
 class CreateStreamVideoCommandHandler
 {
+    use WorkflowTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
         private UploadFileServiceInterface $uploadFileService,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
+        private WorkflowInterface $streamsStateMachine,
     ) {
     }
 
@@ -34,15 +41,15 @@ class CreateStreamVideoCommandHandler
             'mimeTypesMessage' => 'Please upload a valid video file (MP4).',
         ]);
 
-        $violations = $this->validator->validate($command->getVideoFile(), $constraints);
+        $violations = $this->validator->validate($command->getFile(), $constraints);
 
         if (count($violations) > 0) {
-            throw new \RuntimeException($command->getVideoFile()->getMimeType());
+            throw new \RuntimeException($command->getFile()->getMimeType());
         }
 
         $uploadFileModel = $this->uploadFileService->uploadVideo(
             streamId: $command->getStreamId(),
-            video: $command->getVideoFile(),
+            file: $command->getFile(),
         );
 
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
@@ -50,8 +57,8 @@ class CreateStreamVideoCommandHandler
             streamId: $command->getStreamId(),
             fileName: $uploadFileModel->getFileName(),
             originalFileName: $uploadFileModel->getOriginalFileName(),
-            mimeType: $command->getVideoFile()->getMimeType(),
-            size: $command->getVideoFile()->getSize(),
+            mimeType: $command->getFile()->getMimeType(),
+            size: $command->getFile()->getSize(),
         ));
 
         $stream = $this->streamRepository->find($command->getStreamId());
@@ -59,8 +66,8 @@ class CreateStreamVideoCommandHandler
         if (null === $stream) {
             throw new StreamNotFoundException();
         }
-
-        $stream->markAsUploaded();
+        
+        $this->apply($stream, WorkflowTransitionEnum::UPLOADED_SIMPLE);
         $this->streamRepository->save($stream);
 
         $this->commandBus->dispatch(new ExtractSoundCommand(

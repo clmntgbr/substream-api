@@ -163,6 +163,14 @@ class Stream
         return $this;
     }
 
+    public function markAsUploading(): self
+    {
+        $this->status = StreamStatusEnum::UPLOADING->value;
+        $this->statuses[] = StreamStatusEnum::UPLOADING->value;
+
+        return $this;
+    }
+
     public function markAsExtractSoundCompleted(): self
     {
         $this->status = StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value;

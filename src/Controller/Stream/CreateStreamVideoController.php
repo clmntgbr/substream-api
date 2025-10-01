@@ -26,7 +26,7 @@ class CreateStreamVideoController extends AbstractController
         try {
             $createStreamModel = $this->commandBus->dispatch(
                 new CreateStreamVideoCommand(
-                    videoFile: $video,
+                    file: $video,
                     user: $user,
                 ),
             );
@@ -35,7 +35,7 @@ class CreateStreamVideoController extends AbstractController
                 'streamId' => $createStreamModel->streamId,
             ]);
         } catch (\Throwable $exception) {
-            return Response::errorResponse($exception->getMessage());
+            return Response::errorResponse('Invalid file');
         }
     }
 }

@@ -8,5 +8,5 @@ use Symfony\Component\Uid\Uuid;
 
 interface UploadFileServiceInterface
 {
-    public function uploadVideo(Uuid $streamId, UploadedFile $video): UploadFileModel;
+    public function uploadVideo(Uuid $streamId, UploadedFile $file): UploadFileModel;
 }

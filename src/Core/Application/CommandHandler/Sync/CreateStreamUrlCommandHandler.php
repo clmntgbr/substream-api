@@ -5,19 +5,29 @@ namespace App\Core\Application\CommandHandler\Sync;
 use App\Core\Application\Command\Async\GetVideoCommand;
 use App\Core\Application\Command\Sync\CreateStreamCommand;
 use App\Core\Application\Command\Sync\CreateStreamUrlCommand;
+use App\Core\Application\Trait\WorkflowTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
+use App\Enum\StreamStatusEnum;
+use App\Enum\WorkflowTransitionEnum;
+use App\Exception\StreamNotFoundException;
+use App\Repository\StreamRepository;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
 class CreateStreamUrlCommandHandler
 {
+    use WorkflowTrait;
+
     public function __construct(
         private UploadFileServiceInterface $uploadFileService,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
+        private WorkflowInterface $streamsStateMachine,
+        private StreamRepository $streamRepository,
     ) {
     }
 
@@ -28,6 +38,15 @@ class CreateStreamUrlCommandHandler
             streamId: $command->getStreamId(),
             url: $command->getUrl(),
         ));
+
+        $stream = $this->streamRepository->find($command->getStreamId());
+
+        if (null === $stream) {
+            throw new StreamNotFoundException();
+        }
+
+        $this->apply($stream, WorkflowTransitionEnum::UPLOADING);
+        $this->streamRepository->save($stream);
 
         $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),

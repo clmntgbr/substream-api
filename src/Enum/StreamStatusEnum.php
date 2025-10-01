@@ -9,6 +9,7 @@ enum StreamStatusEnum: string
     case COMPLETED = 'completed';
 
     case UPLOADED = 'uploaded';
+    case UPLOADING = 'uploading';
     case UPLOAD_FAILED = 'upload_failed';
 
     case EXTRACTING_SOUND = 'extracting_sound';

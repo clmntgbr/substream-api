@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler\Async;
 
 use App\Client\Processor\ExtractSoundProcessorInterface;
 use App\Core\Application\Command\Async\ExtractSoundCommand;
+use App\Core\Application\Message\ExtractSoundMessage;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\ExtractSound;
 use App\Exception\ProcessorException;
@@ -13,6 +14,7 @@ use App\Repository\StreamRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Psr\Log\LoggerInterface;
+use App\Shared\Application\Bus\CoreBusInterface;
 
 #[AsMessageHandler]
 class ExtractSoundCommandHandler
@@ -23,6 +25,7 @@ class ExtractSoundCommandHandler
         private StreamRepository $streamRepository,
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
+        private CoreBusInterface $coreBus,
     ) {
     }
 
@@ -38,16 +41,9 @@ class ExtractSoundCommandHandler
             return;
         }
 
-        // try {
-        //     $this->streamsStateMachine->apply($stream, 'extract_sound');
-        //     ($this->processor)(new ExtractSound(
-        //         stream: $stream,
-        //         fileName: $command->getFileName(),
-        //     ));
-        // } catch (ProcessorException $exception) {
-        //     $stream->markAsExtractSoundFailed();
-        // } finally {
-        //     $this->streamRepository->save($stream);
-        // }
+        $this->coreBus->dispatch(new ExtractSoundMessage(
+            streamId: $stream->getId(),
+            fileName: $command->getFileName(),
+        ));
     }
 }

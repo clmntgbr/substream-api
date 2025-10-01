@@ -23,14 +23,37 @@ framework:
                     allow_no_senders: true
                 middleware:
                     - validation
+
+            core.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: true
+                    allow_no_senders: true
+                middleware:
+                    - validation
         transports:
-            async_commands:
+            async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
                     queues:
-                        async_commands: ~
+                        async: ~
+                retry_strategy:
+                    max_retries: 0
+            core:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: 'core'
+                        type: 'direct'
+                    queues:
+                        core.get_video:
+                            binding_keys: [core.get_video]
+                        core.extract_sound:
+                            binding_keys: [core.extract_sound]
                 retry_strategy:
                     max_retries: 0
 
         routing:
-            'App\Shared\Application\Command\AsyncCommandInterface': async_commands
+            'App\Shared\Application\Command\AsyncCommandInterface': async
+            'App\Core\Application\Message\GetVideoMessage': core
+            'App\Core\Application\Message\ExtractSoundMessage': core

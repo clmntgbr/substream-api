@@ -4,19 +4,29 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler\Async;
 
-use App\Client\Processor\GetVideoProcessorInterface;
 use App\Core\Application\Command\Async\GetVideoCommand;
-use App\Dto\GetVideo;
-use App\Exception\ProcessorException;
+use App\Core\Application\Message\GetVideoMessage;
 use App\Repository\StreamRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use App\Shared\Application\Bus\CommandBusInterface;
+use App\Shared\Application\Bus\CoreBusInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
+use App\Core\Application\Trait\WorkflowTrait;
+use App\Enum\StreamStatusEnum;
+use Symfony\Component\Workflow\Exception\TransitionException;
 
 #[AsMessageHandler]
 class GetVideoCommandHandler
 {
+    use WorkflowTrait;
+
     public function __construct(
         private StreamRepository $streamRepository,
+        private CommandBusInterface $commandBus,
+        private WorkflowInterface $streamsStateMachine,
+        private CoreBusInterface $coreBus,
         private LoggerInterface $logger,
     ) {
     }
@@ -33,12 +43,9 @@ class GetVideoCommandHandler
             return;
         }
 
-        // try {
-        //     ($this->processor)(new GetVideo($stream));
-        // } catch (ProcessorException $exception) {
-        //     $stream->markAsUploadFailed();
-        // } finally {
-        //     $this->streamRepository->save($stream);
-        // }
+        $this->coreBus->dispatch(new GetVideoMessage(
+            streamId: $stream->getId(),
+            url: $command->getUrl(),
+        ));
     }
 }

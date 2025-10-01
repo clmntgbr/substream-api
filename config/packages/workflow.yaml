@@ -13,17 +13,21 @@ framework:
                 - failed
                 - completed
                 - uploaded
+                - uploading
                 - upload_failed
                 - extracting_sound
                 - extracting_sound_failed
                 - extracting_sound_completed
             transitions:
-                extract_sound:
-                    from: uploaded
-                    to:   extracting_sound
-                extract_sound_failed:
-                    from: extracting_sound
-                    to:   extracting_sound_failed
-                extract_sound_completed:
-                    from: extracting_sound
-                    to:   extracting_sound_completed
+                uploading:
+                    from: created
+                    to:   uploading
+                upload_failed:
+                    from: uploading
+                    to:   upload_failed
+                uploaded_simple:
+                    from: created
+                    to:   uploaded
+                uploaded:
+                    from: uploading
+                    to:   uploaded
