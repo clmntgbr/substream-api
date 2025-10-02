@@ -34,7 +34,7 @@ class CreateStreamVideoController extends AbstractController
             return Response::successResponse([
                 'streamId' => $createStreamModel->streamId,
             ]);
-        } catch (\Throwable $exception) {
+        } catch (\Exception $exception) {
             return Response::errorResponse('Invalid file');
         }
     }

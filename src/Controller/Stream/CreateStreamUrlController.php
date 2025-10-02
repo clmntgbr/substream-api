@@ -22,15 +22,19 @@ class CreateStreamUrlController extends AbstractController
 
     public function __invoke(#[MapRequestPayload] CreateStreamUrl $param, #[CurrentUser] User $user)
     {
-        $createStreamModel = $this->commandBus->dispatch(
-            new CreateStreamUrlCommand(
-                url: $param->getUrl(),
-                user: $user,
-            ),
-        );
-
-        return Response::successResponse([
-            'streamId' => $createStreamModel->streamId,
-        ]);
+        try {
+            $createStreamModel = $this->commandBus->dispatch(
+                new CreateStreamUrlCommand(
+                    url: $param->getUrl(),
+                    user: $user,
+                ),
+            );
+    
+            return Response::successResponse([
+                'streamId' => $createStreamModel->streamId,
+            ]);
+        } catch (\Exception $exception) {
+            return Response::errorResponse('Something went wrong.');
+        }
     }
 }
