@@ -13,8 +13,7 @@ class JsonMessageSerializer implements SerializerInterface
 {
     public function __construct(
         private readonly string $apiUrl,
-    ) 
-    {
+    ) {
     }
 
     public function decode(array $encodedEnvelope): Envelope
@@ -34,8 +33,8 @@ class JsonMessageSerializer implements SerializerInterface
             'task_id' => Uuid::v4(),
             'class' => $message::class,
             'payload' => $message->jsonSerialize(),
-            'webhook_url_success' => $this->apiUrl . '/' . $message->getWebhookUrlSuccess(),
-            'webhook_url_failure' => $this->apiUrl . '/' . $message->getWebhookUrlFailure(),
+            'webhook_url_success' => $this->apiUrl.'/'.$message->getWebhookUrlSuccess(),
+            'webhook_url_failure' => $this->apiUrl.'/'.$message->getWebhookUrlFailure(),
         ];
 
         return [
