@@ -28,7 +28,7 @@ final class GetVideoFailureWebhookConsumer implements ConsumerInterface
     public function consume(RemoteEvent $event): void
     {
         /** @var GetVideoFailure $response */
-        $response = $this->denormalizer->denormalize($event->getPayload(), GetVideoFailure::class);
+        $response = $event->getPayload()['payload'];
 
         $stream = $this->streamRepository->findByUuid($response->getStreamId());
 

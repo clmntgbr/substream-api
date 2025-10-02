@@ -2,7 +2,6 @@
 
 namespace App\Core\Application\Command;
 
-use App\Entity\User;
 use App\Shared\Application\Command\AsyncCommandInterface;
 use Symfony\Component\Uid\Uuid;
 

@@ -52,7 +52,7 @@ final class GetVideoFailureRequestParser extends AbstractRequestParser
 
         try {
             $payload = $request->getPayload();
-            $this->denormalizer->denormalize($payload->all(), GetVideoFailure::class);
+            $data = $this->denormalizer->denormalize($payload->all(), GetVideoFailure::class);
         } catch (\Exception $e) {
             throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Invalid payload');
         }
@@ -60,7 +60,7 @@ final class GetVideoFailureRequestParser extends AbstractRequestParser
         return new RemoteEvent(
             $payload->getString('name'),
             $payload->getString('id'),
-            $payload->all(),
+            ['payload' => $data],
         );
     }
 }

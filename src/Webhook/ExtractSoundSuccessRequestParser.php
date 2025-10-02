@@ -2,6 +2,7 @@
 
 namespace App\Webhook;
 
+use App\Dto\Webhook\ExtractSoundSuccess;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,6 +11,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RemoteEvent\RemoteEvent;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
@@ -17,12 +19,17 @@ final class ExtractSoundSuccessRequestParser extends AbstractRequestParser
 {
     public const WEBHOOK_NAME = 'extractsoundsuccess';
 
+    public function __construct(
+        private DenormalizerInterface $denormalizer,
+    ) {
+    }
+
     protected function getRequestMatcher(): RequestMatcherInterface
     {
         return new ChainRequestMatcher([
-                new IsJsonRequestMatcher(),
-                new MethodRequestMatcher('POST'),
-            ]);
+            new IsJsonRequestMatcher(),
+            new MethodRequestMatcher('POST'),
+        ]);
     }
 
     /**
@@ -43,12 +50,17 @@ final class ExtractSoundSuccessRequestParser extends AbstractRequestParser
             throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Request payload name is not matching.');
         }
 
-        $payload = $request->getPayload();
+        try {
+            $payload = $request->getPayload();
+            $data = $this->denormalizer->denormalize($payload->all(), ExtractSoundSuccess::class);
+        } catch (\Exception $e) {
+            throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Invalid payload');
+        }
 
         return new RemoteEvent(
             $payload->getString('name'),
             $payload->getString('id'),
-            $payload->all(),
+            ['payload' => $data],
         );
     }
 }

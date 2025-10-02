@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Dto\Webhook;
+
+use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+
+readonly class ExtractSoundSuccess
+{
+    public function __construct(
+        #[SerializedName('stream_id')]
+        #[Assert\NotBlank]
+        #[Assert\Uuid]
+        #[Assert\Length(max: 36)]
+        private readonly Uuid $streamId,
+        #[SerializedName('audio_files')]
+        #[Assert\NotBlank]
+        #[Assert\All([
+            new Assert\NotBlank(),
+            new Assert\Type('string'),
+            new Assert\Length(max: 255),
+        ])]
+        private readonly array $audioFiles,
+    ) {
+    }
+
+    public function getStreamId(): Uuid
+    {
+        return $this->streamId;
+    }
+
+    public function getAudioFiles(): array
+    {
+        return $this->audioFiles;
+    }
+}
