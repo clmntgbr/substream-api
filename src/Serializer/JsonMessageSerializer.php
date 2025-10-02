@@ -11,7 +11,9 @@ use Symfony\Component\Uid\Uuid;
 
 class JsonMessageSerializer implements SerializerInterface
 {
-    public function __construct() 
+    public function __construct(
+        private readonly string $apiUrl,
+    ) 
     {
     }
 
@@ -32,8 +34,8 @@ class JsonMessageSerializer implements SerializerInterface
             'task_id' => Uuid::v4(),
             'class' => $message::class,
             'payload' => $message->jsonSerialize(),
-            'webhook_url_success' => $message->getWebhookUrlSuccess(),
-            'webhook_url_failure' => $message->getWebhookUrlFailure(),
+            'webhook_url_success' => $this->apiUrl . '/' . $message->getWebhookUrlSuccess(),
+            'webhook_url_failure' => $this->apiUrl . '/' . $message->getWebhookUrlFailure(),
         ];
 
         return [

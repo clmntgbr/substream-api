@@ -4,7 +4,8 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        bind: ~
+        bind:
+            string $apiUrl: '%env(API_URL)%'
 
     App\:
         resource: '../src/'

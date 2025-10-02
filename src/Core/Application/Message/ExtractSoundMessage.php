@@ -39,11 +39,11 @@ readonly class ExtractSoundMessage implements AsyncMessageInterface
 
     public function getWebhookUrlSuccess(): string
     {
-        return 'extractsoundsuccess';
+        return 'webhook/extractsoundsuccess';
     }
 
     public function getWebhookUrlFailure(): string
     {
-        return 'extractsoundfailure';
+        return 'webhook/extractsoundfailure';
     }
 }

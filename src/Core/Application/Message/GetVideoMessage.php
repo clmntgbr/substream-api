@@ -39,11 +39,11 @@ readonly class GetVideoMessage implements AsyncMessageInterface
 
     public function getWebhookUrlSuccess(): string
     {
-        return 'getvideosuccess';
+        return 'webhook/getvideosuccess';
     }
 
     public function getWebhookUrlFailure(): string
     {
-        return 'getvideofailure';
+        return 'webhook/getvideofailure';
     }
 }

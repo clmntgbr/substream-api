@@ -42,7 +42,7 @@ final class GetVideoSuccessRequestParser extends AbstractRequestParser
             throw new RejectWebhookException(Response::HTTP_UNAUTHORIZED, 'Invalid authentication token.');
         }
 
-        if (!$request->getPayload()->has('name') || !$request->getPayload()->has('id')) {
+        if (!$request->getPayload()->has('name') || !$request->getPayload()->has('task_id')) {
             throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Request payload does not contain required fields.');
         }
 
@@ -59,7 +59,7 @@ final class GetVideoSuccessRequestParser extends AbstractRequestParser
 
         return new RemoteEvent(
             $payload->getString('name'),
-            $payload->getString('id'),
+            $payload->getString('task_id'),
             ['payload' => $data],
         );
     }
