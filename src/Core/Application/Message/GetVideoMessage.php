@@ -6,7 +6,7 @@ use App\Shared\Application\Message\AsyncMessageInterface;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Uid\Uuid;
 
-readonly class GetVideoMessage implements \JsonSerializable, AsyncMessageInterface
+readonly class GetVideoMessage implements AsyncMessageInterface
 {
     public function __construct(
         private Uuid $streamId,
@@ -35,5 +35,15 @@ readonly class GetVideoMessage implements \JsonSerializable, AsyncMessageInterfa
     public function getRoutingKey(): AmqpStamp
     {
         return new AmqpStamp('core.get_video');
+    }
+
+    public function getWebhookUrlSuccess(): string
+    {
+        return 'getvideosuccess';
+    }
+
+    public function getWebhookUrlFailure(): string
+    {
+        return 'getvideofailure';
     }
 }

@@ -41,6 +41,7 @@ framework:
                     max_retries: 0
             core:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                serializer: App\Serializer\JsonMessageSerializer
                 options:
                     exchange:
                         name: 'core'
@@ -55,5 +56,4 @@ framework:
 
         routing:
             'App\Shared\Application\Command\AsyncCommandInterface': async
-            'App\Core\Application\Message\GetVideoMessage': core
-            'App\Core\Application\Message\ExtractSoundMessage': core
+            'App\Shared\Application\Message\AsyncMessageInterface': core

@@ -6,7 +6,7 @@ use App\Shared\Application\Message\AsyncMessageInterface;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Uid\Uuid;
 
-readonly class ExtractSoundMessage implements \JsonSerializable, AsyncMessageInterface
+readonly class ExtractSoundMessage implements AsyncMessageInterface
 {
     public function __construct(
         private Uuid $streamId,
@@ -35,5 +35,15 @@ readonly class ExtractSoundMessage implements \JsonSerializable, AsyncMessageInt
     public function getRoutingKey(): AmqpStamp
     {
         return new AmqpStamp('core.extract_sound');
+    }
+
+    public function getWebhookUrlSuccess(): string
+    {
+        return 'extractsoundsuccess';
+    }
+
+    public function getWebhookUrlFailure(): string
+    {
+        return 'extractsoundfailure';
     }
 }
