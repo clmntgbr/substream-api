@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler\Async;
+namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\GetVideoCommand;
 use App\Core\Application\Message\GetVideoMessage;
