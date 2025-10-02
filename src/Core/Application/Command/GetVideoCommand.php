@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Application\Command\Async;
+namespace App\Core\Application\Command;
 
 use App\Entity\User;
 use App\Shared\Application\Command\AsyncCommandInterface;

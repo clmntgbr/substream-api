@@ -1,19 +1,25 @@
 <?php
 
-namespace App\Core\Application\Command\Async;
+namespace App\Core\Application\Command;
 
 use App\Shared\Application\Command\AsyncCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-readonly class ExtractSoundFailureCommand implements AsyncCommandInterface
+readonly class ExtractSoundCommand implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,
+        private string $fileName,
     ) {
     }
 
     public function getStreamId(): Uuid
     {
         return Uuid::fromString($this->streamId);
+    }
+
+    public function getFileName(): string
+    {
+        return $this->fileName;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Controller\Stream;
 
-use App\Core\Application\Command\Sync\CreateStreamUrlCommand;
+use App\Core\Application\Command\CreateStreamUrlCommand;
 use App\Dto\CreateStreamUrl;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -29,7 +29,7 @@ class CreateStreamUrlController extends AbstractController
                     user: $user,
                 ),
             );
-    
+
             return Response::successResponse([
                 'streamId' => $createStreamModel->streamId,
             ]);

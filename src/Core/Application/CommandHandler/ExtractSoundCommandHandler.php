@@ -4,34 +4,30 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler\Async;
 
-use App\Core\Application\Command\Async\GetVideoCommand;
-use App\Core\Application\Message\GetVideoMessage;
-use App\Repository\StreamRepository;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use App\Shared\Application\Bus\CommandBusInterface;
-use App\Shared\Application\Bus\CoreBusInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
+use App\Core\Application\Command\ExtractSoundCommand;
+use App\Core\Application\Message\ExtractSoundMessage;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Enum\StreamStatusEnum;
-use Symfony\Component\Workflow\Exception\TransitionException;
+use App\Enum\WorkflowTransitionEnum;
+use App\Repository\StreamRepository;
+use App\Shared\Application\Bus\CoreBusInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class GetVideoCommandHandler
+class ExtractSoundCommandHandler
 {
     use WorkflowTrait;
 
     public function __construct(
         private StreamRepository $streamRepository,
-        private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
-        private CoreBusInterface $coreBus,
         private LoggerInterface $logger,
+        private CoreBusInterface $coreBus,
     ) {
     }
 
-    public function __invoke(GetVideoCommand $command): void
+    public function __invoke(ExtractSoundCommand $command): void
     {
         $stream = $this->streamRepository->findByUuid($command->getStreamId());
 
@@ -43,9 +39,12 @@ class GetVideoCommandHandler
             return;
         }
 
-        $this->coreBus->dispatch(new GetVideoMessage(
+        $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND);
+        $this->streamRepository->save($stream);
+
+        $this->coreBus->dispatch(new ExtractSoundMessage(
             streamId: $stream->getId(),
-            url: $command->getUrl(),
+            fileName: $command->getFileName(),
         ));
     }
 }

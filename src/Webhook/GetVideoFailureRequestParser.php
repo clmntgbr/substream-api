@@ -2,6 +2,7 @@
 
 namespace App\Webhook;
 
+use App\Dto\Webhook\GetVideoFailure;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,11 +11,19 @@ use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RemoteEvent\RemoteEvent;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
 final class GetVideoFailureRequestParser extends AbstractRequestParser
 {
+    public const WEBHOOK_NAME = 'getvideofailure';
+
+    public function __construct(
+        private DenormalizerInterface $denormalizer,
+    ) {
+    }
+
     protected function getRequestMatcher(): RequestMatcherInterface
     {
         return new ChainRequestMatcher([
@@ -28,22 +37,25 @@ final class GetVideoFailureRequestParser extends AbstractRequestParser
      */
     protected function doParse(Request $request, #[\SensitiveParameter] string $secret): ?RemoteEvent
     {
-        // TODO: Adapt or replace the content of this method to fit your need.
-
-        // Validate the request against $secret.
         $authToken = $request->headers->get('X-Authentication-Token');
         if ($authToken !== $secret) {
             throw new RejectWebhookException(Response::HTTP_UNAUTHORIZED, 'Invalid authentication token.');
         }
 
-        // Validate the request payload.
-        if (!$request->getPayload()->has('name')
-            || !$request->getPayload()->has('id')) {
+        if (!$request->getPayload()->has('name') || !$request->getPayload()->has('id')) {
             throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Request payload does not contain required fields.');
         }
 
-        // Parse the request payload and return a RemoteEvent object.
-        $payload = $request->getPayload();
+        if (self::WEBHOOK_NAME !== $request->getPayload()->getString('name')) {
+            throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Request payload name is not matching.');
+        }
+
+        try {
+            $payload = $request->getPayload();
+            $this->denormalizer->denormalize($payload->all(), GetVideoFailure::class);
+        } catch (\Exception $e) {
+            throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Invalid payload');
+        }
 
         return new RemoteEvent(
             $payload->getString('name'),

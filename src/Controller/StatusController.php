@@ -3,14 +3,13 @@
 namespace App\Controller;
 
 use App\Shared\Domain\Response\Response;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 class StatusController extends AbstractController
 {
-    public function __construct() 
+    public function __construct()
     {
     }
 

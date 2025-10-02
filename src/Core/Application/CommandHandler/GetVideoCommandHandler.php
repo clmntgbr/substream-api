@@ -4,32 +4,31 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler\Async;
 
-use App\Client\Processor\ExtractSoundProcessorInterface;
-use App\Core\Application\Command\Async\ExtractSoundCommand;
-use App\Core\Application\Message\ExtractSoundMessage;
+use App\Core\Application\Command\GetVideoCommand;
+use App\Core\Application\Message\GetVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Dto\ExtractSound;
-use App\Exception\ProcessorException;
 use App\Repository\StreamRepository;
+use App\Shared\Application\Bus\CommandBusInterface;
+use App\Shared\Application\Bus\CoreBusInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Psr\Log\LoggerInterface;
-use App\Shared\Application\Bus\CoreBusInterface;
 
 #[AsMessageHandler]
-class ExtractSoundCommandHandler
+class GetVideoCommandHandler
 {
     use WorkflowTrait;
 
     public function __construct(
         private StreamRepository $streamRepository,
+        private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
-        private LoggerInterface $logger,
         private CoreBusInterface $coreBus,
+        private LoggerInterface $logger,
     ) {
     }
 
-    public function __invoke(ExtractSoundCommand $command): void
+    public function __invoke(GetVideoCommand $command): void
     {
         $stream = $this->streamRepository->findByUuid($command->getStreamId());
 
@@ -41,9 +40,9 @@ class ExtractSoundCommandHandler
             return;
         }
 
-        $this->coreBus->dispatch(new ExtractSoundMessage(
+        $this->coreBus->dispatch(new GetVideoMessage(
             streamId: $stream->getId(),
-            fileName: $command->getFileName(),
+            url: $command->getUrl(),
         ));
     }
 }

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Core\Application\CommandHandler\Sync;
+namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\Async\GetVideoCommand;
-use App\Core\Application\Command\Sync\CreateStreamCommand;
-use App\Core\Application\Command\Sync\CreateStreamUrlCommand;
+use App\Core\Application\Command\CreateStreamCommand;
+use App\Core\Application\Command\CreateStreamUrlCommand;
+use App\Core\Application\Command\GetVideoCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
-use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;

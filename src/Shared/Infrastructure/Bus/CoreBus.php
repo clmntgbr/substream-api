@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Bus;
 
+use App\Shared\Application\Bus\CoreBusInterface;
 use App\Shared\Application\Message\AsyncMessageInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
-use App\Shared\Application\Bus\CoreBusInterface;
 
 class CoreBus implements CoreBusInterface
 {

@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\CommandHandler\Sync;
+namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\Sync\CreateStreamCommand;
-use App\Core\Application\Command\Async\ExtractSoundCommand;
+use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
 use App\Repository\StreamRepository;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class CreateStreamCommandHandler

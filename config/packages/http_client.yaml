@@ -1,7 +1,3 @@
 framework:
     http_client:
-        scoped_clients:
-            processorClient:
-                base_uri: '%env(PROCESSOR_API_URL)%'
-                headers:
-                    token: '%env(PROCESSOR_TOKEN)%'
+        scoped_clients: ~

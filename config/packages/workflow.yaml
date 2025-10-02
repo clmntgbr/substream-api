@@ -31,3 +31,12 @@ framework:
                 uploaded:
                     from: uploading
                     to:   uploaded
+                extracting_sound:
+                    from: uploaded
+                    to:   extracting_sound
+                extracting_sound_failed:
+                    from: extracting_sound
+                    to:   extracting_sound_failed
+                extracting_sound_completed:
+                    from: extracting_sound
+                    to:   extracting_sound_completed

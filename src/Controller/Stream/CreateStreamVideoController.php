@@ -2,7 +2,7 @@
 
 namespace App\Controller\Stream;
 
-use App\Core\Application\Command\Sync\CreateStreamVideoCommand;
+use App\Core\Application\Command\CreateStreamVideoCommand;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Domain\Response\Response;
