@@ -10,7 +10,6 @@ readonly class GetVideoCommand implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,
-        private User $user,
         private string $url,
     ) {
     }
@@ -18,11 +17,6 @@ readonly class GetVideoCommand implements AsyncCommandInterface
     public function getStreamId(): Uuid
     {
         return Uuid::fromString($this->streamId);
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
     }
 
     public function getUrl(): string

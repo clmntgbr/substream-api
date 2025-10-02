@@ -49,7 +49,6 @@ class CreateStreamUrlCommandHandler
 
         $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),
-            user: $command->getUser(),
             url: $command->getUrl(),
         ));
 
