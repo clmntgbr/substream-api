@@ -14,11 +14,11 @@ readonly class TransformSubtitleSuccess
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         private readonly Uuid $streamId,
-        #[SerializedName('subtitle_ass_file')]
+        #[SerializedName('subtitle_ass_file_name')]
         #[Assert\NotBlank]
         #[Assert\Type('string')]
         #[Assert\Length(max: 255)]
-        private readonly string $subtitleAssFile,
+        private readonly string $subtitleAssFileName,
     ) {
     }
 
@@ -27,8 +27,8 @@ readonly class TransformSubtitleSuccess
         return $this->streamId;
     }
 
-    public function getSubtitleAssFile(): string
+    public function getSubtitleAssFileName(): string
     {
-        return $this->subtitleAssFile;
+        return $this->subtitleAssFileName;
     }
 }

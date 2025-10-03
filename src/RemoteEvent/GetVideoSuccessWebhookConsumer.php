@@ -49,7 +49,6 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
             $stream->setOriginalFileName($response->getOriginalFileName());
             $stream->setMimeType($response->getMimeType());
             $stream->setSize($response->getSize());
-
             $this->apply($stream, WorkflowTransitionEnum::UPLOADED);
 
             $this->commandBus->dispatch(new ExtractSoundCommand(

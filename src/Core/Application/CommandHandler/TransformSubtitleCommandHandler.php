@@ -44,7 +44,7 @@ class TransformSubtitleCommandHandler
 
         $this->coreBus->dispatch(new TransformSubtitleMessage(
             streamId: $stream->getId(),
-            subtitleSrtFile: $command->getSubtitleSrtFile(),
+            subtitleSrtFileName: $command->getSubtitleSrtFileName(),
         ));
     }
 }

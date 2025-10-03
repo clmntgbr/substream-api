@@ -43,7 +43,6 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
 
         try {
             $stream->setAudioFiles($response->getAudioFiles());
-
             $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_COMPLETED);
 
             $this->commandBus->dispatch(new GenerateSubtitleCommand(

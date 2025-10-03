@@ -40,14 +40,8 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
         }
 
         try {
-            $stream->setSubtitleAssFile($response->getSubtitleAssFile());
-
+            $stream->setSubtitleAssFileName($response->getSubtitleAssFileName());
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_COMPLETED);
-
-            // $this->commandBus->dispatch(new ExtractSoundCommand(
-            //     streamId: $stream->getId(),
-            //     fileName: $stream->getFileName(),
-            // ));
         } catch (\Exception $e) {
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_FAILED);
         } finally {

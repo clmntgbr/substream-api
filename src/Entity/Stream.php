@@ -68,11 +68,11 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $subtitleSrtFile = null;
+    private ?string $subtitleSrtFileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $subtitleAssFile = null;
+    private ?string $subtitleAssFileName = null;
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
@@ -237,27 +237,39 @@ class Stream
         return $this;
     }
 
-    public function setSubtitleSrtFile(string $subtitleSrtFile): self
+    public function setSubtitleSrtFileName(string $subtitleSrtFileName): self
     {
-        $this->subtitleSrtFile = $subtitleSrtFile;
+        $this->subtitleSrtFileName = $subtitleSrtFileName;
 
         return $this;
     }
 
-    public function getSubtitleSrtFile(): ?string
+    public function getSubtitleSrtFileName(): ?string
     {
-        return $this->subtitleSrtFile;
+        return $this->subtitleSrtFileName;
     }
 
-    public function setSubtitleAssFile(string $subtitleAssFile): self
+    public function setSubtitleAssFileName(string $subtitleAssFileName): self
     {
-        $this->subtitleAssFile = $subtitleAssFile;
+        $this->subtitleAssFileName = $subtitleAssFileName;
 
         return $this;
     }
 
-    public function getSubtitleAssFile(): ?string
+    public function getSubtitleAssFileName(): ?string
     {
-        return $this->subtitleAssFile;
+        return $this->subtitleAssFileName;
+    }
+
+    #[Groups(['stream:read'])]
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    #[Groups(['stream:read'])]
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
     }
 }

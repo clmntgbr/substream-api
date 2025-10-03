@@ -10,7 +10,7 @@ readonly class TransformSubtitleMessage implements AsyncMessageInterface
 {
     public function __construct(
         private Uuid $streamId,
-        private string $subtitleSrtFile,
+        private string $subtitleSrtFileName,
     ) {
     }
 
@@ -19,16 +19,16 @@ readonly class TransformSubtitleMessage implements AsyncMessageInterface
         return $this->streamId;
     }
 
-    public function getSubtitleSrtFile(): string
+    public function getSubtitleSrtFileName(): string
     {
-        return $this->subtitleSrtFile;
+        return $this->subtitleSrtFileName;
     }
 
     public function jsonSerialize(): array
     {
         return [
             'stream_id' => (string) $this->streamId,
-            'subtitle_srt_file' => $this->subtitleSrtFile,
+            'subtitle_srt_file_name' => $this->subtitleSrtFileName,
         ];
     }
 

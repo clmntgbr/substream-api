@@ -9,7 +9,7 @@ readonly class TransformSubtitleCommand implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,
-        private string $subtitleSrtFile,
+        private string $subtitleSrtFileName,
     ) {
     }
 
@@ -18,8 +18,8 @@ readonly class TransformSubtitleCommand implements AsyncCommandInterface
         return $this->streamId;
     }
 
-    public function getSubtitleSrtFile(): string
+    public function getSubtitleSrtFileName(): string
     {
-        return $this->subtitleSrtFile;
+        return $this->subtitleSrtFileName;
     }
 }
