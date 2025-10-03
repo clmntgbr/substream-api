@@ -5,11 +5,11 @@ namespace App\Core\Application\Command;
 use App\Shared\Application\Command\AsyncCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-readonly class ExtractSoundCommand implements AsyncCommandInterface
+readonly class GenerateSubtitleCommand implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,
-        private string $fileName,
+        private array $audioFiles,
     ) {
     }
 
@@ -18,8 +18,8 @@ readonly class ExtractSoundCommand implements AsyncCommandInterface
         return $this->streamId;
     }
 
-    public function getFileName(): string
+    public function getAudioFiles(): array
     {
-        return $this->fileName;
+        return $this->audioFiles;
     }
 }

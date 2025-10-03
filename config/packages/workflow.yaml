@@ -18,6 +18,9 @@ framework:
                 - extracting_sound
                 - extracting_sound_failed
                 - extracting_sound_completed
+                - generating_subtitle
+                - generating_subtitle_failed
+                - generating_subtitle_completed
             transitions:
                 uploading:
                     from: created
@@ -40,3 +43,12 @@ framework:
                 extracting_sound_completed:
                     from: extracting_sound
                     to:   extracting_sound_completed
+                generating_subtitle:
+                    from: extracting_sound_completed
+                    to:   generating_subtitle
+                generating_subtitle_failed:
+                    from: generating_subtitle
+                    to:   generating_subtitle_failed
+                generating_subtitle_completed:
+                    from: generating_subtitle
+                    to:   generating_subtitle_completed

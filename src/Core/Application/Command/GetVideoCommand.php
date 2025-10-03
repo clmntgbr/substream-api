@@ -15,7 +15,7 @@ readonly class GetVideoCommand implements AsyncCommandInterface
 
     public function getStreamId(): Uuid
     {
-        return Uuid::fromString($this->streamId);
+        return $this->streamId;
     }
 
     public function getUrl(): string

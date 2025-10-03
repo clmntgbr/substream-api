@@ -12,4 +12,8 @@ enum WorkflowTransitionEnum: string
     case EXTRACTING_SOUND = 'extracting_sound';
     case EXTRACTING_SOUND_FAILED = 'extracting_sound_failed';
     case EXTRACTING_SOUND_COMPLETED = 'extracting_sound_completed';
+
+    case GENERATING_SUBTITLE = 'generating_subtitle';
+    case GENERATING_SUBTITLE_FAILED = 'generating_subtitle_failed';
+    case GENERATING_SUBTITLE_COMPLETED = 'generating_subtitle_completed';
 }

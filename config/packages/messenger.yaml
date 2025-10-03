@@ -51,6 +51,8 @@ framework:
                             binding_keys: [core.get_video]
                         core.extract_sound:
                             binding_keys: [core.extract_sound]
+                        core.generate_subtitle:
+                            binding_keys: [core.generate_subtitle]
                 retry_strategy:
                     max_retries: 0
 
