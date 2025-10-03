@@ -13,6 +13,8 @@ PHP := docker exec -ti $(CONTAINER_PHP)
 DATABASE := docker exec -ti $(CONTAINER_DB)
 QA := docker exec -ti $(CONTAINER_QA)
 
+init: install update npm fabric db jwt
+
 ## Kill all containers
 kill:
 	@$(DOCKER_COMPOSE) kill $(CONTAINER) || true

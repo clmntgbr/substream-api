@@ -79,6 +79,7 @@ Created → Uploading → Uploaded → Extracting Sound → Generating Subtitle 
    ```bash
    make db
    make jwt
+   make fabric
    ```
 
 5. **Access the Application**
