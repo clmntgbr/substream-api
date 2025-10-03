@@ -45,7 +45,7 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setSubtitleSrtFile($response->getSubtitleSrtFile());
             $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
-            
+
             $this->commandBus->dispatch(new TransformSubtitleCommand(
                 streamId: $stream->getId(),
                 subtitleSrtFile: $stream->getSubtitleSrtFile(),

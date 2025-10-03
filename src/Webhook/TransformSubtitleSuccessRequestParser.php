@@ -3,7 +3,6 @@
 namespace App\Webhook;
 
 use App\Dto\Webhook\TransformSubtitleSuccess;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +11,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RemoteEvent\RemoteEvent;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
@@ -27,9 +27,9 @@ final class TransformSubtitleSuccessRequestParser extends AbstractRequestParser
     protected function getRequestMatcher(): RequestMatcherInterface
     {
         return new ChainRequestMatcher([
-                new IsJsonRequestMatcher(),
-                new MethodRequestMatcher('POST'),
-            ]);
+            new IsJsonRequestMatcher(),
+            new MethodRequestMatcher('POST'),
+        ]);
     }
 
     /**

@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RemoteEvent\RemoteEvent;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 final class TransformSubtitleFailureRequestParser extends AbstractRequestParser
 {
@@ -27,9 +27,9 @@ final class TransformSubtitleFailureRequestParser extends AbstractRequestParser
     protected function getRequestMatcher(): RequestMatcherInterface
     {
         return new ChainRequestMatcher([
-                new IsJsonRequestMatcher(),
-                new MethodRequestMatcher('POST'),
-            ]);
+            new IsJsonRequestMatcher(),
+            new MethodRequestMatcher('POST'),
+        ]);
     }
 
     /**
