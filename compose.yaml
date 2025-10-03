@@ -81,15 +81,23 @@ services:
             - minio_data:/data/minio
         command: 'minio server /data/minio --console-address ":9001"'
         environment:
-            MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
             MINIO_BROWSER: "on"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+            interval: 30s
+            timeout: 20s
+            retries: 3
+            start_period: 30s
+        restart: unless-stopped
    
     minio-setup:
         container_name: ${PROJECT_NAME}-minio-setup
         image: minio/mc:latest
         depends_on:
-            - minio
+            minio:
+                condition: service_healthy
         env_file:
             - .env
         volumes:
@@ -97,11 +105,17 @@ services:
         entrypoint: >
             /bin/sh -c "
             chmod +x /scripts/setup-minio.sh;
-            sleep 10;
+            sleep 15;
             /scripts/setup-minio.sh;
             "
         networks:
             - substream-network
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+            MINIO_USER: ${MINIO_USER:-substream}
+            MINIO_PASSWORD: ${MINIO_PASSWORD:-substream123}
+            S3_BUCKET_NAME: ${S3_BUCKET_NAME:-substream-bucket}
 
     maildev:
         container_name: ${PROJECT_NAME}-maildev

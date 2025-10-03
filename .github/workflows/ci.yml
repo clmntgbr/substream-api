@@ -17,8 +17,45 @@ jobs:
         name: Checkout
         uses: actions/checkout@v4
       -
-        name: Copy .env.dist to .env
-        run: cp .env.dist .env
+        name: Create .env file for CI
+        run: |
+          cat > .env << EOF
+          # CI Environment Configuration
+          APP_ENV=test
+          APP_SECRET=ci-secret-key-for-testing
+          SERVER_NAME=localhost
+          
+          # Database
+          DATABASE_URL="postgresql://app:!ChangeMe!@database:5432/app?serverVersion=16&charset=utf8"
+          
+          # RabbitMQ
+          RABBITMQ_USER=guest
+          RABBITMQ_PASS=guest
+          RABBITMQ_VHOST=/
+          
+          # MinIO Configuration
+          MINIO_ROOT_USER=minioadmin
+          MINIO_ROOT_PASSWORD=minioadmin123
+          MINIO_USER=substream
+          MINIO_PASSWORD=substream123
+          S3_BUCKET_NAME=substream-bucket
+          
+          # JWT
+          CADDY_MERCURE_JWT_SECRET=!ChangeThisMercureHubJWTSecretKey!
+          CADDY_MERCURE_URL=http://php/.well-known/mercure
+          CADDY_MERCURE_PUBLIC_URL=https://localhost/.well-known/mercure
+          
+          # Project
+          PROJECT_NAME=substream
+          
+          # Ports
+          HTTP_PORT=80
+          HTTPS_PORT=443
+          HTTP3_PORT=443
+          
+          # XDebug
+          XDEBUG_MODE=off
+          EOF
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -41,6 +78,15 @@ jobs:
       -
         name: Start services
         run: docker compose up --wait --no-build
+      -
+        name: Check MinIO health
+        run: |
+          echo "Checking MinIO container status..."
+          docker compose ps minio
+          echo "Checking MinIO logs..."
+          docker compose logs minio --tail=50
+          echo "Checking MinIO setup logs..."
+          docker compose logs minio-setup --tail=50
       -
         name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
