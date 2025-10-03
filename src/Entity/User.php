@@ -20,7 +20,7 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new Get(
-            normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read']],
+            normalizationContext: ['groups' => ['user:read']],
             uriTemplate: '/me',
         ),
     ]

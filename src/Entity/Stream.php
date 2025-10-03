@@ -22,10 +22,10 @@ use Symfony\Component\Uid\Uuid;
     order: ['updatedAt' => 'DESC'],
     operations: [
         new Get(
-            normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read', 'option:read']],
+            normalizationContext: ['groups' => ['stream:read', 'option:read']],
         ),
         new GetCollection(
-            normalizationContext: ['skip_null_values' => false, 'groups' => ['stream:read', 'option:read']],
+            normalizationContext: ['groups' => ['stream:read', 'option:read']],
         ),
         new Post(
             uriTemplate: '/streams/video',
