@@ -53,6 +53,8 @@ framework:
                             binding_keys: [core.extract_sound]
                         core.generate_subtitle:
                             binding_keys: [core.generate_subtitle]
+                        core.transform_subtitle:
+                            binding_keys: [core.transform_subtitle]
                 retry_strategy:
                     max_retries: 0
 

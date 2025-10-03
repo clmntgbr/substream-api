@@ -19,3 +19,9 @@ framework:
       generatesubtitlefailure:
         service: App\Webhook\GenerateSubtitleFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
+      transformsubtitlesuccess:
+        service: App\Webhook\TransformSubtitleSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      transformsubtitlefailure:
+        service: App\Webhook\TransformSubtitleFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'

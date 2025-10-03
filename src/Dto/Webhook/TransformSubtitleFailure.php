@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class GenerateSubtitleSuccess
+readonly class TransformSubtitleFailure
 {
     public function __construct(
         #[SerializedName('stream_id')]
@@ -14,21 +14,11 @@ readonly class GenerateSubtitleSuccess
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         private readonly Uuid $streamId,
-        #[SerializedName('subtitle_srt_file')]
-        #[Assert\NotBlank]
-        #[Assert\Type('string')]
-        #[Assert\Length(max: 255)]
-        private readonly string $subtitleSrtFile,
     ) {
     }
 
     public function getStreamId(): Uuid
     {
         return $this->streamId;
-    }
-
-    public function getSubtitleSrtFile(): string
-    {
-        return $this->subtitleSrtFile;
     }
 }

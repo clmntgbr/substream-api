@@ -19,4 +19,8 @@ enum StreamStatusEnum: string
     case GENERATING_SUBTITLE = 'generating_subtitle';
     case GENERATING_SUBTITLE_FAILED = 'generating_subtitle_failed';
     case GENERATING_SUBTITLE_COMPLETED = 'generating_subtitle_completed';
+
+    case TRANSFORMING_SUBTITLE = 'transforming_subtitle';
+    case TRANSFORMING_SUBTITLE_FAILED = 'transforming_subtitle_failed';
+    case TRANSFORMING_SUBTITLE_COMPLETED = 'transforming_subtitle_completed';
 }

@@ -2,12 +2,13 @@
 
 namespace App\RemoteEvent;
 
-use App\Dto\Webhook\GenerateSubtitleSuccess;
+use App\Core\Application\Command\TransformSubtitleCommand;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Dto\Webhook\GenerateSubtitleSuccess;
 use App\Enum\WorkflowTransitionEnum;
-use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
@@ -22,6 +23,7 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
         private StreamRepository $streamRepository,
         private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -33,17 +35,25 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
         $stream = $this->streamRepository->findByUuid($response->getStreamId());
 
         if (null === $stream) {
-            throw new StreamNotFoundException();
+            $this->logger->error('Stream not found', [
+                'stream_id' => $response->getStreamId(),
+            ]);
+
+            return;
         }
 
-        $stream->setSubtitle($response->getSubtitle());
-
-        $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
-        $this->streamRepository->save($stream);
-
-        // $this->commandBus->dispatch(new GenerateSubtitleCommand(
-        //     streamId: $stream->getId(),
-        //     audioFiles: $stream->getAudioFiles(),
-        // ));
+        try {
+            $stream->setSubtitleSrtFile($response->getSubtitleSrtFile());
+            $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
+            
+            $this->commandBus->dispatch(new TransformSubtitleCommand(
+                streamId: $stream->getId(),
+                subtitleSrtFile: $stream->getSubtitleSrtFile(),
+            ));
+        } catch (\Exception $e) {
+            $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_FAILED);
+        } finally {
+            $this->streamRepository->save($stream);
+        }
     }
 }

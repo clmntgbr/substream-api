@@ -68,7 +68,11 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $subtitle = null;
+    private ?string $subtitleSrtFile = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $subtitleAssFile = null;
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
@@ -233,15 +237,27 @@ class Stream
         return $this;
     }
 
-    public function setSubtitle(string $subtitle): self
+    public function setSubtitleSrtFile(string $subtitleSrtFile): self
     {
-        $this->subtitle = $subtitle;
+        $this->subtitleSrtFile = $subtitleSrtFile;
 
         return $this;
     }
 
-    public function getSubtitle(): ?string
+    public function getSubtitleSrtFile(): ?string
     {
-        return $this->subtitle;
+        return $this->subtitleSrtFile;
+    }
+
+    public function setSubtitleAssFile(string $subtitleAssFile): self
+    {
+        $this->subtitleAssFile = $subtitleAssFile;
+
+        return $this;
+    }
+
+    public function getSubtitleAssFile(): ?string
+    {
+        return $this->subtitleAssFile;
     }
 }
