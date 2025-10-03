@@ -66,6 +66,10 @@ class Stream
     #[Groups(['stream:read'])]
     private array $audioFiles = [];
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $subtitle = null;
+
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
     private string $status;
@@ -227,5 +231,17 @@ class Stream
         $this->audioFiles = $audioFiles;
 
         return $this;
+    }
+
+    public function setSubtitle(string $subtitle): self
+    {
+        $this->subtitle = $subtitle;
+
+        return $this;
+    }
+
+    public function getSubtitle(): ?string
+    {
+        return $this->subtitle;
     }
 }

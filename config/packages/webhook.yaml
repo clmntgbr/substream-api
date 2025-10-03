@@ -13,3 +13,9 @@ framework:
       extractsoundfailure:
         service: App\Webhook\ExtractSoundFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
+      generatesubtitlesuccess:
+        service: App\Webhook\GenerateSubtitleSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      generatesubtitlefailure:
+        service: App\Webhook\GenerateSubtitleFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
