@@ -59,6 +59,9 @@ jobs:
           # XDebug
           XDEBUG_MODE=off
           EOF
+          echo "Created .env file with CI configuration"
+          echo "DATABASE_URL from .env:"
+          grep DATABASE_URL .env
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -87,6 +90,10 @@ jobs:
           echo "Waiting for PHP container to be ready..."
           timeout 300 bash -c 'until docker compose exec -T php php bin/console --version >/dev/null 2>&1; do sleep 5; done'
           echo "PHP container is ready!"
+          echo "Checking database configuration in PHP container..."
+          docker compose exec -T php php bin/console debug:dotenv | grep DATABASE_URL || echo "DATABASE_URL not found in environment"
+          echo "Testing database connection..."
+          docker compose exec -T php php bin/console dbal:run-sql "SELECT 1" || echo "Database connection failed"
           echo "Testing Caddy metrics endpoint..."
           docker compose exec -T php curl -f http://localhost:2019/metrics || echo "Caddy metrics not available yet"
       -
