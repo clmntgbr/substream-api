@@ -82,16 +82,13 @@ jobs:
         name: Start services
         run: docker compose up --wait --no-build
       -
-        name: Install dependencies and setup application
+        name: Wait for PHP container to be ready
         run: |
-          echo "Installing Composer dependencies..."
-          docker compose exec -T php composer install --no-interaction --prefer-dist --optimize-autoloader
-          echo "Clearing cache..."
-          docker compose exec -T php php bin/console cache:clear --env=test
-          echo "Creating database..."
-          docker compose exec -T php php bin/console doctrine:database:create --if-not-exists --env=test
-          echo "Running migrations..."
-          docker compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction --env=test
+          echo "Waiting for PHP container to be ready..."
+          timeout 300 bash -c 'until docker compose exec -T php php bin/console --version >/dev/null 2>&1; do sleep 5; done'
+          echo "PHP container is ready!"
+          echo "Testing Caddy metrics endpoint..."
+          docker compose exec -T php curl -f http://localhost:2019/metrics || echo "Caddy metrics not available yet"
       -
         name: Check container health
         run: |

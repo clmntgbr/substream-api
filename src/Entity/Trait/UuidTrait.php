@@ -24,4 +24,11 @@ trait UuidTrait
 
         return $this;
     }
+
+    public function setIdFromString(string $uuid): self
+    {
+        $this->id = Uuid::fromString($uuid);
+
+        return $this;
+    }
 }

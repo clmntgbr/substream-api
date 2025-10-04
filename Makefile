@@ -108,3 +108,6 @@ php-stan:
 
 consume:
 	$(PHP) php bin/console messenger:consume async --limit=100 -vv
+
+transform-subtitle:
+	$(PHP) php bin/console transform-subtitle

@@ -89,11 +89,11 @@ class Stream
     public static function create(
         Uuid $id,
         User $user,
-        ?string $fileName,
-        ?string $originalFileName,
-        ?string $url,
-        ?string $mimeType,
-        ?int $size,
+        ?string $fileName = null,
+        ?string $originalFileName = null,
+        ?string $url = null,
+        ?string $mimeType = null,
+        ?int $size = null,
     ): self {
         $stream = new self();
         $stream->id = $id;
@@ -143,6 +143,20 @@ class Stream
     {
         $this->status = StreamStatusEnum::from($status)->value;
         $this->statuses[] = StreamStatusEnum::from($status)->value;
+
+        return $this;
+    }
+
+    public function setStatuses(array $statuses): self
+    {
+        $this->statuses = $statuses;
+
+        return $this;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
@@ -249,7 +263,7 @@ class Stream
         return $this->subtitleSrtFileName;
     }
 
-    public function setSubtitleAssFileName(string $subtitleAssFileName): self
+    public function setSubtitleAssFileName(?string $subtitleAssFileName): self
     {
         $this->subtitleAssFileName = $subtitleAssFileName;
 
