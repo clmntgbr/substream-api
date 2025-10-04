@@ -79,8 +79,23 @@ jobs:
         name: Start services
         run: docker compose up --wait --no-build
       -
-        name: Check MinIO health
+        name: Install dependencies and setup application
         run: |
+          echo "Installing Composer dependencies..."
+          docker compose exec -T php composer install --no-interaction --prefer-dist --optimize-autoloader
+          echo "Clearing cache..."
+          docker compose exec -T php php bin/console cache:clear --env=test
+          echo "Creating database..."
+          docker compose exec -T php php bin/console doctrine:database:create --if-not-exists --env=test
+          echo "Running migrations..."
+          docker compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction --env=test
+      -
+        name: Check container health
+        run: |
+          echo "Checking all container status..."
+          docker compose ps
+          echo "Checking PHP container logs..."
+          docker compose logs php --tail=100
           echo "Checking MinIO container status..."
           docker compose ps minio
           echo "Checking MinIO logs..."

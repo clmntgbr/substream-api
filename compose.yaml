@@ -11,8 +11,12 @@ services:
         networks:
             - substream-network
         depends_on:
-            - database
-            - rabbitmq
+            database:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
         environment:
             SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
             MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
@@ -33,6 +37,9 @@ services:
             - target: 443
               published: ${HTTP3_PORT:-443}
               protocol: udp
+            - target: 2019
+              published: 2019
+              protocol: tcp
             
     database:
         image: postgres:latest
@@ -46,6 +53,12 @@ services:
         ports:
             - "9001:5432"
         restart: unless-stopped
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U app -d app"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     rabbitmq:
         container_name: ${PROJECT_NAME}-rabbitmq
@@ -66,6 +79,12 @@ services:
         ports:
             - "9002:5672"
             - "9003:15672"
+        healthcheck:
+            test: ["CMD", "rabbitmq-diagnostics", "ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
     
     minio:
         container_name: ${PROJECT_NAME}-minio
