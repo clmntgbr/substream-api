@@ -4,16 +4,14 @@ namespace App\Command;
 
 use App\Core\Application\Command\TransformSubtitleCommand;
 use App\Entity\Stream;
-use App\Entity\User;
 use App\Enum\StreamStatusEnum;
+use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
-use App\Repository\StreamRepository;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Uid\Uuid;
@@ -28,6 +26,7 @@ class DispatchTransformSubtitleCommand extends Command
         private StreamRepository $streamRepository,
         private CommandBusInterface $commandBus,
         private UserRepository $userRepository,
+        private FilesystemOperator $awsStorage,
     ) {
         parent::__construct();
     }
@@ -58,7 +57,58 @@ class DispatchTransformSubtitleCommand extends Command
         $stream->setStatus(StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value);
         $stream->setStatuses([StreamStatusEnum::CREATED->value, StreamStatusEnum::UPLOADED->value, StreamStatusEnum::EXTRACTING_SOUND->value, StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value, StreamStatusEnum::GENERATING_SUBTITLE->value, StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value]);
 
+        $this->uploadSubtitleSrtFile($stream);
+        $this->uploadAudioFiles($stream);
+        $this->uploadVideoFile($stream);
+
         $this->streamRepository->save($stream);
+
         return $stream;
+    }
+
+    private function uploadSubtitleSrtFile(Stream $stream): void
+    {
+        $path = $stream->getId().'/'.$stream->getSubtitleSrtFileName();
+
+        $handle = fopen('/app/public/debug/'.$stream->getSubtitleSrtFileName(), 'r');
+
+        $this->awsStorage->writeStream($path, $handle, [
+            'visibility' => 'public',
+        ]);
+
+        if (is_resource($handle)) {
+            fclose($handle);
+        }
+    }
+
+    private function uploadAudioFiles(Stream $stream): void
+    {
+        foreach ($stream->getAudioFiles() as $audioFile) {
+            $path = $stream->getId().'/'.$audioFile;
+
+            $handle = fopen('/app/public/debug/'.$audioFile, 'r');
+
+            $this->awsStorage->writeStream($path, $handle, [
+                'visibility' => 'public',
+            ]);
+
+            if (is_resource($handle)) {
+                fclose($handle);
+            }
+        }
+    }
+
+    private function uploadVideoFile(Stream $stream): void
+    {
+        $path = $stream->getId().'/'.$stream->getFileName();
+        $handle = fopen('/app/public/debug/'.$stream->getFileName(), 'r');
+
+        $this->awsStorage->writeStream($path, $handle, [
+            'visibility' => 'public',
+        ]);
+
+        if (is_resource($handle)) {
+            fclose($handle);
+        }
     }
 }

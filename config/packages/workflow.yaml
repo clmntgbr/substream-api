@@ -28,6 +28,17 @@ framework:
                 - transforming_subtitle
                 - transforming_subtitle_failed
                 - transforming_subtitle_completed
+                
+                - resizing_video
+                - resizing_video_failed
+                - resizing_video_completed
+
+                - embedding_video
+                - embedding_video_failed
+                - embedding_video_completed
+
+                - completed
+
             transitions:
                 uploading:
                     from: created
@@ -71,3 +82,27 @@ framework:
                 transforming_subtitle_completed:
                     from: transforming_subtitle
                     to:   transforming_subtitle_completed
+
+                resizing_video:
+                    from: transforming_subtitle_completed
+                    to:   resizing_video
+                resizing_video_failed:
+                    from: resizing_video
+                    to:   resizing_video_failed
+                resizing_video_completed:
+                    from: resizing_video
+                    to:   resizing_video_completed
+                
+                embedding_video:
+                    from: resizing_video_completed
+                    to:   embedding_video
+                embedding_video_failed:
+                    from: embedding_video
+                    to:   embedding_video_failed
+                embedding_video_completed:
+                    from: embedding_video
+                    to:   embedding_video_completed
+
+                completed:
+                    from: embedding_video_completed
+                    to:   completed

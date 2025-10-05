@@ -2,9 +2,9 @@
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\ResizeVideoCommand;
+use App\Core\Application\Command\CompleteVideoCommand;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Dto\Webhook\TransformSubtitleSuccess;
+use App\Dto\Webhook\EmbedVideoSuccess;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -14,22 +14,22 @@ use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-#[AsRemoteEventConsumer('transformsubtitlesuccess')]
-final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
+#[AsRemoteEventConsumer('embedvideosuccess')]
+final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
 {
     use WorkflowTrait;
 
     public function __construct(
         private StreamRepository $streamRepository,
+        private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
-        private CommandBusInterface $commandBus,
     ) {
     }
 
     public function consume(RemoteEvent $event): void
     {
-        /** @var TransformSubtitleSuccess $response */
+        /** @var EmbedVideoSuccess $response */
         $response = $event->getPayload()['payload'];
 
         $stream = $this->streamRepository->findByUuid($response->getStreamId());
@@ -43,16 +43,14 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
         }
 
         try {
-            $stream->setSubtitleAssFileName($response->getSubtitleAssFileName());
-            $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_COMPLETED);
+            $stream->setEmbedFileName($response->getEmbedFileName());
+            $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_COMPLETED);
 
-            $this->commandBus->dispatch(new ResizeVideoCommand(
+            $this->commandBus->dispatch(new CompleteVideoCommand(
                 streamId: $stream->getId(),
-                fileName: $stream->getFileName(),
-                format: 'mp4',
             ));
         } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_FAILED);
+            $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_FAILED);
         } finally {
             $this->streamRepository->save($stream);
         }

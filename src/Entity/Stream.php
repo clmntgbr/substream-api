@@ -74,6 +74,14 @@ class Stream
     #[Groups(['stream:read'])]
     private ?string $subtitleAssFileName = null;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $resizedFileName = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?string $embedFileName = null;
+
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
     private string $status;
@@ -273,6 +281,30 @@ class Stream
     public function getSubtitleAssFileName(): ?string
     {
         return $this->subtitleAssFileName;
+    }
+
+    public function setResizedFileName(string $resizedFileName): self
+    {
+        $this->resizedFileName = $resizedFileName;
+
+        return $this;
+    }
+
+    public function getResizedFileName(): ?string
+    {
+        return $this->resizedFileName;
+    }
+
+    public function setEmbedFileName(string $embedFileName): self
+    {
+        $this->embedFileName = $embedFileName;
+
+        return $this;
+    }
+
+    public function getEmbedFileName(): ?string
+    {
+        return $this->embedFileName;
     }
 
     #[Groups(['stream:read'])]

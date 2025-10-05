@@ -55,6 +55,10 @@ framework:
                             binding_keys: [core.generate_subtitle]
                         core.transform_subtitle:
                             binding_keys: [core.transform_subtitle]
+                        core.resize_video:
+                            binding_keys: [core.resize_video]
+                        core.embed_video:
+                            binding_keys: [core.embed_video]
                 retry_strategy:
                     max_retries: 0
 

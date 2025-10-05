@@ -23,4 +23,12 @@ enum StreamStatusEnum: string
     case TRANSFORMING_SUBTITLE = 'transforming_subtitle';
     case TRANSFORMING_SUBTITLE_FAILED = 'transforming_subtitle_failed';
     case TRANSFORMING_SUBTITLE_COMPLETED = 'transforming_subtitle_completed';
+
+    case RESIZING_VIDEO = 'resizing_video';
+    case RESIZING_VIDEO_FAILED = 'resizing_video_failed';
+    case RESIZING_VIDEO_COMPLETED = 'resizing_video_completed';
+
+    case EMBEDDING_VIDEO = 'embedding_video';
+    case EMBEDDING_VIDEO_FAILED = 'embedding_video_failed';
+    case EMBEDDING_VIDEO_COMPLETED = 'embedding_video_completed';
 }
