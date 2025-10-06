@@ -5,12 +5,12 @@ namespace App\Core\Application\Command;
 use App\Shared\Application\Command\AsyncCommandInterface;
 use Symfony\Component\Uid\Uuid;
 
-readonly class EmbedVideoCommand implements AsyncCommandInterface
+readonly class ChunkVideoCommand implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,
-        private string $subtitleAssFileName,
-        private string $resizeFileName,
+        private int $chunkNumber,
+        private string $embedFileName,
     ) {
     }
 
@@ -19,13 +19,13 @@ readonly class EmbedVideoCommand implements AsyncCommandInterface
         return $this->streamId;
     }
 
-    public function getSubtitleAssFileName(): string
+    public function getChunkNumber(): int
     {
-        return $this->subtitleAssFileName;
+        return $this->chunkNumber;
     }
 
-    public function getResizeFileName(): string
+    public function getEmbedFileName(): string
     {
-        return $this->resizeFileName;
+        return $this->embedFileName;
     }
 }

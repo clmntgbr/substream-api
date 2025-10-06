@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\EmbedVideoCommand;
+use App\Core\Application\Command\ChunkVideoCommand;
+use App\Core\Application\Message\ChunkVideoMessage;
 use App\Core\Application\Message\EmbedVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Enum\WorkflowTransitionEnum;
@@ -15,7 +16,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class EmbedVideoCommandHandler
+class ChunkVideoCommandHandler
 {
     use WorkflowTrait;
 
@@ -27,7 +28,7 @@ class EmbedVideoCommandHandler
     ) {
     }
 
-    public function __invoke(EmbedVideoCommand $command): void
+    public function __invoke(ChunkVideoCommand $command): void
     {
         $stream = $this->streamRepository->findByUuid($command->getStreamId());
 
@@ -39,13 +40,13 @@ class EmbedVideoCommandHandler
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO);
+        $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO);
         $this->streamRepository->save($stream);
 
-        $this->coreBus->dispatch(new EmbedVideoMessage(
+        $this->coreBus->dispatch(new ChunkVideoMessage(
             streamId: $stream->getId(),
-            subtitleAssFileName: $command->getSubtitleAssFileName(),
-            resizeFileName: $command->getResizeFileName(),
+            chunkNumber: $command->getChunkNumber(),
+            embedFileName: $command->getEmbedFileName(),
         ));
     }
 }

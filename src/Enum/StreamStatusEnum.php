@@ -31,4 +31,8 @@ enum StreamStatusEnum: string
     case EMBEDDING_VIDEO = 'embedding_video';
     case EMBEDDING_VIDEO_FAILED = 'embedding_video_failed';
     case EMBEDDING_VIDEO_COMPLETED = 'embedding_video_completed';
+
+    case CHUNKING_VIDEO = 'chunking_video';
+    case CHUNKING_VIDEO_FAILED = 'chunking_video_failed';
+    case CHUNKING_VIDEO_COMPLETED = 'chunking_video_completed';
 }

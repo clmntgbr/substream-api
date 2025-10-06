@@ -37,3 +37,9 @@ framework:
       embedvideosuccess:
         service: App\Webhook\EmbedVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
+      chunkvideosuccess:
+        service: App\Webhook\ChunkVideoSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      chunkvideofailure:
+        service: App\Webhook\ChunkVideoFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'

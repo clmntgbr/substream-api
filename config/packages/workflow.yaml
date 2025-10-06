@@ -37,6 +37,10 @@ framework:
                 - embedding_video_failed
                 - embedding_video_completed
 
+                - chunking_video
+                - chunking_video_failed
+                - chunking_video_completed
+
                 - completed
 
             transitions:
@@ -103,6 +107,16 @@ framework:
                     from: embedding_video
                     to:   embedding_video_completed
 
-                completed:
+                chunking_video:
                     from: embedding_video_completed
+                    to:   chunking_video
+                chunking_video_failed:
+                    from: chunking_video
+                    to:   chunking_video_failed
+                chunking_video_completed:
+                    from: chunking_video
+                    to:   chunking_video_completed
+
+                completed:
+                    from: chunking_video_completed
                     to:   completed

@@ -68,7 +68,7 @@ class DispatchTransformSubtitleCommand extends Command
 
     private function uploadSubtitleSrtFile(Stream $stream): void
     {
-        $path = $stream->getId().'/'.$stream->getSubtitleSrtFileName();
+        $path = $stream->getId().'/subtitles/'.$stream->getSubtitleSrtFileName();
 
         $handle = fopen('/app/public/debug/'.$stream->getSubtitleSrtFileName(), 'r');
 
@@ -84,7 +84,7 @@ class DispatchTransformSubtitleCommand extends Command
     private function uploadAudioFiles(Stream $stream): void
     {
         foreach ($stream->getAudioFiles() as $audioFile) {
-            $path = $stream->getId().'/'.$audioFile;
+            $path = $stream->getId().'/audios/'.$audioFile;
 
             $handle = fopen('/app/public/debug/'.$audioFile, 'r');
 

@@ -76,11 +76,15 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
-    private ?string $resizedFileName = null;
+    private ?string $resizeFileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
     private ?string $embedFileName = null;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?array $chunkFileNames = null;
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['stream:read'])]
@@ -283,16 +287,16 @@ class Stream
         return $this->subtitleAssFileName;
     }
 
-    public function setResizedFileName(string $resizedFileName): self
+    public function setResizeFileName(string $resizeFileName): self
     {
-        $this->resizedFileName = $resizedFileName;
+        $this->resizeFileName = $resizeFileName;
 
         return $this;
     }
 
-    public function getResizedFileName(): ?string
+    public function getResizeFileName(): ?string
     {
-        return $this->resizedFileName;
+        return $this->resizeFileName;
     }
 
     public function setEmbedFileName(string $embedFileName): self
@@ -305,6 +309,18 @@ class Stream
     public function getEmbedFileName(): ?string
     {
         return $this->embedFileName;
+    }
+
+    public function setChunkFileNames(array $chunkFileNames): self
+    {
+        $this->chunkFileNames = $chunkFileNames;
+
+        return $this;
+    }
+    
+    public function getChunkFileNames(): ?array
+    {
+        return $this->chunkFileNames;
     }
 
     #[Groups(['stream:read'])]

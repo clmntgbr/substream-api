@@ -6,12 +6,12 @@ use App\Shared\Application\Message\AsyncMessageInterface;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Uid\Uuid;
 
-readonly class EmbedVideoMessage implements AsyncMessageInterface
+readonly class ChunkVideoMessage implements AsyncMessageInterface
 {
     public function __construct(
         private Uuid $streamId,
-        private string $subtitleAssFileName,
-        private string $resizeFileName,
+        private int $chunkNumber,
+        private string $embedFileName,
     ) {
     }
 
@@ -19,38 +19,38 @@ readonly class EmbedVideoMessage implements AsyncMessageInterface
     {
         return $this->streamId;
     }
-
-    public function getSubtitleAssFileName(): string
+    
+    public function getChunkNumber(): int
     {
-        return $this->subtitleAssFileName;
+        return $this->chunkNumber;
     }
 
-    public function getResizeFileName(): string
+    public function getEmbedFileName(): string
     {
-        return $this->resizeFileName;
+        return $this->embedFileName;
     }
 
     public function jsonSerialize(): array
     {
         return [
             'stream_id' => (string) $this->streamId,
-            'subtitle_ass_file_name' => $this->subtitleAssFileName,
-            'resize_file_name' => $this->resizeFileName,
+            'chunk_number' => $this->chunkNumber,
+            'embed_file_name' => $this->embedFileName,
         ];
     }
 
     public function getRoutingKey(): AmqpStamp
     {
-        return new AmqpStamp('core.embed_video');
+        return new AmqpStamp('core.chunk_video');
     }
 
     public function getWebhookUrlSuccess(): string
     {
-        return 'webhook/embedvideosuccess';
+        return 'webhook/chunkvideosuccess';
     }
 
     public function getWebhookUrlFailure(): string
     {
-        return 'webhook/embedvideofailure';
+        return 'webhook/chunkvideofailure';
     }
 }

@@ -59,6 +59,8 @@ framework:
                             binding_keys: [core.resize_video]
                         core.embed_video:
                             binding_keys: [core.embed_video]
+                        core.chunk_video:
+                            binding_keys: [core.chunk_video]
                 retry_strategy:
                     max_retries: 0
 

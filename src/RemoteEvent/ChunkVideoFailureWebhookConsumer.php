@@ -2,27 +2,24 @@
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\CompleteVideoCommand;
-use App\Core\Application\Command\ChunkVideoCommand;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Dto\Webhook\EmbedVideoSuccess;
+use App\Dto\Webhook\ChunkVideoFailure;
+use App\Dto\Webhook\EmbedVideoFailure;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
-use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-#[AsRemoteEventConsumer('embedvideosuccess')]
-final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
+#[AsRemoteEventConsumer('chunkvideofailure')]
+final class ChunkVideoFailureWebhookConsumer implements ConsumerInterface
 {
     use WorkflowTrait;
 
     public function __construct(
         private StreamRepository $streamRepository,
-        private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
     ) {
@@ -30,7 +27,7 @@ final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
 
     public function consume(RemoteEvent $event): void
     {
-        /** @var EmbedVideoSuccess $response */
+        /** @var ChunkVideoFailure $response */
         $response = $event->getPayload()['payload'];
 
         $stream = $this->streamRepository->findByUuid($response->getStreamId());
@@ -43,19 +40,7 @@ final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
             return;
         }
 
-        try {
-            $stream->setEmbedFileName($response->getEmbedFileName());
-            $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_COMPLETED);
-
-            $this->commandBus->dispatch(new ChunkVideoCommand(
-                streamId: $stream->getId(),
-                chunkNumber: 5,
-                embedFileName: $stream->getEmbedFileName(),
-            ));
-        } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_FAILED);
-        } finally {
-            $this->streamRepository->save($stream);
-        }
+        $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_FAILED);
+        $this->streamRepository->save($stream);
     }
 }
