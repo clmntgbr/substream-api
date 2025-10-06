@@ -32,9 +32,14 @@ readonly class TransformSubtitleMessage implements AsyncMessageInterface
         ];
     }
 
-    public function getRoutingKey(): AmqpStamp
+    /**
+     * @return AmqpStamp[]
+     */
+    public function getStamps(): array
     {
-        return new AmqpStamp('core.transform_subtitle');
+        return [
+            new AmqpStamp('core.transform_subtitle'),
+        ];
     }
 
     public function getWebhookUrlSuccess(): string

@@ -8,8 +8,10 @@ use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Mapper\CreateStreamMapperInterface;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Entity\Stream;
+use App\Event\CreateStreamEvent;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -19,6 +21,7 @@ class CreateStreamCommandHandler
         private StreamRepository $streamRepository,
         private CreateStreamMapperInterface $createStreamMapper,
         private CommandBusInterface $commandBus,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -35,6 +38,8 @@ class CreateStreamCommandHandler
         );
 
         $this->streamRepository->save($stream, true);
+
+        $this->eventDispatcher->dispatch(new CreateStreamEvent($command->getStreamId()));
 
         return $this->createStreamMapper->fromEntity($stream);
     }

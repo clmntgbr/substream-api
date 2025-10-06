@@ -8,7 +8,10 @@ use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 
 interface AsyncMessageInterface extends \JsonSerializable
 {
-    public function getRoutingKey(): AmqpStamp;
+    /**
+     * @return AmqpStamp[]
+     */
+    public function getStamps(): array;
 
     public function jsonSerialize(): array;
 

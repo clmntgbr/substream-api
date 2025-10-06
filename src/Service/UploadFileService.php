@@ -38,4 +38,17 @@ class UploadFileService implements UploadFileServiceInterface
             id: $streamId,
         );
     }
+
+    public function deleteAllFiles(Uuid $streamId): void
+    {
+        $streamPath = $streamId->toRfc4122();
+
+        $files = $this->awsStorage->listContents($streamPath, true);
+
+        foreach ($files as $file) {
+            if ('file' === $file['type']) {
+                $this->awsStorage->delete($file['path']);
+            }
+        }
+    }
 }

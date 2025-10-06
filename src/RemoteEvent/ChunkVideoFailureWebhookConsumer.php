@@ -4,7 +4,6 @@ namespace App\RemoteEvent;
 
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ChunkVideoFailure;
-use App\Dto\Webhook\EmbedVideoFailure;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use Psr\Log\LoggerInterface;

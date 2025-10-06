@@ -6,7 +6,6 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\ChunkVideoCommand;
 use App\Core\Application\Message\ChunkVideoMessage;
-use App\Core\Application\Message\EmbedVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;

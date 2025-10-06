@@ -32,9 +32,14 @@ readonly class ExtractSoundMessage implements AsyncMessageInterface
         ];
     }
 
-    public function getRoutingKey(): AmqpStamp
+    /**
+     * @return AmqpStamp[]
+     */
+    public function getStamps(): array
     {
-        return new AmqpStamp('core.extract_sound');
+        return [
+            new AmqpStamp('core.extract_sound'),
+        ];
     }
 
     public function getWebhookUrlSuccess(): string

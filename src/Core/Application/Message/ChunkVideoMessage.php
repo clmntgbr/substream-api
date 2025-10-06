@@ -19,7 +19,7 @@ readonly class ChunkVideoMessage implements AsyncMessageInterface
     {
         return $this->streamId;
     }
-    
+
     public function getChunkNumber(): int
     {
         return $this->chunkNumber;
@@ -39,9 +39,14 @@ readonly class ChunkVideoMessage implements AsyncMessageInterface
         ];
     }
 
-    public function getRoutingKey(): AmqpStamp
+    /**
+     * @return AmqpStamp[]
+     */
+    public function getStamps(): array
     {
-        return new AmqpStamp('core.chunk_video');
+        return [
+            new AmqpStamp('core.chunk_video'),
+        ];
     }
 
     public function getWebhookUrlSuccess(): string

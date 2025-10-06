@@ -2,10 +2,12 @@
 
 namespace App\Core\Application\Command;
 
+use App\Shared\Application\Command\AsyncCommandAbstract;
 use App\Shared\Application\Command\AsyncCommandInterface;
+use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Uid\Uuid;
 
-readonly class GenerateSubtitleCommand implements AsyncCommandInterface
+final class GenerateSubtitleCommand extends AsyncCommandAbstract implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,

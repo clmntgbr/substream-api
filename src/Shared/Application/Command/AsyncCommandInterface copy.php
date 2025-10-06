@@ -6,10 +6,13 @@ namespace App\Shared\Application\Command;
 
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 
-interface AsyncCommandInterface
+abstract class AsyncCommandAbstract
 {
     /**
      * @return AmqpStamp[]
      */
-    public function getStamps(): array;
+    public function getStamps(): array
+    {
+        return [];
+    }
 }

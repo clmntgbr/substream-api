@@ -7,13 +7,13 @@ use App\Entity\Stream;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
+use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Uid\Uuid;
 
 #[AsCommand(
@@ -27,14 +27,13 @@ class DispatchTransformSubtitleCommand extends Command
         private CommandBusInterface $commandBus,
         private UserRepository $userRepository,
         private FilesystemOperator $awsStorage,
+        private UploadFileServiceInterface $uploadFileService,
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-
         $stream = $this->init();
 
         $this->commandBus->dispatch(new TransformSubtitleCommand(
@@ -54,9 +53,13 @@ class DispatchTransformSubtitleCommand extends Command
         }
 
         $stream->setSubtitleAssFileName(null);
+        $stream->setChunkFileNames([]);
+        $stream->setResizeFileName(null);
+        $stream->setEmbedFileName(null);
         $stream->setStatus(StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value);
         $stream->setStatuses([StreamStatusEnum::CREATED->value, StreamStatusEnum::UPLOADED->value, StreamStatusEnum::EXTRACTING_SOUND->value, StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value, StreamStatusEnum::GENERATING_SUBTITLE->value, StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value]);
 
+        $this->uploadFileService->deleteAllFiles($stream->getId());
         $this->uploadSubtitleSrtFile($stream);
         $this->uploadAudioFiles($stream);
         $this->uploadVideoFile($stream);

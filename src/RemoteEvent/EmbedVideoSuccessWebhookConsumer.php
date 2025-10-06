@@ -2,7 +2,6 @@
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\CompleteVideoCommand;
 use App\Core\Application\Command\ChunkVideoCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\EmbedVideoSuccess;

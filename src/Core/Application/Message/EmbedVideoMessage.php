@@ -39,9 +39,14 @@ readonly class EmbedVideoMessage implements AsyncMessageInterface
         ];
     }
 
-    public function getRoutingKey(): AmqpStamp
+    /**
+     * @return AmqpStamp[]
+     */
+    public function getStamps(): array
     {
-        return new AmqpStamp('core.embed_video');
+        return [
+            new AmqpStamp('core.embed_video'),
+        ];
     }
 
     public function getWebhookUrlSuccess(): string

@@ -39,9 +39,14 @@ readonly class ResizeVideoMessage implements AsyncMessageInterface
         ];
     }
 
-    public function getRoutingKey(): AmqpStamp
+    /**
+     * @return AmqpStamp[]
+     */
+    public function getStamps(): array
     {
-        return new AmqpStamp('core.resize_video');
+        return [
+            new AmqpStamp('core.resize_video'),
+        ];
     }
 
     public function getWebhookUrlSuccess(): string

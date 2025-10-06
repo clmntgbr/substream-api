@@ -6,5 +6,5 @@ namespace App\Shared\Application\Bus;
 
 interface CommandBusInterface
 {
-    public function dispatch(object $message, array $stamps = []): mixed;
+    public function dispatch(object $message): mixed;
 }

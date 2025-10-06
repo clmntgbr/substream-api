@@ -32,9 +32,14 @@ readonly class GenerateSubtitleMessage implements AsyncMessageInterface
         ];
     }
 
-    public function getRoutingKey(): AmqpStamp
+    /**
+     * @return AmqpStamp[]
+     */
+    public function getStamps(): array
     {
-        return new AmqpStamp('core.generate_subtitle');
+        return [
+            new AmqpStamp('core.generate_subtitle'),
+        ];
     }
 
     public function getWebhookUrlSuccess(): string

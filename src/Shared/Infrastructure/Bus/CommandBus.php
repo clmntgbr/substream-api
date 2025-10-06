@@ -18,14 +18,14 @@ class CommandBus implements CommandBusInterface
     ) {
     }
 
-    public function dispatch(object $command, array $stamps = []): mixed
+    public function dispatch(object $command): mixed
     {
         if (!$command instanceof SyncCommandInterface && !$command instanceof AsyncCommandInterface) {
             throw new \RuntimeException('The message must implement SyncCommandInterface or  AsyncCommandInterface.');
         }
 
         if ($command instanceof SyncCommandInterface) {
-            return $this->dispatchSync($command, $stamps);
+            return $this->dispatchSync($command);
         }
 
         if ($command instanceof AsyncCommandInterface) {
@@ -47,9 +47,12 @@ class CommandBus implements CommandBusInterface
         return $handledStamp->getResult();
     }
 
-    private function dispatchAsync(object $command, array $stamps = []): mixed
+    /**
+     * @param AsyncCommandInterface $command
+     */
+    private function dispatchAsync(object $command): mixed
     {
-        $this->asyncCommandBus->dispatch($command, $stamps);
+        $this->asyncCommandBus->dispatch($command, $command->getStamps());
 
         return [
             'status' => 'queued',

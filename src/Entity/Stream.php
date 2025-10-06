@@ -287,7 +287,7 @@ class Stream
         return $this->subtitleAssFileName;
     }
 
-    public function setResizeFileName(string $resizeFileName): self
+    public function setResizeFileName(?string $resizeFileName): self
     {
         $this->resizeFileName = $resizeFileName;
 
@@ -299,7 +299,7 @@ class Stream
         return $this->resizeFileName;
     }
 
-    public function setEmbedFileName(string $embedFileName): self
+    public function setEmbedFileName(?string $embedFileName): self
     {
         $this->embedFileName = $embedFileName;
 
@@ -317,7 +317,7 @@ class Stream
 
         return $this;
     }
-    
+
     public function getChunkFileNames(): ?array
     {
         return $this->chunkFileNames;

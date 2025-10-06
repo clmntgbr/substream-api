@@ -22,6 +22,6 @@ class CoreBus implements CoreBusInterface
             throw new \RuntimeException('The message must implement AsyncMessageInterface.');
         }
 
-        return $this->coreBus->dispatch($message, [$message->getRoutingKey()]);
+        return $this->coreBus->dispatch($message, $message->getStamps());
     }
 }
