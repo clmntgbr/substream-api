@@ -4,7 +4,6 @@ namespace App\Core\Application\Command;
 
 use App\Shared\Application\Command\AsyncCommandAbstract;
 use App\Shared\Application\Command\AsyncCommandInterface;
-use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Uid\Uuid;
 
 final class ResizeVideoCommand extends AsyncCommandAbstract implements AsyncCommandInterface
