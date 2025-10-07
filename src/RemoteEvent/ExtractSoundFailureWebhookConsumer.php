@@ -2,10 +2,13 @@
 
 namespace App\RemoteEvent;
 
+use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ExtractSoundFailure;
+use App\Enum\TaskStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
@@ -21,6 +24,7 @@ final class ExtractSoundFailureWebhookConsumer implements ConsumerInterface
         private StreamRepository $streamRepository,
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -39,7 +43,18 @@ final class ExtractSoundFailureWebhookConsumer implements ConsumerInterface
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_FAILED);
-        $this->streamRepository->save($stream);
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_FAILED);
+
+            $this->commandBus->dispatch(new UpdateTaskCommand(
+                taskId: $response->getTaskId(),
+                processingTime: 0,
+                taskStatus: TaskStatusEnum::FAILED,
+            ));
+        } catch (\Exception $e) {
+            $stream->markAsExtractSoundFailed();
+        } finally {
+            $this->streamRepository->save($stream);
+        }
     }
 }

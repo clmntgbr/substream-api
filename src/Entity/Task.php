@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ApiResource]
@@ -22,12 +23,15 @@ class Task
     #[ORM\JoinColumn(nullable: false)]
     private Stream $stream;
 
+    #[Groups(['stream:read'])]
     #[ORM\Column(type: Types::STRING)]
     private string $commandClass;
 
+    #[Groups(['stream:read'])]
     #[ORM\Column(type: Types::STRING)]
     private string $status;
 
+    #[Groups(['stream:read'])]
     #[ORM\Column(type: Types::INTEGER)]
     private int $processingTime;
 

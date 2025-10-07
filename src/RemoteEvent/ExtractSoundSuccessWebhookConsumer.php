@@ -56,7 +56,7 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
                 audioFiles: $stream->getAudioFiles(),
             ));
         } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_FAILED);
+            $stream->markAsExtractSoundFailed();
         } finally {
             $this->streamRepository->save($stream);
         }

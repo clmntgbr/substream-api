@@ -56,7 +56,7 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
                 streamId: $stream->getId(),
             ));
         } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_FAILED);
+            $stream->markAsChunkingVideoFailed();
         } finally {
             $this->streamRepository->save($stream);
         }

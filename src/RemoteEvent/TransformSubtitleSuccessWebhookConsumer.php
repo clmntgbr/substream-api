@@ -58,7 +58,7 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
                 format: 'mp4',
             ));
         } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_FAILED);
+            $stream->markAsTransformingSubtitleFailed();
         } finally {
             $this->streamRepository->save($stream);
         }

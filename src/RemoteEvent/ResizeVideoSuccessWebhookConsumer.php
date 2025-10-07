@@ -58,7 +58,7 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
                 resizeFileName: $stream->getResizeFileName(),
             ));
         } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::RESIZING_VIDEO_FAILED);
+            $stream->markAsResizingVideoFailed();
         } finally {
             $this->streamRepository->save($stream);
         }

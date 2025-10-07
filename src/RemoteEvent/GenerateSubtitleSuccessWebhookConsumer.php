@@ -57,7 +57,7 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
                 subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
             ));
         } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_FAILED);
+            $stream->markAsGenerateSubtitleFailed();
         } finally {
             $this->streamRepository->save($stream);
         }

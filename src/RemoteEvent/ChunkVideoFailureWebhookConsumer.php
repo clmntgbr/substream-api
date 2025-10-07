@@ -5,6 +5,7 @@ namespace App\RemoteEvent;
 use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ChunkVideoFailure;
+use App\Enum\TaskStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
@@ -44,12 +45,19 @@ final class ChunkVideoFailureWebhookConsumer implements ConsumerInterface
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_FAILED);
-        $this->streamRepository->save($stream);
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_FAILED);
+            $this->streamRepository->save($stream);
 
-        $this->commandBus->dispatch(new UpdateTaskCommand(
-            taskId: $response->getTaskId(),
-            processingTime: 0,
-        ));
+            $this->commandBus->dispatch(new UpdateTaskCommand(
+                taskId: $response->getTaskId(),
+                processingTime: 0,
+                taskStatus: TaskStatusEnum::FAILED,
+            ));
+        } catch (\Exception $e) {
+            $stream->markAsChunkingVideoFailed();
+        } finally {
+            $this->streamRepository->save($stream);
+        }
     }
 }

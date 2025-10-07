@@ -17,6 +17,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
@@ -100,6 +101,7 @@ class Stream
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
+    #[Groups(['stream:read'])]
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
     private Collection $tasks;
 
@@ -199,26 +201,50 @@ class Stream
         return $this;
     }
 
-    public function markAsUploaded(): self
+    public function markAsGenerateSubtitleFailed(): self
     {
-        $this->status = StreamStatusEnum::UPLOADED->value;
-        $this->statuses[] = StreamStatusEnum::UPLOADED->value;
+        $this->status = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
 
         return $this;
     }
 
-    public function markAsUploading(): self
+    public function markAsTransformingSubtitleFailed(): self
     {
-        $this->status = StreamStatusEnum::UPLOADING->value;
-        $this->statuses[] = StreamStatusEnum::UPLOADING->value;
+        $this->status = StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value;
 
         return $this;
     }
 
-    public function markAsExtractSoundCompleted(): self
+    public function markAsResizingVideoFailed(): self
     {
-        $this->status = StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value;
-        $this->statuses[] = StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value;
+        $this->status = StreamStatusEnum::RESIZING_VIDEO_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::RESIZING_VIDEO_FAILED->value;
+
+        return $this;
+    }
+
+    public function markAsGeneratingSubtitleFailed(): self
+    {
+        $this->status = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
+
+        return $this;
+    }
+
+    public function markAsChunkingVideoFailed(): self
+    {
+        $this->status = StreamStatusEnum::CHUNKING_VIDEO_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::CHUNKING_VIDEO_FAILED->value;
+
+        return $this;
+    }
+
+    public function markAsEmbeddingVideoFailed(): self
+    {
+        $this->status = StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value;
 
         return $this;
     }
@@ -355,5 +381,19 @@ class Stream
         $this->tasks = $tasks;
 
         return $this;
+    }
+
+    public function getProcessingTimeInMilliseconds(): int
+    {
+        return $this->tasks
+            ->map(fn (Task $task) => $task->getProcessingTime())
+            ->reduce(fn (int $carry, int $item) => $carry + $item, 0);
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('processingTimeInSeconds')]
+    public function getProcessingTimeInSeconds(): int
+    {
+        return $this->getProcessingTimeInMilliseconds() / 1000;
     }
 }

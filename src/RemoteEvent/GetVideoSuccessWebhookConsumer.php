@@ -62,7 +62,7 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
                 fileName: $stream->getFileName(),
             ));
         } catch (\Exception $e) {
-            $this->apply($stream, WorkflowTransitionEnum::UPLOAD_FAILED);
+            $stream->markAsUploadFailed();
         } finally {
             $this->streamRepository->save($stream);
         }

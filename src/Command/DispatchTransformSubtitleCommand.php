@@ -9,6 +9,7 @@ use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -52,6 +53,7 @@ class DispatchTransformSubtitleCommand extends Command
             throw new \Exception('Stream not found');
         }
 
+        $stream->setTasks(new ArrayCollection());
         $stream->setSubtitleAssFileName(null);
         $stream->setChunkFileNames([]);
         $stream->setResizeFileName(null);
