@@ -102,14 +102,25 @@ class Task
         return $this;
     }
 
-    #[SerializedName('processingTimeInSeconds')]
     public function getProcessingTimeInSeconds(): int
     {
         return $this->processingTime / 1000;
     }
 
     #[Groups(['stream:read'])]
-    #[SerializedName('processingTimeFormatted')]
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    #[Groups(['stream:read'])]
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('processingTime')]
     public function getProcessingTimeFormatted(): string
     {
         $totalSeconds = (int) floor($this->processingTime / 1000);
