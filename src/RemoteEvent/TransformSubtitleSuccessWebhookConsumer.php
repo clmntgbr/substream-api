@@ -47,11 +47,6 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
             $stream->setSubtitleAssFileName($response->getSubtitleAssFileName());
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_COMPLETED);
 
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: $response->getProcessingTime(),
-            ));
-
             $this->commandBus->dispatch(new ResizeVideoCommand(
                 streamId: $stream->getId(),
                 fileName: $stream->getFileName(),
@@ -62,5 +57,10 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: $response->getProcessingTime(),
+        ));
     }
 }

@@ -47,14 +47,14 @@ final class TransformSubtitleFailureWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_FAILED);
         } catch (\Exception $e) {
             $stream->markAsTransformingSubtitleFailed();
-
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: 0,
-                taskStatus: TaskStatusEnum::FAILED,
-            ));
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: 0,
+            taskStatus: TaskStatusEnum::FAILED,
+        ));
     }
 }

@@ -47,15 +47,14 @@ final class GenerateSubtitleFailureWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_FAILED);
         } catch (\Exception $e) {
             $stream->markAsGenerateSubtitleFailed();
-
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: 0,
-                taskStatus: TaskStatusEnum::FAILED,
-            ));
         } finally {
             $this->streamRepository->save($stream);
         }
-        $this->streamRepository->save($stream);
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: 0,
+            taskStatus: TaskStatusEnum::FAILED,
+        ));
     }
 }

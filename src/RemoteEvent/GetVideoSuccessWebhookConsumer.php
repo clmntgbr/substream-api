@@ -52,11 +52,6 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
             $stream->setSize($response->getSize());
             $this->apply($stream, WorkflowTransitionEnum::UPLOADED);
 
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: $response->getProcessingTime(),
-            ));
-
             $this->commandBus->dispatch(new ExtractSoundCommand(
                 streamId: $stream->getId(),
                 fileName: $stream->getFileName(),
@@ -66,5 +61,10 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: $response->getProcessingTime(),
+        ));
     }
 }

@@ -47,11 +47,6 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
             $stream->setResizeFileName($response->getResizeFileName());
             $this->apply($stream, WorkflowTransitionEnum::RESIZING_VIDEO_COMPLETED);
 
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: $response->getProcessingTime(),
-            ));
-
             $this->commandBus->dispatch(new EmbedVideoCommand(
                 streamId: $stream->getId(),
                 subtitleAssFileName: $stream->getSubtitleAssFileName(),
@@ -62,5 +57,10 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: $response->getProcessingTime(),
+        ));
     }
 }

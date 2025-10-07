@@ -45,17 +45,16 @@ final class EmbedVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_FAILED);
-            $this->streamRepository->save($stream);
-
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: 0,
-                taskStatus: TaskStatusEnum::FAILED,
-            ));
         } catch (\Exception $e) {
             $stream->markAsEmbeddingVideoFailed();
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: 0,
+            taskStatus: TaskStatusEnum::FAILED,
+        ));
     }
 }

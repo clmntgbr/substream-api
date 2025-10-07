@@ -47,17 +47,16 @@ final class ChunkVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_FAILED);
-            $this->streamRepository->save($stream);
-
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: 0,
-                taskStatus: TaskStatusEnum::FAILED,
-            ));
         } catch (\Exception $e) {
             $stream->markAsChunkingVideoFailed();
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: 0,
+            taskStatus: TaskStatusEnum::FAILED,
+        ));
     }
 }

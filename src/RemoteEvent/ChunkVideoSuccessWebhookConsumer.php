@@ -47,11 +47,6 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
             $stream->setChunkFileNames($response->getChunkFileNames());
             $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_COMPLETED);
 
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: $response->getProcessingTime(),
-            ));
-
             $this->commandBus->dispatch(new CompleteVideoCommand(
                 streamId: $stream->getId(),
             ));
@@ -60,5 +55,10 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: $response->getProcessingTime(),
+        ));
     }
 }

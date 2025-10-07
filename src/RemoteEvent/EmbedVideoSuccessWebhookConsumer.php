@@ -47,11 +47,6 @@ final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
             $stream->setEmbedFileName($response->getEmbedFileName());
             $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_COMPLETED);
 
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: $response->getProcessingTime(),
-            ));
-
             $this->commandBus->dispatch(new ChunkVideoCommand(
                 streamId: $stream->getId(),
                 chunkNumber: 5,
@@ -62,5 +57,10 @@ final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: $response->getProcessingTime(),
+        ));
     }
 }

@@ -45,16 +45,16 @@ final class ExtractSoundFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_FAILED);
-
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: 0,
-                taskStatus: TaskStatusEnum::FAILED,
-            ));
         } catch (\Exception $e) {
             $stream->markAsExtractSoundFailed();
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: 0,
+            taskStatus: TaskStatusEnum::FAILED,
+        ));
     }
 }

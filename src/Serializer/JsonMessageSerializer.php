@@ -7,7 +7,6 @@ namespace App\Serializer;
 use App\Shared\Application\Message\AsyncMessageInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
-use Symfony\Component\Uid\Uuid;
 
 class JsonMessageSerializer implements SerializerInterface
 {

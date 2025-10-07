@@ -47,16 +47,16 @@ final class GetVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::UPLOAD_FAILED);
-
-            $this->commandBus->dispatch(new UpdateTaskCommand(
-                taskId: $response->getTaskId(),
-                processingTime: 0,
-                taskStatus: TaskStatusEnum::FAILED,
-            ));
         } catch (\Exception $e) {
             $stream->markAsUploadFailed();
         } finally {
             $this->streamRepository->save($stream);
         }
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: 0,
+            taskStatus: TaskStatusEnum::FAILED,
+        ));
     }
 }
