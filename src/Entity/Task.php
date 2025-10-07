@@ -32,7 +32,6 @@ class Task
     #[ORM\Column(type: Types::STRING)]
     private string $status;
 
-    #[Groups(['stream:read'])]
     #[ORM\Column(type: Types::INTEGER)]
     private int $processingTime;
 
@@ -103,10 +102,20 @@ class Task
         return $this;
     }
 
-    #[Groups(['stream:read'])]
     #[SerializedName('processingTimeInSeconds')]
     public function getProcessingTimeInSeconds(): int
     {
         return $this->processingTime / 1000;
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('processingTimeFormatted')]
+    public function getProcessingTimeFormatted(): string
+    {
+        $totalSeconds = (int) floor($this->processingTime / 1000);
+        $hours = (int) floor($totalSeconds / 3600);
+        $minutes = (int) floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 }

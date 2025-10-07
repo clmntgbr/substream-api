@@ -398,10 +398,20 @@ class Stream
             ->reduce(fn (int $carry, int $item) => $carry + $item, 0);
     }
 
-    #[Groups(['stream:read'])]
-    #[SerializedName('processingTimeInSeconds')]
     public function getProcessingTimeInSeconds(): int
     {
         return $this->getProcessingTimeInMilliseconds() / 1000;
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('processingTime')]
+    public function getProcessingTimeFormatted(): string
+    {
+        $processingTime = $this->getProcessingTimeInMilliseconds();
+        $totalSeconds = (int) floor($processingTime / 1000);
+        $hours = (int) floor($totalSeconds / 3600);
+        $minutes = (int) floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 }
