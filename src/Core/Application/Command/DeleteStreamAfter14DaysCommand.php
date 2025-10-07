@@ -8,7 +8,7 @@ use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Uid\Uuid;
 
-final class DeleteStreamAfter7DaysCommand extends AsyncCommandAbstract implements AsyncCommandInterface
+final class DeleteStreamAfter14DaysCommand extends AsyncCommandAbstract implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,
@@ -26,7 +26,7 @@ final class DeleteStreamAfter7DaysCommand extends AsyncCommandAbstract implement
     public function getStamps(): array
     {
         return [
-            new DelayStamp(7 * 24 * 60 * 60 * 1000),
+            new DelayStamp(14 * 24 * 60 * 60 * 1000),
         ];
     }
 }

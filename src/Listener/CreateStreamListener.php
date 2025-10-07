@@ -2,8 +2,10 @@
 
 namespace App\Listener;
 
+use App\Core\Application\Command\DeleteStreamAfter14DaysCommand;
 use App\Event\CreateStreamEvent;
 use App\Repository\StreamRepository;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 #[AsEventListener(event: CreateStreamEvent::class, method: 'onCreateStream')]
@@ -11,6 +13,7 @@ class CreateStreamListener
 {
     public function __construct(
         private StreamRepository $streamRepository,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -23,5 +26,9 @@ class CreateStreamListener
         if (null === $stream) {
             return;
         }
+        
+        $this->commandBus->dispatch(new DeleteStreamAfter14DaysCommand(
+            streamId: $streamId,
+        ));
     }
 }

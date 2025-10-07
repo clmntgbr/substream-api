@@ -249,6 +249,14 @@ class Stream
         return $this;
     }
 
+    public function markAsDeleted(): self
+    {
+        $this->status = StreamStatusEnum::DELETED->value;
+        $this->statuses[] = StreamStatusEnum::DELETED->value;
+
+        return $this;
+    }
+
     public function getAudioFiles(): array
     {
         return $this->audioFiles;

@@ -7,6 +7,7 @@ enum StreamStatusEnum: string
     case CREATED = 'created';
     case FAILED = 'failed';
     case COMPLETED = 'completed';
+    case DELETED = 'deleted';
 
     case UPLOADED = 'uploaded';
     case UPLOADING = 'uploading';
