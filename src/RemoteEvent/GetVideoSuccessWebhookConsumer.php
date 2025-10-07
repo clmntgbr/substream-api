@@ -3,7 +3,7 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\ExtractSoundCommand;
-use App\Core\Application\Command\UpdateTaskCommand;
+use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\GetVideoSuccess;
 use App\Enum\WorkflowTransitionEnum;
@@ -62,7 +62,7 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
             $this->streamRepository->save($stream);
         }
 
-        $this->commandBus->dispatch(new UpdateTaskCommand(
+        $this->commandBus->dispatch(new UpdateTaskSuccessCommand(
             taskId: $response->getTaskId(),
             processingTime: $response->getProcessingTime(),
         ));

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\UpdateTaskCommand;
+use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class UpdateTaskCommandHandler
+class UpdateTaskSuccessCommandHandler
 {
     use WorkflowTrait;
 
@@ -27,7 +27,7 @@ class UpdateTaskCommandHandler
     ) {
     }
 
-    public function __invoke(UpdateTaskCommand $command): void
+    public function __invoke(UpdateTaskSuccessCommand $command): void
     {
         $task = $this->taskRepository->findByUuid($command->getTaskId());
 

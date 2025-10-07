@@ -3,7 +3,7 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\TransformSubtitleCommand;
-use App\Core\Application\Command\UpdateTaskCommand;
+use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\GenerateSubtitleSuccess;
 use App\Enum\WorkflowTransitionEnum;
@@ -57,7 +57,7 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
             $this->streamRepository->save($stream);
         }
 
-        $this->commandBus->dispatch(new UpdateTaskCommand(
+        $this->commandBus->dispatch(new UpdateTaskSuccessCommand(
             taskId: $response->getTaskId(),
             processingTime: $response->getProcessingTime(),
         ));

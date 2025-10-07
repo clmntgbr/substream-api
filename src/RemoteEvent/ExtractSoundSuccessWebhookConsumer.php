@@ -3,8 +3,9 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\GenerateSubtitleCommand;
-use App\Core\Application\Command\UpdateTaskCommand;
+use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Dto\Webhook\ExtractSoundSuccess;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -29,7 +30,7 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
 
     public function consume(RemoteEvent $event): void
     {
-        /** @var GetVideoSuccess $response */
+        /** @var ExtractSoundSuccess $response */
         $response = $event->getPayload()['payload'];
 
         $stream = $this->streamRepository->findByUuid($response->getStreamId());
@@ -56,7 +57,7 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
             $this->streamRepository->save($stream);
         }
 
-        $this->commandBus->dispatch(new UpdateTaskCommand(
+        $this->commandBus->dispatch(new UpdateTaskSuccessCommand(
             taskId: $response->getTaskId(),
             processingTime: $response->getProcessingTime(),
         ));

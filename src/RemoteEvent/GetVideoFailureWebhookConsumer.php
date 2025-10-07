@@ -2,10 +2,9 @@
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\UpdateTaskCommand;
+use App\Core\Application\Command\UpdateTaskFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\GetVideoFailure;
-use App\Enum\TaskStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -53,10 +52,8 @@ final class GetVideoFailureWebhookConsumer implements ConsumerInterface
             $this->streamRepository->save($stream);
         }
 
-        $this->commandBus->dispatch(new UpdateTaskCommand(
+        $this->commandBus->dispatch(new UpdateTaskFailureCommand(
             taskId: $response->getTaskId(),
-            processingTime: 0,
-            taskStatus: TaskStatusEnum::FAILED,
         ));
     }
 }
