@@ -2,13 +2,13 @@
 
 namespace App\Core\Application\Command;
 
-use App\Shared\Application\Command\AsyncCommandAbstract;
 use App\Shared\Application\Command\AsyncCommandInterface;
+use App\Shared\Application\Command\CommandAbstract;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Uid\Uuid;
 
-final class DeleteStreamAfter14DaysCommand extends AsyncCommandAbstract implements AsyncCommandInterface
+final class DeleteStreamAfter14DaysCommand extends CommandAbstract implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,

@@ -2,11 +2,11 @@
 
 namespace App\Core\Application\Command;
 
-use App\Shared\Application\Command\AsyncCommandAbstract;
 use App\Shared\Application\Command\AsyncCommandInterface;
+use App\Shared\Application\Command\CommandAbstract;
 use Symfony\Component\Uid\Uuid;
 
-final class ChunkVideoCommand extends AsyncCommandAbstract implements AsyncCommandInterface
+final class ChunkVideoCommand extends CommandAbstract implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,

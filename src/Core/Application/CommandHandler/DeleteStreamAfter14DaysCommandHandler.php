@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\DeleteStreamAfter14DaysCommand;
-use App\Core\Application\Command\ExtractSoundCommand;
-use App\Core\Application\Message\ExtractSoundMessage;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Entity\Task;
-use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Service\UploadFileServiceInterface;
@@ -46,7 +42,7 @@ class DeleteStreamAfter14DaysCommandHandler
         }
 
         $this->uploadFileService->deleteAllFiles($stream->getId());
-        
+
         $stream->markAsDeleted();
         $this->streamRepository->save($stream);
     }

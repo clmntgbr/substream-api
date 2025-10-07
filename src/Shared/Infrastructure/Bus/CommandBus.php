@@ -28,11 +28,7 @@ class CommandBus implements CommandBusInterface
             return $this->dispatchSync($command);
         }
 
-        if ($command instanceof AsyncCommandInterface) {
-            return $this->dispatchAsync($command);
-        }
-
-        return $this->dispatchSync($command);
+        return $this->dispatchAsync($command);
     }
 
     private function dispatchSync(object $command): mixed

@@ -2,11 +2,11 @@
 
 namespace App\Core\Application\Command;
 
-use App\Shared\Application\Command\AsyncCommandAbstract;
 use App\Shared\Application\Command\AsyncCommandInterface;
+use App\Shared\Application\Command\CommandAbstract;
 use Symfony\Component\Uid\Uuid;
 
-final class EmbedVideoCommand extends AsyncCommandAbstract implements AsyncCommandInterface
+final class EmbedVideoCommand extends CommandAbstract implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,

@@ -2,11 +2,11 @@
 
 namespace App\Core\Application\Command;
 
-use App\Shared\Application\Command\AsyncCommandAbstract;
 use App\Shared\Application\Command\AsyncCommandInterface;
+use App\Shared\Application\Command\CommandAbstract;
 use Symfony\Component\Uid\Uuid;
 
-final class ResizeVideoCommand extends AsyncCommandAbstract implements AsyncCommandInterface
+final class ResizeVideoCommand extends CommandAbstract implements AsyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,

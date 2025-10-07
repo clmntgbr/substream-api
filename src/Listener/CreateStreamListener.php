@@ -26,7 +26,7 @@ class CreateStreamListener
         if (null === $stream) {
             return;
         }
-        
+
         $this->commandBus->dispatch(new DeleteStreamAfter14DaysCommand(
             streamId: $streamId,
         ));
