@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
@@ -100,5 +101,12 @@ class Task
         $this->processingTime = $processingTime;
 
         return $this;
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('processingTimeInSeconds')]
+    public function getProcessingTimeInSeconds(): int
+    {
+        return $this->processingTime / 1000;
     }
 }
