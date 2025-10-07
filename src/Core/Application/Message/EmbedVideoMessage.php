@@ -9,10 +9,16 @@ use Symfony\Component\Uid\Uuid;
 readonly class EmbedVideoMessage implements AsyncMessageInterface
 {
     public function __construct(
+        private Uuid $taskId,
         private Uuid $streamId,
         private string $subtitleAssFileName,
         private string $resizeFileName,
     ) {
+    }
+
+    public function getTaskId(): Uuid
+    {
+        return $this->taskId;
     }
 
     public function getStreamId(): Uuid
@@ -33,6 +39,7 @@ readonly class EmbedVideoMessage implements AsyncMessageInterface
     public function jsonSerialize(): array
     {
         return [
+            'task_id' => (string) $this->taskId,
             'stream_id' => (string) $this->streamId,
             'subtitle_ass_file_name' => $this->subtitleAssFileName,
             'resize_file_name' => $this->resizeFileName,

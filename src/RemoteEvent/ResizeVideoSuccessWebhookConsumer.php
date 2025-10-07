@@ -3,6 +3,7 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\EmbedVideoCommand;
+use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ResizeVideoSuccess;
 use App\Enum\WorkflowTransitionEnum;
@@ -45,6 +46,11 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setResizeFileName($response->getResizeFileName());
             $this->apply($stream, WorkflowTransitionEnum::RESIZING_VIDEO_COMPLETED);
+
+            $this->commandBus->dispatch(new UpdateTaskCommand(
+                taskId: $response->getTaskId(),
+                processingTime: $response->getProcessingTime(),
+            ));
 
             $this->commandBus->dispatch(new EmbedVideoCommand(
                 streamId: $stream->getId(),

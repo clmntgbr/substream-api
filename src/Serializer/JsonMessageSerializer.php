@@ -30,7 +30,6 @@ class JsonMessageSerializer implements SerializerInterface
         }
 
         $data = [
-            'task_id' => Uuid::v4(),
             'class' => $message::class,
             'payload' => $message->jsonSerialize(),
             'webhook_url_success' => $this->apiUrl.'/'.$message->getWebhookUrlSuccess(),

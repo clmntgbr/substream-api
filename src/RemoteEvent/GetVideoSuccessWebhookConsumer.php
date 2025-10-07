@@ -3,6 +3,7 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\ExtractSoundCommand;
+use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\GetVideoSuccess;
 use App\Enum\WorkflowTransitionEnum;
@@ -50,6 +51,11 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
             $stream->setMimeType($response->getMimeType());
             $stream->setSize($response->getSize());
             $this->apply($stream, WorkflowTransitionEnum::UPLOADED);
+
+            $this->commandBus->dispatch(new UpdateTaskCommand(
+                taskId: $response->getTaskId(),
+                processingTime: $response->getProcessingTime(),
+            ));
 
             $this->commandBus->dispatch(new ExtractSoundCommand(
                 streamId: $stream->getId(),

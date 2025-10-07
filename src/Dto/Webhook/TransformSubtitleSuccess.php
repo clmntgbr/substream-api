@@ -14,11 +14,20 @@ readonly class TransformSubtitleSuccess
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         private readonly Uuid $streamId,
+        #[SerializedName('task_id')]
+        #[Assert\NotBlank]
+        #[Assert\Uuid]
+        #[Assert\Length(max: 36)]
+        private readonly Uuid $taskId,
         #[SerializedName('subtitle_ass_file_name')]
         #[Assert\NotBlank]
         #[Assert\Type('string')]
         #[Assert\Length(max: 255)]
         private readonly string $subtitleAssFileName,
+        #[SerializedName('processing_time')]
+        #[Assert\NotBlank]
+        #[Assert\Type('int')]
+        private readonly int $processingTime,
     ) {
     }
 
@@ -27,8 +36,18 @@ readonly class TransformSubtitleSuccess
         return $this->streamId;
     }
 
+    public function getTaskId(): Uuid
+    {
+        return $this->taskId;
+    }
+
     public function getSubtitleAssFileName(): string
     {
         return $this->subtitleAssFileName;
+    }
+
+    public function getProcessingTime(): int
+    {
+        return $this->processingTime;
     }
 }

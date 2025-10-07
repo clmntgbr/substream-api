@@ -7,8 +7,10 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\GenerateSubtitleCommand;
 use App\Core\Application\Message\GenerateSubtitleMessage;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
+use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -24,6 +26,7 @@ class GenerateSubtitleCommandHandler
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
         private CoreBusInterface $coreBus,
+        private TaskRepository $taskRepository,
     ) {
     }
 
@@ -42,7 +45,11 @@ class GenerateSubtitleCommandHandler
         $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE);
         $this->streamRepository->save($stream);
 
+        $task = Task::create(GenerateSubtitleCommand::class, $stream);
+        $this->taskRepository->save($task, true);
+
         $this->coreBus->dispatch(new GenerateSubtitleMessage(
+            taskId: $task->getId(),
             streamId: $stream->getId(),
             audioFiles: $command->getAudioFiles(),
         ));

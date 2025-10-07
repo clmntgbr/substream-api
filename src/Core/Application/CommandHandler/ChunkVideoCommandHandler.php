@@ -7,8 +7,10 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\ChunkVideoCommand;
 use App\Core\Application\Message\ChunkVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
+use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -24,6 +26,7 @@ class ChunkVideoCommandHandler
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
         private CoreBusInterface $coreBus,
+        private TaskRepository $taskRepository,
     ) {
     }
 
@@ -42,8 +45,12 @@ class ChunkVideoCommandHandler
         $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO);
         $this->streamRepository->save($stream);
 
+        $task = Task::create(ChunkVideoCommand::class, $stream);
+        $this->taskRepository->save($task, true);
+
         $this->coreBus->dispatch(new ChunkVideoMessage(
             streamId: $stream->getId(),
+            taskId: $task->getId(),
             chunkNumber: $command->getChunkNumber(),
             embedFileName: $command->getEmbedFileName(),
         ));

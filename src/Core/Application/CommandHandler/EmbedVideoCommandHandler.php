@@ -7,8 +7,10 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\EmbedVideoCommand;
 use App\Core\Application\Message\EmbedVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
+use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -24,6 +26,7 @@ class EmbedVideoCommandHandler
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
         private CoreBusInterface $coreBus,
+        private TaskRepository $taskRepository,
     ) {
     }
 
@@ -42,8 +45,12 @@ class EmbedVideoCommandHandler
         $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO);
         $this->streamRepository->save($stream);
 
+        $task = Task::create(EmbedVideoCommand::class, $stream);
+        $this->taskRepository->save($task, true);
+
         $this->coreBus->dispatch(new EmbedVideoMessage(
             streamId: $stream->getId(),
+            taskId: $task->getId(),
             subtitleAssFileName: $command->getSubtitleAssFileName(),
             resizeFileName: $command->getResizeFileName(),
         ));

@@ -11,6 +11,8 @@ use App\Controller\Stream\CreateStreamVideoController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -97,6 +99,14 @@ class Stream
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
+
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
+    private Collection $tasks;
+
+    public function __construct()
+    {
+        $this->tasks = new ArrayCollection();
+    }
 
     public static function create(
         Uuid $id,
@@ -333,5 +343,17 @@ class Stream
     public function getUpdatedAt(): \DateTimeInterface
     {
         return $this->updatedAt;
+    }
+
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function setTasks(Collection $tasks): self
+    {
+        $this->tasks = $tasks;
+
+        return $this;
     }
 }

@@ -7,7 +7,9 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\GetVideoCommand;
 use App\Core\Application\Message\GetVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Task;
 use App\Repository\StreamRepository;
+use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
@@ -25,6 +27,7 @@ class GetVideoCommandHandler
         private WorkflowInterface $streamsStateMachine,
         private CoreBusInterface $coreBus,
         private LoggerInterface $logger,
+        private TaskRepository $taskRepository,
     ) {
     }
 
@@ -40,8 +43,12 @@ class GetVideoCommandHandler
             return;
         }
 
+        $task = Task::create(GetVideoCommand::class, $stream);
+        $this->taskRepository->save($task, true);
+
         $this->coreBus->dispatch(new GetVideoMessage(
             streamId: $stream->getId(),
+            taskId: $task->getId(),
             url: $command->getUrl(),
         ));
     }

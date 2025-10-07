@@ -2,10 +2,13 @@
 
 namespace App\RemoteEvent;
 
+use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ChunkVideoFailure;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
+use App\Repository\TaskRepository;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
@@ -21,6 +24,8 @@ final class ChunkVideoFailureWebhookConsumer implements ConsumerInterface
         private StreamRepository $streamRepository,
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
+        private CommandBusInterface $commandBus,
+        private TaskRepository $taskRepository,
     ) {
     }
 
@@ -41,5 +46,10 @@ final class ChunkVideoFailureWebhookConsumer implements ConsumerInterface
 
         $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_FAILED);
         $this->streamRepository->save($stream);
+
+        $this->commandBus->dispatch(new UpdateTaskCommand(
+            taskId: $response->getTaskId(),
+            processingTime: 0,
+        ));
     }
 }

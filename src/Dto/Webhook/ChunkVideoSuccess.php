@@ -14,6 +14,15 @@ readonly class ChunkVideoSuccess
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         private readonly Uuid $streamId,
+        #[SerializedName('task_id')]
+        #[Assert\NotBlank]
+        #[Assert\Uuid]
+        #[Assert\Length(max: 36)]
+        private readonly Uuid $taskId,
+        #[SerializedName('processing_time')]
+        #[Assert\NotBlank]
+        #[Assert\Type('int')]
+        private readonly int $processingTime,
         #[SerializedName('chunk_file_names')]
         #[Assert\NotBlank]
         #[Assert\All([
@@ -25,9 +34,19 @@ readonly class ChunkVideoSuccess
     ) {
     }
 
+    public function getTaskId(): Uuid
+    {
+        return $this->taskId;
+    }
+
     public function getStreamId(): Uuid
     {
         return $this->streamId;
+    }
+
+    public function getProcessingTime(): int
+    {
+        return $this->processingTime;
     }
 
     public function getChunkFileNames(): array

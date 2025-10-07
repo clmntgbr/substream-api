@@ -9,9 +9,15 @@ use Symfony\Component\Uid\Uuid;
 readonly class TransformSubtitleMessage implements AsyncMessageInterface
 {
     public function __construct(
+        private Uuid $taskId,
         private Uuid $streamId,
         private string $subtitleSrtFileName,
     ) {
+    }
+
+    public function getTaskId(): Uuid
+    {
+        return $this->taskId;
     }
 
     public function getStreamId(): Uuid
@@ -27,6 +33,7 @@ readonly class TransformSubtitleMessage implements AsyncMessageInterface
     public function jsonSerialize(): array
     {
         return [
+            'task_id' => (string) $this->taskId,
             'stream_id' => (string) $this->streamId,
             'subtitle_srt_file_name' => $this->subtitleSrtFileName,
         ];

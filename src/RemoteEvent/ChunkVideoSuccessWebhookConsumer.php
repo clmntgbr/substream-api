@@ -3,6 +3,7 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\CompleteVideoCommand;
+use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ChunkVideoSuccess;
 use App\Enum\WorkflowTransitionEnum;
@@ -45,6 +46,11 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setChunkFileNames($response->getChunkFileNames());
             $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_COMPLETED);
+
+            $this->commandBus->dispatch(new UpdateTaskCommand(
+                taskId: $response->getTaskId(),
+                processingTime: $response->getProcessingTime(),
+            ));
 
             $this->commandBus->dispatch(new CompleteVideoCommand(
                 streamId: $stream->getId(),

@@ -3,6 +3,7 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\ResizeVideoCommand;
+use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\TransformSubtitleSuccess;
 use App\Enum\WorkflowTransitionEnum;
@@ -45,6 +46,11 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setSubtitleAssFileName($response->getSubtitleAssFileName());
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_COMPLETED);
+
+            $this->commandBus->dispatch(new UpdateTaskCommand(
+                taskId: $response->getTaskId(),
+                processingTime: $response->getProcessingTime(),
+            ));
 
             $this->commandBus->dispatch(new ResizeVideoCommand(
                 streamId: $stream->getId(),

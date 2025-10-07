@@ -16,8 +16,6 @@ class CreateStreamMapper implements CreateStreamMapperInterface
 
     public function toEntity(CreateStreamModel $model): Stream
     {
-        return new Stream(
-            id: $model->streamId,
-        );
+        return (new Stream())->setId($model->streamId);
     }
 }

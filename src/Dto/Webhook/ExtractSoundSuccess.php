@@ -14,6 +14,15 @@ readonly class ExtractSoundSuccess
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         private readonly Uuid $streamId,
+        #[SerializedName('task_id')]
+        #[Assert\NotBlank]
+        #[Assert\Uuid]
+        #[Assert\Length(max: 36)]
+        private readonly Uuid $taskId,
+        #[SerializedName('processing_time')]
+        #[Assert\NotBlank]
+        #[Assert\Type('int')]
+        private readonly int $processingTime,
         #[SerializedName('audio_files')]
         #[Assert\NotBlank]
         #[Assert\All([
@@ -28,6 +37,16 @@ readonly class ExtractSoundSuccess
     public function getStreamId(): Uuid
     {
         return $this->streamId;
+    }
+
+    public function getTaskId(): Uuid
+    {
+        return $this->taskId;
+    }
+
+    public function getProcessingTime(): int
+    {
+        return $this->processingTime;
     }
 
     public function getAudioFiles(): array

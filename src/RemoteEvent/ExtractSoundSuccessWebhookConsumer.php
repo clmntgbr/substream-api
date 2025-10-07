@@ -3,6 +3,7 @@
 namespace App\RemoteEvent;
 
 use App\Core\Application\Command\GenerateSubtitleCommand;
+use App\Core\Application\Command\UpdateTaskCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
@@ -44,6 +45,11 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setAudioFiles($response->getAudioFiles());
             $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_COMPLETED);
+
+            $this->commandBus->dispatch(new UpdateTaskCommand(
+                taskId: $response->getTaskId(),
+                processingTime: $response->getProcessingTime(),
+            ));
 
             $this->commandBus->dispatch(new GenerateSubtitleCommand(
                 streamId: $stream->getId(),
