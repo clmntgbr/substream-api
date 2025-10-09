@@ -46,7 +46,6 @@ class Stream
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $fileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
@@ -66,27 +65,21 @@ class Stream
     private ?int $size = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
     private array $audioFiles = [];
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $subtitleSrtFileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $subtitleAssFileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $resizeFileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?string $embedFileName = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['stream:read'])]
     private ?array $chunkFileNames = null;
 
     #[ORM\Column(type: Types::STRING)]
@@ -94,7 +87,6 @@ class Stream
     private string $status;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['stream:read'])]
     private array $statuses = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -106,7 +98,6 @@ class Stream
     #[Groups(['stream:read'])]
     private Option $option;
 
-    #[Groups(['stream:read'])]
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
     #[ORM\OrderBy(["createdAt" => "ASC"])]
     private Collection $tasks;
