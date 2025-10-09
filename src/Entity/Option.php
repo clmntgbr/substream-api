@@ -23,7 +23,7 @@ use Symfony\Component\Uid\Uuid;
             normalizationContext: ['groups' => ['option:read']],
         ),
         new Post(
-            normalizationContext: ['groups' => ['option:read']],
+            normalizationContext: ['groups' => ['option:read:post']],
             denormalizationContext: ['groups' => ['option:write']],
             inputFormats: ['json' => ['application/json']],
         ),
@@ -128,6 +128,12 @@ class Option
         $this->format = VideoFormatEnum::ORIGINAL->value;
         $this->chunkNumber = 1;
         $this->yAxisAlignment = 0;
+    }
+
+    #[Groups(['option:read:post', 'option:read'])]
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 
     public function getSubtitleBold(): bool

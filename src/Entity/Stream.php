@@ -22,7 +22,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
 #[ApiResource(
-    order: ['updatedAt' => 'DESC'],
+    order: ['createdAt' => 'DESC'],
     operations: [
         new Get(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
@@ -138,6 +138,65 @@ class Stream
         $stream->user = $user;
 
         return $stream;
+    }
+
+    #[Groups(['stream:read'])]
+    public function getId(): Uuid
+    {
+        return $this->id;
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('isProcessing')]
+    public function isProcessing(): bool
+    {
+        return in_array($this->status, [
+            StreamStatusEnum::UPLOADED->value,
+            StreamStatusEnum::CREATED->value,
+            StreamStatusEnum::UPLOADING->value,
+            StreamStatusEnum::EXTRACTING_SOUND->value,
+            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value,
+            StreamStatusEnum::GENERATING_SUBTITLE->value,
+            StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value,
+            StreamStatusEnum::TRANSFORMING_SUBTITLE->value,
+            StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED->value,
+            StreamStatusEnum::RESIZING_VIDEO->value,
+            StreamStatusEnum::RESIZING_VIDEO_COMPLETED->value,
+            StreamStatusEnum::EMBEDDING_VIDEO->value,
+            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED->value,
+            StreamStatusEnum::CHUNKING_VIDEO->value,
+            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value,
+        ]);
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('isCompleted')]
+    public function isCompleted(): bool
+    {
+        return $this->status === StreamStatusEnum::COMPLETED->value;
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('isFailed')]
+    public function isFailed(): bool
+    {
+        return in_array($this->status, [
+            StreamStatusEnum::FAILED->value,
+            StreamStatusEnum::UPLOAD_FAILED->value,
+            StreamStatusEnum::EXTRACTING_SOUND_FAILED->value,
+            StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value,
+            StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value,
+            StreamStatusEnum::RESIZING_VIDEO_FAILED->value,
+            StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value,
+            StreamStatusEnum::CHUNKING_VIDEO_FAILED->value,
+            StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value,
+        ]);
+    }
+
+    #[Groups(['stream:read'])]
+    public function getSizeInMegabytes(): int
+    {
+        return (int) ($this->size / 1024 / 1024);
     }
 
     public function getUrl(): ?string
