@@ -52,7 +52,7 @@ class ResizeVideoCommandHandler
             streamId: $stream->getId(),
             taskId: $task->getId(),
             fileName: $command->getFileName(),
-            format: $command->getFormat(),
+            format: $stream->getOption()->getFormat(),
         ));
     }
 }

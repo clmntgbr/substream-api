@@ -49,7 +49,6 @@ final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
 
             $this->commandBus->dispatch(new ChunkVideoCommand(
                 streamId: $stream->getId(),
-                chunkNumber: 5,
                 embedFileName: $stream->getEmbedFileName(),
             ));
         } catch (\Exception $e) {

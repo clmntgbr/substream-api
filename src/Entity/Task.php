@@ -32,8 +32,8 @@ class Task
     #[ORM\Column(type: Types::STRING)]
     private string $status;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    private int $processingTime;
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $processingTime = null;
 
     public static function create(string $commandClass, Stream $stream): self
     {
@@ -41,7 +41,6 @@ class Task
         $task->setId(Uuid::v4());
         $task->commandClass = $commandClass;
         $task->status = TaskStatusEnum::RUNNING->value;
-        $task->processingTime = 0;
         $task->stream = $stream;
 
         return $task;
@@ -62,7 +61,7 @@ class Task
         return TaskStatusEnum::from($this->status);
     }
 
-    public function getProcessingTime(): int
+    public function getProcessingTime(): ?int
     {
         return $this->processingTime;
     }
@@ -121,8 +120,12 @@ class Task
 
     #[Groups(['stream:read'])]
     #[SerializedName('processingTime')]
-    public function getProcessingTimeFormatted(): string
+    public function getProcessingTimeFormatted(): ?string
     {
+        if (null === $this->processingTime) {
+            return null;
+        }
+
         $totalSeconds = (int) floor($this->processingTime / 1000);
         $hours = (int) floor($totalSeconds / 3600);
         $minutes = (int) floor(($totalSeconds % 3600) / 60);

@@ -108,6 +108,7 @@ class Stream
 
     #[Groups(['stream:read'])]
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
+    #[ORM\OrderBy(["createdAt" => "ASC"])]
     private Collection $tasks;
 
     public function __construct()
@@ -466,7 +467,7 @@ class Stream
     {
         return $this->tasks
             ->map(fn (Task $task) => $task->getProcessingTime())
-            ->reduce(fn (int $carry, int $item) => $carry + $item, 0);
+            ->reduce(fn (int $carry, ?int $item) => $carry + $item, 0);
     }
 
     public function getProcessingTimeInSeconds(): int
@@ -476,13 +477,18 @@ class Stream
 
     #[Groups(['stream:read'])]
     #[SerializedName('processingTime')]
-    public function getProcessingTimeFormatted(): string
+    public function getProcessingTimeFormatted(): ?string
     {
         $processingTime = $this->getProcessingTimeInMilliseconds();
         $totalSeconds = (int) floor($processingTime / 1000);
         $hours = (int) floor($totalSeconds / 3600);
         $minutes = (int) floor(($totalSeconds % 3600) / 60);
         $seconds = $totalSeconds % 60;
+
+        if (0 === $hours && 0 === $minutes && 0 === $seconds) {
+            return null;
+        }
+
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 

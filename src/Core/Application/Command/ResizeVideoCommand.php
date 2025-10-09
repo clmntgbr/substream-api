@@ -11,7 +11,6 @@ final class ResizeVideoCommand extends CommandAbstract implements AsyncCommandIn
     public function __construct(
         private Uuid $streamId,
         private string $fileName,
-        private string $format,
     ) {
     }
 
@@ -23,10 +22,5 @@ final class ResizeVideoCommand extends CommandAbstract implements AsyncCommandIn
     public function getFileName(): string
     {
         return $this->fileName;
-    }
-
-    public function getFormat(): string
-    {
-        return $this->format;
     }
 }

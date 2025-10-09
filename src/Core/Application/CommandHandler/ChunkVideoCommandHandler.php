@@ -51,7 +51,7 @@ class ChunkVideoCommandHandler
         $this->coreBus->dispatch(new ChunkVideoMessage(
             streamId: $stream->getId(),
             taskId: $task->getId(),
-            chunkNumber: $command->getChunkNumber(),
+            chunkNumber: $stream->getOption()->getChunkNumber(),
             embedFileName: $command->getEmbedFileName(),
         ));
     }

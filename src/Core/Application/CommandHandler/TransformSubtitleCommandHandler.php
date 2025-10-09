@@ -51,6 +51,7 @@ class TransformSubtitleCommandHandler
         $this->coreBus->dispatch(new TransformSubtitleMessage(
             taskId: $task->getId(),
             streamId: $stream->getId(),
+            option: $stream->getOption(),
             subtitleSrtFileName: $command->getSubtitleSrtFileName(),
         ));
     }

@@ -50,7 +50,6 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
             $this->commandBus->dispatch(new ResizeVideoCommand(
                 streamId: $stream->getId(),
                 fileName: $stream->getFileName(),
-                format: 'zoomed_916',
             ));
         } catch (\Exception $e) {
             $stream->markAsTransformingSubtitleFailed();

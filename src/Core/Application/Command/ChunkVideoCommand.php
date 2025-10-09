@@ -10,7 +10,6 @@ final class ChunkVideoCommand extends CommandAbstract implements AsyncCommandInt
 {
     public function __construct(
         private Uuid $streamId,
-        private int $chunkNumber,
         private string $embedFileName,
     ) {
     }
@@ -18,11 +17,6 @@ final class ChunkVideoCommand extends CommandAbstract implements AsyncCommandInt
     public function getStreamId(): Uuid
     {
         return $this->streamId;
-    }
-
-    public function getChunkNumber(): int
-    {
-        return $this->chunkNumber;
     }
 
     public function getEmbedFileName(): string
