@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\GenerateSubtitleCommand;
+use App\Core\Application\Command\TransformSubtitleCommand;
+use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Message\GenerateSubtitleMessage;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Stream;
 use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CoreBusInterface;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
+use League\Flysystem\FilesystemOperator;
 
 #[AsMessageHandler]
 class GenerateSubtitleCommandHandler
@@ -27,6 +32,9 @@ class GenerateSubtitleCommandHandler
         private LoggerInterface $logger,
         private CoreBusInterface $coreBus,
         private TaskRepository $taskRepository,
+        private FilesystemOperator $awsStorage,
+        private CommandBusInterface $commandBus,
+        private string $env,
     ) {
     }
 
@@ -48,10 +56,51 @@ class GenerateSubtitleCommandHandler
         $task = Task::create(GenerateSubtitleCommand::class, $stream);
         $this->taskRepository->save($task, true);
 
-        $this->coreBus->dispatch(new GenerateSubtitleMessage(
+        //TODO: Remove this after testing
+        if ($this->env === 'prod') {
+            $this->coreBus->dispatch(new GenerateSubtitleMessage(
+                taskId: $task->getId(),
+                streamId: $stream->getId(),
+                audioFiles: $command->getAudioFiles(),
+            ));
+            return;
+        }
+
+        $this->mockGenerateSubtitle($stream, $task);
+    }
+
+    private function mockGenerateSubtitle(Stream $stream, Task $task): void
+    {
+        $subtitleSrtFileName = $stream->getId().'.srt';
+
+        $path = $stream->getId().'/subtitles/'.$subtitleSrtFileName;
+        $handle = fopen('/app/public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.srt', 'r');
+
+        $this->awsStorage->writeStream($path, $handle, [
+            'visibility' => 'public',
+        ]);
+
+        if (is_resource($handle)) {
+            fclose($handle);
+        }
+
+        try {
+            $stream->setSubtitleSrtFileName($subtitleSrtFileName);
+            $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
+
+            $this->commandBus->dispatch(new TransformSubtitleCommand(
+                streamId: $stream->getId(),
+                subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
+            ));
+        } catch (\Exception $e) {
+            $stream->markAsGenerateSubtitleFailed();
+        } finally {
+            $this->streamRepository->save($stream);
+        }
+
+        $this->commandBus->dispatch(new UpdateTaskSuccessCommand(
             taskId: $task->getId(),
-            streamId: $stream->getId(),
-            audioFiles: $command->getAudioFiles(),
+            processingTime: 0,
         ));
     }
 }

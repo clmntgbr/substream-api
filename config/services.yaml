@@ -6,6 +6,7 @@ services:
         autoconfigure: true
         bind:
             string $apiUrl: '%env(API_URL)%'
+            string $env: '%env(APP_ENV)%'
 
     App\:
         resource: '../src/'
