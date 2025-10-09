@@ -8,7 +8,9 @@ use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Enum\WorkflowTransitionEnum;
+use App\Exception\OptionNotFoundException;
 use App\Exception\StreamNotFoundException;
+use App\Repository\OptionRepository;
 use App\Repository\StreamRepository;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -28,6 +30,7 @@ class CreateStreamVideoCommandHandler
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
+        private OptionRepository $optionRepository,
     ) {
     }
 
@@ -51,9 +54,16 @@ class CreateStreamVideoCommandHandler
             file: $command->getFile(),
         );
 
+        $option = $this->optionRepository->findByUuid($command->getOptionId());
+
+        if (null === $option) {
+            throw new OptionNotFoundException();
+        }
+
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
             user: $command->getUser(),
             streamId: $command->getStreamId(),
+            optionId: $option->getId(),
             fileName: $uploadFileModel->getFileName(),
             originalFileName: $uploadFileModel->getOriginalFileName(),
             mimeType: $command->getFile()->getMimeType(),

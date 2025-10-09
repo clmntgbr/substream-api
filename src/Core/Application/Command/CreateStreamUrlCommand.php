@@ -2,6 +2,7 @@
 
 namespace App\Core\Application\Command;
 
+use App\Entity\Option;
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
 use Symfony\Component\Uid\Uuid;
@@ -12,6 +13,7 @@ readonly class CreateStreamUrlCommand implements SyncCommandInterface
 
     public function __construct(
         private string $url,
+        private Uuid $optionId,
         private User $user,
     ) {
         $this->streamId = Uuid::v4();
@@ -25,6 +27,11 @@ readonly class CreateStreamUrlCommand implements SyncCommandInterface
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getOptionId(): Uuid
+    {
+        return $this->optionId;
     }
 
     public function getUser(): User

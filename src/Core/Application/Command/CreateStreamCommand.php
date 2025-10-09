@@ -10,6 +10,7 @@ readonly class CreateStreamCommand implements SyncCommandInterface
 {
     public function __construct(
         private Uuid $streamId,
+        private Uuid $optionId,
         private User $user,
         private ?string $fileName = null,
         private ?string $originalFileName = null,
@@ -22,6 +23,11 @@ readonly class CreateStreamCommand implements SyncCommandInterface
     public function getStreamId(): Uuid
     {
         return Uuid::fromString($this->streamId);
+    }
+
+    public function getOptionId(): Uuid
+    {
+        return $this->optionId;
     }
 
     public function getUser(): User

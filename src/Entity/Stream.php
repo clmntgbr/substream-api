@@ -101,6 +101,11 @@ class Stream
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
+    #[ORM\ManyToOne(targetEntity: Option::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['stream:read'])]
+    private Option $option;
+
     #[Groups(['stream:read'])]
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
     private Collection $tasks;
@@ -113,6 +118,7 @@ class Stream
     public static function create(
         Uuid $id,
         User $user,
+        Option $option,
         ?string $fileName = null,
         ?string $originalFileName = null,
         ?string $url = null,
@@ -121,6 +127,7 @@ class Stream
     ): self {
         $stream = new self();
         $stream->id = $id;
+        $stream->option = $option;
         $stream->fileName = $fileName;
         $stream->originalFileName = $originalFileName;
         $stream->url = $url;
@@ -136,6 +143,11 @@ class Stream
     public function getUrl(): ?string
     {
         return $this->url;
+    }
+
+    public function getOption(): Option
+    {
+        return $this->option;
     }
 
     public function getFileName(): ?string
@@ -413,5 +425,12 @@ class Stream
         $minutes = (int) floor(($totalSeconds % 3600) / 60);
         $seconds = $totalSeconds % 60;
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+
+    public function setOption(Option $option): self
+    {
+        $this->option = $option;
+
+        return $this;
     }
 }

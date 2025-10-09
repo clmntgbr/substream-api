@@ -36,6 +36,7 @@ class CreateStreamUrlCommandHandler
             user: $command->getUser(),
             streamId: $command->getStreamId(),
             url: $command->getUrl(),
+            optionId: $command->getOptionId(),
         ));
 
         $stream = $this->streamRepository->find($command->getStreamId());

@@ -13,6 +13,7 @@ readonly class CreateStreamVideoCommand implements SyncCommandInterface
 
     public function __construct(
         private UploadedFile $file,
+        private Uuid $optionId,
         private User $user,
     ) {
         $this->streamId = Uuid::v4();
@@ -21,6 +22,11 @@ readonly class CreateStreamVideoCommand implements SyncCommandInterface
     public function getFile(): UploadedFile
     {
         return $this->file;
+    }
+
+    public function getOptionId(): Uuid
+    {
+        return $this->optionId;
     }
 
     public function getUser(): User

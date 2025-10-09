@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @template T of object
@@ -19,6 +20,16 @@ abstract class AbstractRepository extends ServiceEntityRepository
         $this->getEntityManager()->refresh($entity);
 
         return $entity;
+    }
+
+    /**
+     * @param Uuid $id
+     *
+     * @return T|null
+     */
+    public function findByUuid(Uuid $id): ?object
+    {
+        return $this->findOneBy(['id' => $id]);
     }
 
     /**
