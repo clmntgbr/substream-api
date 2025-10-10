@@ -23,13 +23,13 @@
 #       - "generating_subtitle_completed"
 #     user: "@user_1"
 #     option: "@option_1"
-  
+
 #   stream_created:
 #     setIdFromString: "11111111-1111-1111-1111-111111111111"
 #     fileName: "created.mp4"
 #     originalFileName: "created.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000000
+#     size: 100000000
 #     status: "created"
 #     statuses: ["created"]
 #     user: "@user_1"
@@ -40,7 +40,7 @@
 #     fileName: "failed.mp4"
 #     originalFileName: "failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000001
+#     size: 100000001
 #     status: "failed"
 #     statuses: ["created", "failed"]
 #     user: "@user_1"
@@ -51,7 +51,7 @@
 #     fileName: "completed.mp4"
 #     originalFileName: "completed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000002
+#     size: 100000002
 #     status: "completed"
 #     statuses: ["created", "completed"]
 #     user: "@user_1"
@@ -62,7 +62,7 @@
 #     fileName: "deleted.mp4"
 #     originalFileName: "deleted.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000003
+#     size: 100000003
 #     status: "deleted"
 #     statuses: ["created", "deleted"]
 #     user: "@user_1"
@@ -73,7 +73,7 @@
 #     fileName: "uploaded.mp4"
 #     originalFileName: "uploaded.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000004
+#     size: 100000004
 #     status: "uploaded"
 #     statuses: ["created", "uploaded"]
 #     user: "@user_1"
@@ -84,7 +84,7 @@
 #     fileName: "uploading.mp4"
 #     originalFileName: "uploading.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000005
+#     size: 100000005
 #     status: "uploading"
 #     statuses: ["created", "uploading"]
 #     user: "@user_1"
@@ -95,7 +95,7 @@
 #     fileName: "upload_failed.mp4"
 #     originalFileName: "upload_failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000006
+#     size: 100000006
 #     status: "upload_failed"
 #     statuses: ["created", "uploading", "upload_failed"]
 #     user: "@user_1"
@@ -106,7 +106,7 @@
 #     fileName: "extracting_sound.mp4"
 #     originalFileName: "extracting_sound.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000007
+#     size: 100000007
 #     status: "extracting_sound"
 #     statuses: ["created", "uploaded", "extracting_sound"]
 #     user: "@user_1"
@@ -117,9 +117,10 @@
 #     fileName: "extracting_sound_failed.mp4"
 #     originalFileName: "extracting_sound_failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000008
+#     size: 100000008
 #     status: "extracting_sound_failed"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_failed"]
+#     statuses:
+#       ["created", "uploaded", "extracting_sound", "extracting_sound_failed"]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -128,9 +129,10 @@
 #     fileName: "extracting_sound_completed.mp4"
 #     originalFileName: "extracting_sound_completed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000009
+#     size: 100000009
 #     status: "extracting_sound_completed"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_completed"]
+#     statuses:
+#       ["created", "uploaded", "extracting_sound", "extracting_sound_completed"]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -139,9 +141,16 @@
 #     fileName: "generating_subtitle.mp4"
 #     originalFileName: "generating_subtitle.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000010
+#     size: 100000010
 #     status: "generating_subtitle"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_completed", "generating_subtitle"]
+#     statuses:
+#       [
+#         "created",
+#         "uploaded",
+#         "extracting_sound",
+#         "extracting_sound_completed",
+#         "generating_subtitle",
+#       ]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -150,9 +159,17 @@
 #     fileName: "generating_subtitle_failed.mp4"
 #     originalFileName: "generating_subtitle_failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000011
+#     size: 100000011
 #     status: "generating_subtitle_failed"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_completed", "generating_subtitle", "generating_subtitle_failed"]
+#     statuses:
+#       [
+#         "created",
+#         "uploaded",
+#         "extracting_sound",
+#         "extracting_sound_completed",
+#         "generating_subtitle",
+#         "generating_subtitle_failed",
+#       ]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -161,9 +178,17 @@
 #     fileName: "generating_subtitle_completed.mp4"
 #     originalFileName: "generating_subtitle_completed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000012
+#     size: 100000012
 #     status: "generating_subtitle_completed"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_completed", "generating_subtitle", "generating_subtitle_completed"]
+#     statuses:
+#       [
+#         "created",
+#         "uploaded",
+#         "extracting_sound",
+#         "extracting_sound_completed",
+#         "generating_subtitle",
+#         "generating_subtitle_completed",
+#       ]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -172,9 +197,18 @@
 #     fileName: "transforming_subtitle.mp4"
 #     originalFileName: "transforming_subtitle.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000013
+#     size: 100000013
 #     status: "transforming_subtitle"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_completed", "generating_subtitle", "generating_subtitle_completed", "transforming_subtitle"]
+#     statuses:
+#       [
+#         "created",
+#         "uploaded",
+#         "extracting_sound",
+#         "extracting_sound_completed",
+#         "generating_subtitle",
+#         "generating_subtitle_completed",
+#         "transforming_subtitle",
+#       ]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -183,9 +217,19 @@
 #     fileName: "transforming_subtitle_failed.mp4"
 #     originalFileName: "transforming_subtitle_failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000014
+#     size: 100000014
 #     status: "transforming_subtitle_failed"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_completed", "generating_subtitle", "generating_subtitle_completed", "transforming_subtitle", "transforming_subtitle_failed"]
+#     statuses:
+#       [
+#         "created",
+#         "uploaded",
+#         "extracting_sound",
+#         "extracting_sound_completed",
+#         "generating_subtitle",
+#         "generating_subtitle_completed",
+#         "transforming_subtitle",
+#         "transforming_subtitle_failed",
+#       ]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -194,9 +238,19 @@
 #     fileName: "transforming_subtitle_completed.mp4"
 #     originalFileName: "transforming_subtitle_completed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000015
+#     size: 100000015
 #     status: "transforming_subtitle_completed"
-#     statuses: ["created", "uploaded", "extracting_sound", "extracting_sound_completed", "generating_subtitle", "generating_subtitle_completed", "transforming_subtitle", "transforming_subtitle_completed"]
+#     statuses:
+#       [
+#         "created",
+#         "uploaded",
+#         "extracting_sound",
+#         "extracting_sound_completed",
+#         "generating_subtitle",
+#         "generating_subtitle_completed",
+#         "transforming_subtitle",
+#         "transforming_subtitle_completed",
+#       ]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -205,7 +259,7 @@
 #     fileName: "resizing_video.mp4"
 #     originalFileName: "resizing_video.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000016
+#     size: 100000016
 #     status: "resizing_video"
 #     statuses: ["created", "uploaded", "resizing_video"]
 #     user: "@user_1"
@@ -216,7 +270,7 @@
 #     fileName: "resizing_video_failed.mp4"
 #     originalFileName: "resizing_video_failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000017
+#     size: 100000017
 #     status: "resizing_video_failed"
 #     statuses: ["created", "uploaded", "resizing_video", "resizing_video_failed"]
 #     user: "@user_1"
@@ -227,9 +281,10 @@
 #     fileName: "resizing_video_completed.mp4"
 #     originalFileName: "resizing_video_completed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000018
+#     size: 100000018
 #     status: "resizing_video_completed"
-#     statuses: ["created", "uploaded", "resizing_video", "resizing_video_completed"]
+#     statuses:
+#       ["created", "uploaded", "resizing_video", "resizing_video_completed"]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -238,7 +293,7 @@
 #     fileName: "embedding_video.mp4"
 #     originalFileName: "embedding_video.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000019
+#     size: 100000019
 #     status: "embedding_video"
 #     statuses: ["created", "uploaded", "embedding_video"]
 #     user: "@user_1"
@@ -249,7 +304,7 @@
 #     fileName: "embedding_video_failed.mp4"
 #     originalFileName: "embedding_video_failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000020
+#     size: 100000020
 #     status: "embedding_video_failed"
 #     statuses: ["created", "uploaded", "embedding_video", "embedding_video_failed"]
 #     user: "@user_1"
@@ -260,9 +315,10 @@
 #     fileName: "embedding_video_completed.mp4"
 #     originalFileName: "embedding_video_completed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000021
+#     size: 100000021
 #     status: "embedding_video_completed"
-#     statuses: ["created", "uploaded", "embedding_video", "embedding_video_completed"]
+#     statuses:
+#       ["created", "uploaded", "embedding_video", "embedding_video_completed"]
 #     user: "@user_1"
 #     option: "@option_1"
 
@@ -271,7 +327,7 @@
 #     fileName: "chunking_video.mp4"
 #     originalFileName: "chunking_video.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000022
+#     size: 100000022
 #     status: "chunking_video"
 #     statuses: ["created", "uploaded", "chunking_video"]
 #     user: "@user_1"
@@ -282,7 +338,7 @@
 #     fileName: "chunking_video_failed.mp4"
 #     originalFileName: "chunking_video_failed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000023
+#     size: 100000023
 #     status: "chunking_video_failed"
 #     statuses: ["created", "uploaded", "chunking_video", "chunking_video_failed"]
 #     user: "@user_1"
@@ -293,8 +349,20 @@
 #     fileName: "chunking_video_completed.mp4"
 #     originalFileName: "chunking_video_completed.mp4"
 #     mimeType: "video/mp4"
-#     size: 1000024
+#     size: 100002400
 #     status: "chunking_video_completed"
-#     statuses: ["created", "uploaded", "chunking_video", "chunking_video_completed"]
+#     statuses:
+#       ["created", "uploaded", "chunking_video", "chunking_video_completed"]
 #     user: "@user_1"
+#     option: "@option_1"
+
+#   stream_{2..400}:
+#     setIdFromString: "<uuid()>"
+#     fileName: "stream_{{ i }}.mp4"
+#     originalFileName: "stream_{{ i }}.mp4"
+#     mimeType: "video/mp4"
+#     size: 100000000
+#     status: "completed"
+#     statuses: ["created", "completed"]
+#     user: "@user_*"
 #     option: "@option_1"

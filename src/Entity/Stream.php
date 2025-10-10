@@ -2,14 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\QueryParameter;
 use App\Controller\Stream\CreateStreamUrlController;
 use App\Controller\Stream\CreateStreamVideoController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
+use App\Filter\DeletedFilter;
+use App\Filter\IncludeDeletedStreamFilter;
 use App\Repository\StreamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -29,6 +34,10 @@ use Symfony\Component\Uid\Uuid;
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
+            parameters: [
+                'status' => new QueryParameter(description: 'Filter streams by status'),
+                'include_deleted' => new QueryParameter(filter: new IncludeDeletedStreamFilter()),
+            ]
         ),
         new Post(
             uriTemplate: '/streams/video',
@@ -40,6 +49,7 @@ use Symfony\Component\Uid\Uuid;
         ),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['status'])]
 class Stream
 {
     use UuidTrait;
@@ -488,5 +498,37 @@ class Stream
         $this->option = $option;
 
         return $this;
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('progress')]
+    public function getProgress(): int
+    {
+        $statusEnum = StreamStatusEnum::from($this->status);
+        
+        if (str_contains($this->status, 'failed')) {
+            return 100;
+        }
+        
+        return match ($statusEnum) {
+            StreamStatusEnum::CREATED => 0,
+            StreamStatusEnum::UPLOADING => 5,
+            StreamStatusEnum::UPLOADED => 10,
+            StreamStatusEnum::EXTRACTING_SOUND => 20,
+            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED => 30,
+            StreamStatusEnum::GENERATING_SUBTITLE => 40,
+            StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED => 50,
+            StreamStatusEnum::TRANSFORMING_SUBTITLE => 60,
+            StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED => 70,
+            StreamStatusEnum::RESIZING_VIDEO => 75,
+            StreamStatusEnum::RESIZING_VIDEO_COMPLETED => 80,
+            StreamStatusEnum::EMBEDDING_VIDEO => 85,
+            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED => 90,
+            StreamStatusEnum::CHUNKING_VIDEO => 95,
+            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED, 
+            StreamStatusEnum::COMPLETED,
+            StreamStatusEnum::DELETED => 100,
+            default => 0,
+        };
     }
 }
