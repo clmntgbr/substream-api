@@ -28,6 +28,8 @@ class JsonMessageSerializer implements SerializerInterface
             throw new \RuntimeException('The message must implement AsyncMessageInterface.');
         }
 
+        dump($message->jsonSerialize());
+
         $data = [
             'class' => $message::class,
             'payload' => $message->jsonSerialize(),
