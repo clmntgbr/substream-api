@@ -5,29 +5,22 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CleanStreamCommand;
-use App\Core\Application\Command\CompleteVideoCommand;
-use App\Core\Application\Trait\WorkflowTrait;
-use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
-use App\Shared\Application\Bus\CommandBusInterface;
+use App\Service\S3ServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class CompleteVideoCommandHandler
+class CleanStreamCommandHandler
 {
-    use WorkflowTrait;
-
     public function __construct(
         private StreamRepository $streamRepository,
-        private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
-        private CommandBusInterface $commandBus,
+        private S3ServiceInterface $s3Service,
     ) {
     }
 
-    public function __invoke(CompleteVideoCommand $command): void
+    public function __invoke(CleanStreamCommand $command): void
     {
         $stream = $this->streamRepository->findByUuid($command->getStreamId());
 
@@ -39,11 +32,8 @@ class CompleteVideoCommandHandler
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::COMPLETED);
-        $this->streamRepository->save($stream);
-
-        $this->commandBus->dispatch(new CleanStreamCommand(
-            streamId: $stream->getId(),
-        ));
+        foreach ($stream->getCleanableFiles() as $cleanableFile) {
+            $this->s3Service->delete($stream->getId(), $cleanableFile);
+        }
     }
 }

@@ -8,6 +8,7 @@ use App\Core\Application\Command\DeleteStreamAfter14DaysCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
+use App\Service\S3ServiceInterface;
 use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
@@ -25,7 +26,7 @@ class DeleteStreamAfter14DaysCommandHandler
         private LoggerInterface $logger,
         private CoreBusInterface $coreBus,
         private TaskRepository $taskRepository,
-        private UploadFileServiceInterface $uploadFileService,
+        private S3ServiceInterface $s3Service,
     ) {
     }
 
@@ -41,7 +42,7 @@ class DeleteStreamAfter14DaysCommandHandler
             return;
         }
 
-        $this->uploadFileService->deleteAllFiles($stream->getId());
+        $this->s3Service->deleteAll($stream->getId());
 
         $stream->markAsDeleted();
         $this->streamRepository->save($stream);

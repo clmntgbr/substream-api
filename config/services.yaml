@@ -7,6 +7,7 @@ services:
         bind:
             string $apiUrl: '%env(API_URL)%'
             string $env: '%env(APP_ENV)%'
+            string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
 
     App\:
         resource: '../src/'

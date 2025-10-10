@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\QueryParameter;
 use App\Controller\Stream\CreateStreamUrlController;
 use App\Controller\Stream\CreateStreamVideoController;
+use App\Controller\Stream\BuildArchiveStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
 use App\Filter\DeletedFilter;
@@ -31,6 +32,10 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new Get(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
+        ),
+        new Get(
+            uriTemplate: '/streams/{id}/download',
+            controller: BuildArchiveStreamController::class,
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
@@ -435,6 +440,9 @@ class Stream
         return $this;
     }
 
+    /**
+     * @return list<string>
+     */
     public function getChunkFileNames(): ?array
     {
         return $this->chunkFileNames;
@@ -530,5 +538,28 @@ class Stream
             StreamStatusEnum::DELETED => 100,
             default => 0,
         };
+    }
+
+    public function isDownloadable(): bool
+    {
+        return in_array($this->status, [
+            StreamStatusEnum::COMPLETED->value,
+        ]);
+    }
+
+    public function getCleanableFiles(): array
+    {
+        $audioFiles = [];
+        foreach ($this->getAudioFiles() as $audioFile) {
+            $audioFiles[] = 'audios/'.$audioFile;
+        }
+        
+        return [
+            ...$audioFiles,
+            'subtitles/'.$this->getSubtitleSrtFileName(),
+            'subtitles/'.$this->getSubtitleAssFileName(),
+            $this->getResizeFileName(),
+            $this->getEmbedFileName(),
+        ];
     }
 }
