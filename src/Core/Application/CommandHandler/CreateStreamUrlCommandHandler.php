@@ -10,7 +10,6 @@ use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Enum\WorkflowTransitionEnum;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
-use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -22,7 +21,6 @@ class CreateStreamUrlCommandHandler
     use WorkflowTrait;
 
     public function __construct(
-        private UploadFileServiceInterface $uploadFileService,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,

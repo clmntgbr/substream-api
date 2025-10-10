@@ -7,7 +7,7 @@ use App\Entity\Stream;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use App\Repository\UserRepository;
-use App\Service\UploadFileServiceInterface;
+use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use League\Flysystem\FilesystemOperator;
@@ -32,7 +32,7 @@ class DispatchTransformSubtitleCommand extends Command
         private CommandBusInterface $commandBus,
         private UserRepository $userRepository,
         private FilesystemOperator $awsStorage,
-        private UploadFileServiceInterface $uploadFileService,
+        private S3ServiceInterface $s3Service,
         private KernelInterface $kernel,
     ) {
         parent::__construct();
@@ -67,7 +67,7 @@ class DispatchTransformSubtitleCommand extends Command
         $stream->setStatus(StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value);
         $stream->setStatuses([StreamStatusEnum::CREATED->value, StreamStatusEnum::UPLOADED->value, StreamStatusEnum::EXTRACTING_SOUND->value, StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value, StreamStatusEnum::GENERATING_SUBTITLE->value, StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value]);
 
-        $this->uploadFileService->deleteAllFiles($stream->getId());
+        $this->s3Service->deleteAll($stream->getId());
         $this->uploadSubtitleSrtFile($stream);
         $this->uploadAudioFiles($stream);
         $this->uploadVideoFile($stream);

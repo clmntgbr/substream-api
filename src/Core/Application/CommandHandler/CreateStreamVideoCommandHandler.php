@@ -12,7 +12,7 @@ use App\Exception\OptionNotFoundException;
 use App\Exception\StreamNotFoundException;
 use App\Repository\OptionRepository;
 use App\Repository\StreamRepository;
-use App\Service\UploadFileServiceInterface;
+use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Constraints\File;
@@ -26,7 +26,7 @@ class CreateStreamVideoCommandHandler
 
     public function __construct(
         private StreamRepository $streamRepository,
-        private UploadFileServiceInterface $uploadFileService,
+        private S3ServiceInterface $s3Service,
         private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
@@ -49,8 +49,8 @@ class CreateStreamVideoCommandHandler
             throw new \RuntimeException($command->getFile()->getMimeType());
         }
 
-        $uploadFileModel = $this->uploadFileService->uploadVideo(
-            streamId: $command->getStreamId(),
+        $uploadFileModel = $this->s3Service->upload(
+            uuid: $command->getStreamId(),
             file: $command->getFile(),
         );
 
