@@ -36,22 +36,22 @@ class S3Service implements S3ServiceInterface
 
     public function download(Uuid $uuid, string $fileName): string
     {
-        $tmpDir = sys_get_temp_dir() . '/'.$uuid->toRfc4122();
+        $tmpDir = sys_get_temp_dir().'/'.$uuid->toRfc4122();
         if (!is_dir($tmpDir)) {
             mkdir($tmpDir, 0777, true);
         }
 
-        $tmpFilePath = $tmpDir . '/' . basename($fileName);
+        $tmpFilePath = $tmpDir.'/'.basename($fileName);
 
         $stream = $this->awsStorage->readStream($uuid.'/'.$fileName);
 
         $tmpFile = fopen($tmpFilePath, 'w');
         stream_copy_to_stream($stream, $tmpFile);
-        
+
         if (is_resource($stream)) {
             fclose($stream);
         }
-        
+
         if (is_resource($tmpFile)) {
             fclose($tmpFile);
         }

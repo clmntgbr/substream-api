@@ -9,7 +9,7 @@ use Symfony\Component\Uid\Uuid;
 interface S3ServiceInterface
 {
     public function download(Uuid $uuid, string $fileName): string;
-    
+
     public function upload(Uuid $uuid, UploadedFile $file): UploadFileModel;
 
     public function deleteAll(Uuid $uuid): void;

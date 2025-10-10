@@ -9,12 +9,11 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\QueryParameter;
+use App\Controller\Stream\BuildArchiveStreamController;
 use App\Controller\Stream\CreateStreamUrlController;
 use App\Controller\Stream\CreateStreamVideoController;
-use App\Controller\Stream\BuildArchiveStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
-use App\Filter\DeletedFilter;
 use App\Filter\IncludeDeletedStreamFilter;
 use App\Repository\StreamRepository;
 use App\Service\ProcessingTimeEstimator;
@@ -115,7 +114,7 @@ class Stream
     private Option $option;
 
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
-    #[ORM\OrderBy(["createdAt" => "ASC"])]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $tasks;
 
     public function __construct()
@@ -514,11 +513,11 @@ class Stream
     public function getProgress(): int
     {
         $statusEnum = StreamStatusEnum::from($this->status);
-        
+
         if (str_contains($this->status, 'failed')) {
             return 100;
         }
-        
+
         return match ($statusEnum) {
             StreamStatusEnum::CREATED => 0,
             StreamStatusEnum::UPLOADING => 5,
@@ -534,7 +533,7 @@ class Stream
             StreamStatusEnum::EMBEDDING_VIDEO => 85,
             StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED => 90,
             StreamStatusEnum::CHUNKING_VIDEO => 95,
-            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED, 
+            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED,
             StreamStatusEnum::COMPLETED,
             StreamStatusEnum::DELETED => 100,
             default => 0,
@@ -554,7 +553,7 @@ class Stream
         foreach ($this->getAudioFiles() as $audioFile) {
             $audioFiles[] = 'audios/'.$audioFile;
         }
-        
+
         return [
             ...$audioFiles,
             'subtitles/'.$this->getSubtitleSrtFileName(),
@@ -570,6 +569,7 @@ class Stream
     {
         $sizeInMB = $this->getSizeInMegabytes();
         $hasUrl = !empty($this->url);
+
         return ProcessingTimeEstimator::estimateRemainingTime(StreamStatusEnum::from($this->status), $sizeInMB, $hasUrl);
     }
 }

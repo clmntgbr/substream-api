@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Stream;
-use App\Util\Slugify;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 

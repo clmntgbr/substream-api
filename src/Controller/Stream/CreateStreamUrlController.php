@@ -3,8 +3,6 @@
 namespace App\Controller\Stream;
 
 use App\Core\Application\Command\CreateStreamUrlCommand;
-use App\Dto\CreateStreamOption;
-use App\Dto\CreateStreamUrl;
 use App\Dto\CreateStreamUrlPayload;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;

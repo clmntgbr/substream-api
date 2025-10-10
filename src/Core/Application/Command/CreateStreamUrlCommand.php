@@ -2,7 +2,6 @@
 
 namespace App\Core\Application\Command;
 
-use App\Entity\Option;
 use App\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
 use Symfony\Component\Uid\Uuid;

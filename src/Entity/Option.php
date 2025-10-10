@@ -12,9 +12,9 @@ use App\Repository\OptionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OptionRepository::class)]
 #[ApiResource(
@@ -140,12 +140,12 @@ class Option
     {
         return $this->subtitleBold;
     }
-    
+
     public function getSubtitleItalic(): bool
     {
         return $this->subtitleItalic;
     }
-    
+
     public function getSubtitleUnderline(): bool
     {
         return $this->subtitleUnderline;
@@ -155,129 +155,140 @@ class Option
     {
         return $this->subtitleFont;
     }
-    
+
     public function getSubtitleSize(): int
     {
         return $this->subtitleSize;
     }
-    
+
     public function getSubtitleColor(): string
     {
         return $this->subtitleColor;
     }
-    
+
     public function getSubtitleOutlineColor(): string
     {
         return $this->subtitleOutlineColor;
     }
-    
+
     public function getSubtitleOutlineThickness(): int
     {
         return $this->subtitleOutlineThickness;
     }
-    
+
     public function getSubtitleShadow(): int
     {
         return $this->subtitleShadow;
     }
-    
+
     public function getSubtitleShadowColor(): string
     {
         return $this->subtitleShadowColor;
     }
-    
+
     public function getFormat(): string
     {
         return $this->format;
     }
-    
+
     public function getChunkNumber(): int
     {
         return $this->chunkNumber;
     }
-    
+
     public function getYAxisAlignment(): float
     {
         return $this->yAxisAlignment;
     }
-    
+
     public function setSubtitleFont(string $subtitleFont): self
     {
         $this->subtitleFont = $subtitleFont;
+
         return $this;
     }
-    
+
     public function setSubtitleSize(int $subtitleSize): self
     {
         $this->subtitleSize = $subtitleSize;
+
         return $this;
     }
-    
+
     public function setSubtitleColor(string $subtitleColor): self
     {
         $this->subtitleColor = $subtitleColor;
+
         return $this;
     }
 
     public function setSubtitleBold(bool $subtitleBold): self
     {
         $this->subtitleBold = $subtitleBold;
-        return $this;
-    }
-    
-    public function setSubtitleItalic(bool $subtitleItalic): self
-    {
-        $this->subtitleItalic = $subtitleItalic;
-        return $this;
-    }
-    
-    
-    public function setSubtitleUnderline(bool $subtitleUnderline): self
-    {
-        $this->subtitleUnderline = $subtitleUnderline;
-        return $this;
-    }
-    
-    public function setSubtitleOutlineColor(string $subtitleOutlineColor): self
-    {
-        $this->subtitleOutlineColor = $subtitleOutlineColor;
-        return $this;
-    }
-    
-    public function setSubtitleOutlineThickness(int $subtitleOutlineThickness): self
-    {
-        $this->subtitleOutlineThickness = $subtitleOutlineThickness;
-        return $this;
-    }
-    
-    public function setSubtitleShadow(int $subtitleShadow): self
-    {
-        $this->subtitleShadow = $subtitleShadow;
-        return $this;
-    }
-    
-    public function setSubtitleShadowColor(string $subtitleShadowColor): self
-    {
-        $this->subtitleShadowColor = $subtitleShadowColor;
-        return $this;
-    }
-    
-    public function setFormat(string $format): self
-    {
-        $this->format = $format;
-        return $this;
-    }
-    
-    public function setChunkNumber(int $chunkNumber): self
-    {
-        $this->chunkNumber = $chunkNumber;
-        return $this;
-    }
-    
-    public function setYAxisAlignment(float $yAxisAlignment): self
-    {
-        $this->yAxisAlignment = $yAxisAlignment;
+
         return $this;
     }
 
+    public function setSubtitleItalic(bool $subtitleItalic): self
+    {
+        $this->subtitleItalic = $subtitleItalic;
+
+        return $this;
+    }
+
+    public function setSubtitleUnderline(bool $subtitleUnderline): self
+    {
+        $this->subtitleUnderline = $subtitleUnderline;
+
+        return $this;
+    }
+
+    public function setSubtitleOutlineColor(string $subtitleOutlineColor): self
+    {
+        $this->subtitleOutlineColor = $subtitleOutlineColor;
+
+        return $this;
+    }
+
+    public function setSubtitleOutlineThickness(int $subtitleOutlineThickness): self
+    {
+        $this->subtitleOutlineThickness = $subtitleOutlineThickness;
+
+        return $this;
+    }
+
+    public function setSubtitleShadow(int $subtitleShadow): self
+    {
+        $this->subtitleShadow = $subtitleShadow;
+
+        return $this;
+    }
+
+    public function setSubtitleShadowColor(string $subtitleShadowColor): self
+    {
+        $this->subtitleShadowColor = $subtitleShadowColor;
+
+        return $this;
+    }
+
+    public function setFormat(string $format): self
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    public function setChunkNumber(int $chunkNumber): self
+    {
+        $this->chunkNumber = $chunkNumber;
+
+        return $this;
+    }
+
+    public function setYAxisAlignment(float $yAxisAlignment): self
+    {
+        $this->yAxisAlignment = $yAxisAlignment;
+
+        return $this;
+    }
 }

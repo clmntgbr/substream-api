@@ -3,12 +3,11 @@
 namespace App\Service;
 
 use App\Enum\StreamStatusEnum;
-use App\Enum\VideoStatus;
 
 class ProcessingTimeEstimator
 {
     private const REFERENCE_SIZE_MB = 400;
-    
+
     private const BASE_TIMINGS = [
         'GetVideoCommand' => 60,
         'ExtractSoundCommand' => 5,
@@ -51,7 +50,7 @@ class ProcessingTimeEstimator
     public static function estimateRemainingTime(StreamStatusEnum $currentStatus, float $videoSizeMB, bool $hasUrl = false): int
     {
         // If failed or completed, no remaining time
-        if (self::isFailedStatus($currentStatus) || $currentStatus === StreamStatusEnum::COMPLETED) {
+        if (self::isFailedStatus($currentStatus) || StreamStatusEnum::COMPLETED === $currentStatus) {
             return 0;
         }
 
@@ -60,32 +59,32 @@ class ProcessingTimeEstimator
 
         // Get current position in processing order
         $currentIndex = array_search($currentStatus->value, self::PROCESSING_ORDER);
-        
-        if ($currentIndex === false) {
+
+        if (false === $currentIndex) {
             return 0;
         }
 
         // Iterate through all processing steps
         foreach (self::STATUS_TO_COMMAND as $statusValue => $command) {
             // Skip GetVideoCommand if the stream doesn't have a URL
-            if ($command === 'GetVideoCommand' && !$hasUrl) {
+            if ('GetVideoCommand' === $command && !$hasUrl) {
                 continue;
             }
-            
+
             $processingStatusIndex = array_search($statusValue, self::PROCESSING_ORDER);
-            $completedStatusValue = $statusValue . '_completed';
+            $completedStatusValue = $statusValue.'_completed';
             $completedStatusIndex = array_search($completedStatusValue, self::PROCESSING_ORDER);
-            
+
             // If we're currently processing this step, include full time
             if ($statusValue === $currentStatus->value) {
                 $remainingSeconds += self::calculateEstimatedTime($command, $scaleFactor);
             }
             // If this step hasn't been started yet (we're before the processing status)
-            elseif ($processingStatusIndex !== false && $currentIndex < $processingStatusIndex) {
+            elseif (false !== $processingStatusIndex && $currentIndex < $processingStatusIndex) {
                 $remainingSeconds += self::calculateEstimatedTime($command, $scaleFactor);
             }
             // If we're between processing and completed (shouldn't happen but handle it)
-            elseif ($processingStatusIndex !== false && $completedStatusIndex !== false 
+            elseif (false !== $processingStatusIndex && false !== $completedStatusIndex
                     && $currentIndex > $processingStatusIndex && $currentIndex < $completedStatusIndex) {
                 // Still add the time as we're not completed yet
                 $remainingSeconds += self::calculateEstimatedTime($command, $scaleFactor);
@@ -97,18 +96,14 @@ class ProcessingTimeEstimator
     }
 
     /**
-     * Calcule le temps estimé pour une commande
-     *
-     * @param string $command
-     * @param float $scaleFactor
-     * @return int
+     * Calcule le temps estimé pour une commande.
      */
     private static function calculateEstimatedTime(string $command, float $scaleFactor): int
     {
         $baseTime = self::BASE_TIMINGS[$command];
 
         // TransformSubtitleCommand reste constant (traitement de texte)
-        if ($command === 'TransformSubtitleCommand') {
+        if ('TransformSubtitleCommand' === $command) {
             return $baseTime;
         }
 

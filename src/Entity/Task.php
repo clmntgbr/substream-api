@@ -130,6 +130,7 @@ class Task
         $hours = (int) floor($totalSeconds / 3600);
         $minutes = (int) floor(($totalSeconds % 3600) / 60);
         $seconds = $totalSeconds % 60;
+
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 }

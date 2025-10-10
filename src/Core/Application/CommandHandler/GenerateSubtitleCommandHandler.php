@@ -14,12 +14,12 @@ use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
-use App\Shared\Application\Bus\CoreBusInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Shared\Application\Bus\CoreBusInterface;
+use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
-use League\Flysystem\FilesystemOperator;
 
 #[AsMessageHandler]
 class GenerateSubtitleCommandHandler
@@ -56,13 +56,14 @@ class GenerateSubtitleCommandHandler
         $task = Task::create(GenerateSubtitleCommand::class, $stream);
         $this->taskRepository->save($task, true);
 
-        //TODO: Remove this after testing
-        if ($this->env === 'prod') {
+        // TODO: Remove this after testing
+        if ('prod' === $this->env) {
             $this->coreBus->dispatch(new GenerateSubtitleMessage(
                 taskId: $task->getId(),
                 streamId: $stream->getId(),
                 audioFiles: $command->getAudioFiles(),
             ));
+
             return;
         }
 

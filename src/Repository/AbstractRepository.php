@@ -23,8 +23,6 @@ abstract class AbstractRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Uuid $id
-     *
      * @return T|null
      */
     public function findByUuid(Uuid $id): ?object

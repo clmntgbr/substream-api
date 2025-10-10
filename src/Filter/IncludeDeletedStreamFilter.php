@@ -1,13 +1,15 @@
 <?php
+
 // src/Filter/RegexpFilter.php
+
 namespace App\Filter;
 
 use ApiPlatform\Doctrine\Orm\Filter\FilterInterface;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ParameterNotFound;
-use Doctrine\ORM\QueryBuilder;
-use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Enum\StreamStatusEnum;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
 
 final class IncludeDeletedStreamFilter implements FilterInterface
@@ -21,7 +23,7 @@ final class IncludeDeletedStreamFilter implements FilterInterface
             return;
         }
 
-        if ($value === 'true') {
+        if ('true' === $value) {
             return;
         }
 

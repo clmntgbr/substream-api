@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Util;
@@ -38,7 +39,7 @@ class Slugify
         $slug = preg_replace("/^{$sep}+|{$sep}+$/u", '', $slug);
         $slug = preg_replace("/{$sep}{2,}/u", self::$separator, $slug);
 
-        if (self::$maxLength !== null && self::$maxLength > 0) {
+        if (null !== self::$maxLength && self::$maxLength > 0) {
             if (function_exists('mb_substr')) {
                 $slug = mb_substr($slug, 0, self::$maxLength, 'UTF-8');
                 $slug = preg_replace("/{$sep}+$/u", '', $slug);
@@ -48,7 +49,7 @@ class Slugify
             }
         }
 
-        return $slug === '' ? 'n-a' : $slug;
+        return '' === $slug ? 'n-a' : $slug;
     }
 
     private static function transliterate(string $text): string
@@ -56,9 +57,9 @@ class Slugify
         if (class_exists(\Transliterator::class)) {
             try {
                 $t = \Transliterator::create('Any-Latin; Latin-ASCII; NFD; [:Nonspacing Mark:] Remove; NFC');
-                if ($t !== null) {
+                if (null !== $t) {
                     $result = $t->transliterate($text);
-                    if ($result !== null && $result !== '') {
+                    if (null !== $result && '' !== $result) {
                         return $result;
                     }
                 }
@@ -68,30 +69,31 @@ class Slugify
 
         if (function_exists('iconv')) {
             $converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
-            if ($converted !== false && $converted !== '') {
+            if (false !== $converted && '' !== $converted) {
                 return $converted;
             }
         }
 
         $map = [
-            'à'=>'a','á'=>'a','â'=>'a','ä'=>'a','ã'=>'a','å'=>'a','ā'=>'a',
-            'ç'=>'c','č'=>'c','ć'=>'c',
-            'đ'=>'d','ď'=>'d',
-            'è'=>'e','é'=>'e','ê'=>'e','ë'=>'e','ē'=>'e','ė'=>'e','ę'=>'e',
-            'î'=>'i','ï'=>'i','í'=>'i','ī'=>'i','į'=>'i','ì'=>'i',
-            'ł'=>'l','ľ'=>'l','ĺ'=>'l','ñ'=>'n','ń'=>'n','ň'=>'n',
-            'ô'=>'o','ö'=>'o','ò'=>'o','ó'=>'o','õ'=>'o','ő'=>'o','ō'=>'o',
-            'ř'=>'r','ŕ'=>'r',
-            'š'=>'s','ś'=>'s','ș'=>'s','ş'=>'s',
-            'ť'=>'t','ț'=>'t','ţ'=>'t',
-            'û'=>'u','ü'=>'u','ù'=>'u','ú'=>'u','ū'=>'u','ů'=>'u',
-            'ÿ'=>'y','ý'=>'y',
-            'ž'=>'z','ż'=>'z','ź'=>'z',
-            'Æ'=>'AE','æ'=>'ae','Ø'=>'O','ø'=>'o','ß'=>'ss','Œ'=>'OE','œ'=>'oe'
+            'à' => 'a', 'á' => 'a', 'â' => 'a', 'ä' => 'a', 'ã' => 'a', 'å' => 'a', 'ā' => 'a',
+            'ç' => 'c', 'č' => 'c', 'ć' => 'c',
+            'đ' => 'd', 'ď' => 'd',
+            'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ē' => 'e', 'ė' => 'e', 'ę' => 'e',
+            'î' => 'i', 'ï' => 'i', 'í' => 'i', 'ī' => 'i', 'į' => 'i', 'ì' => 'i',
+            'ł' => 'l', 'ľ' => 'l', 'ĺ' => 'l', 'ñ' => 'n', 'ń' => 'n', 'ň' => 'n',
+            'ô' => 'o', 'ö' => 'o', 'ò' => 'o', 'ó' => 'o', 'õ' => 'o', 'ő' => 'o', 'ō' => 'o',
+            'ř' => 'r', 'ŕ' => 'r',
+            'š' => 's', 'ś' => 's', 'ș' => 's', 'ş' => 's',
+            'ť' => 't', 'ț' => 't', 'ţ' => 't',
+            'û' => 'u', 'ü' => 'u', 'ù' => 'u', 'ú' => 'u', 'ū' => 'u', 'ů' => 'u',
+            'ÿ' => 'y', 'ý' => 'y',
+            'ž' => 'z', 'ż' => 'z', 'ź' => 'z',
+            'Æ' => 'AE', 'æ' => 'ae', 'Ø' => 'O', 'ø' => 'o', 'ß' => 'ss', 'Œ' => 'OE', 'œ' => 'oe',
         ];
         $lower = $text;
         $lower = strtr($lower, $map);
         $filtered = preg_replace('/[^\x00-\x7F]/', '', $lower);
+
         return $filtered ?? $text;
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateStreamVideoPayload
 {
-    public function __construct(    
+    public function __construct(
         #[Assert\NotBlank]
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]

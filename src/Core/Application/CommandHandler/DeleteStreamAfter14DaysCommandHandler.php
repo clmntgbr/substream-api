@@ -9,7 +9,6 @@ use App\Core\Application\Trait\WorkflowTrait;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Service\S3ServiceInterface;
-use App\Service\UploadFileServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
