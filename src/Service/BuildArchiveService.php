@@ -18,6 +18,7 @@ class BuildArchiveService implements BuildArchiveServiceInterface
     public function build(Stream $stream): File
     {
         $archive = new \ZipArchive();
+        $tmpFiles = [];
 
         $archivePath = sprintf(
             '%s%s.zip',
@@ -32,9 +33,16 @@ class BuildArchiveService implements BuildArchiveServiceInterface
         foreach ($stream->getChunkFileNames() as $file) {
             $filePath = $this->s3Service->download($stream->getId(), $file);
             $archive->addFile($filePath, $file);
+            $tmpFiles[] = $filePath;
         }
 
         $archive->close();
+
+        foreach ($tmpFiles as $tmpFile) {
+            if (file_exists($tmpFile)) {
+                unlink($tmpFile);
+            }
+        }
 
         return new File($archivePath);
     }

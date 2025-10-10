@@ -17,6 +17,7 @@ use App\Enum\StreamStatusEnum;
 use App\Filter\DeletedFilter;
 use App\Filter\IncludeDeletedStreamFilter;
 use App\Repository\StreamRepository;
+use App\Service\ProcessingTimeEstimator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -561,5 +562,13 @@ class Stream
             $this->getResizeFileName(),
             $this->getEmbedFileName(),
         ];
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('processingTimeEstimate')]
+    public function getProcessingTimeEstimate(): int
+    {
+        $sizeInMB = $this->getSizeInMegabytes();
+        return ProcessingTimeEstimator::estimateRemainingTime(StreamStatusEnum::from($this->status), $sizeInMB);
     }
 }
