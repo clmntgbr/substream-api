@@ -569,6 +569,7 @@ class Stream
     public function getProcessingTimeEstimate(): int
     {
         $sizeInMB = $this->getSizeInMegabytes();
-        return ProcessingTimeEstimator::estimateRemainingTime(StreamStatusEnum::from($this->status), $sizeInMB);
+        $hasUrl = !empty($this->url);
+        return ProcessingTimeEstimator::estimateRemainingTime(StreamStatusEnum::from($this->status), $sizeInMB, $hasUrl);
     }
 }

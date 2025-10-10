@@ -10,6 +10,7 @@ class ProcessingTimeEstimator
     private const REFERENCE_SIZE_MB = 400;
     
     private const BASE_TIMINGS = [
+        'GetVideoCommand' => 60,
         'ExtractSoundCommand' => 5,
         'GenerateSubtitleCommand' => 32,
         'TransformSubtitleCommand' => 0,
@@ -20,6 +21,7 @@ class ProcessingTimeEstimator
 
     // Mapping entre les status et les commandes
     private const STATUS_TO_COMMAND = [
+        'uploading' => 'GetVideoCommand',
         'extracting_sound' => 'ExtractSoundCommand',
         'generating_subtitle' => 'GenerateSubtitleCommand',
         'transforming_subtitle' => 'TransformSubtitleCommand',
@@ -30,6 +32,7 @@ class ProcessingTimeEstimator
 
     // Ordre des étapes de traitement
     private const PROCESSING_ORDER = [
+        'uploading',
         'uploaded',
         'extracting_sound',
         'extracting_sound_completed',
@@ -45,10 +48,10 @@ class ProcessingTimeEstimator
         'chunking_video_completed',
     ];
 
-    public static function estimateRemainingTime(StreamStatusEnum $currentStatus, float $videoSizeMB): int
+    public static function estimateRemainingTime(StreamStatusEnum $currentStatus, float $videoSizeMB, bool $hasUrl = false): int
     {
-        // If failed or uploading, no remaining time
-        if (self::isFailedStatus($currentStatus) || $currentStatus === StreamStatusEnum::UPLOADING || $currentStatus === StreamStatusEnum::COMPLETED) {
+        // If failed or completed, no remaining time
+        if (self::isFailedStatus($currentStatus) || $currentStatus === StreamStatusEnum::COMPLETED) {
             return 0;
         }
 
@@ -64,6 +67,11 @@ class ProcessingTimeEstimator
 
         // Iterate through all processing steps
         foreach (self::STATUS_TO_COMMAND as $statusValue => $command) {
+            // Skip GetVideoCommand if the stream doesn't have a URL
+            if ($command === 'GetVideoCommand' && !$hasUrl) {
+                continue;
+            }
+            
             $processingStatusIndex = array_search($statusValue, self::PROCESSING_ORDER);
             $completedStatusValue = $statusValue . '_completed';
             $completedStatusIndex = array_search($completedStatusValue, self::PROCESSING_ORDER);
@@ -84,7 +92,8 @@ class ProcessingTimeEstimator
             }
         }
 
-        return $remainingSeconds;
+        // Add 20% margin
+        return (int) round($remainingSeconds * 1.2);
     }
 
     /**
