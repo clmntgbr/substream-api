@@ -6,6 +6,7 @@ use App\Entity\Stream;
 use App\Exception\StreamNotDownloadableException;
 use App\Service\BuildArchiveServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Shared\Domain\Response\Response;
 use App\Util\Slugify;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -27,20 +28,24 @@ class BuildArchiveStreamController extends AbstractController
             throw new StreamNotDownloadableException();
         }
 
-        $zip = $this->buildArchiveService->build($stream);
+        try {
+            $zip = $this->buildArchiveService->build($stream);
 
-        $response = new BinaryFileResponse($zip->getPathname());
+            $response = new BinaryFileResponse($zip->getPathname());
 
-        $response->headers->set(
-            'Content-Disposition',
-            HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                sprintf('%s.zip', Slugify::slug($stream->getOriginalFileName()))
-            )
-        );
+            $response->headers->set(
+                'Content-Disposition',
+                HeaderUtils::makeDisposition(
+                    HeaderUtils::DISPOSITION_ATTACHMENT,
+                    sprintf('%s.zip', Slugify::slug($stream->getOriginalFileName()))
+                )
+            );
 
-        $response->deleteFileAfterSend();
+            $response->deleteFileAfterSend();
 
-        return $response;
+            return $response;
+        } catch (\Exception $e) {
+            return Response::errorResponse($e->getMessage());
+        }
     }
 }

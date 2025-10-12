@@ -26,13 +26,17 @@ class BuildArchiveService implements BuildArchiveServiceInterface
         );
 
         if (true !== $archive->open($archivePath, \ZipArchive::CREATE)) {
-            throw new UnprocessableEntityHttpException('Unable to create temporary zip archive');
+            throw new UnprocessableEntityHttpException('Unable to create zip archive');
         }
 
-        foreach ($stream->getChunkFileNames() as $file) {
+        foreach ($stream->getChunkFileNames() ?? [] as $file) {
             $filePath = $this->s3Service->download($stream->getId(), $file);
             $archive->addFile($filePath, $file);
             $tmpFiles[] = $filePath;
+        }
+
+        if (0 === $archive->count()) {
+            throw new UnprocessableEntityHttpException('No files found');
         }
 
         $archive->close();

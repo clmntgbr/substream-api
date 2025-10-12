@@ -60,6 +60,7 @@ class CreateStreamVideoCommandHandler
             throw new OptionNotFoundException();
         }
 
+
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
             user: $command->getUser(),
             streamId: $command->getStreamId(),

@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\QueryParameter;
 use App\Controller\Stream\BuildArchiveStreamController;
 use App\Controller\Stream\CreateStreamUrlController;
 use App\Controller\Stream\CreateStreamVideoController;
+use App\Controller\Stream\DeleteStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
 use App\Filter\IncludeDeletedStreamFilter;
@@ -32,6 +33,11 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new Get(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
+        ),
+        new Get(
+            uriTemplate: '/streams/{id}/delete',
+            controller: DeleteStreamController::class,
+            normalizationContext: ['groups' => ['stream:read:status']],
         ),
         new Get(
             uriTemplate: '/streams/{id}/download',
@@ -79,6 +85,10 @@ class Stream
     #[Groups(['stream:read'])]
     private ?int $size = null;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['stream:read'])]
+    private ?int $duration = null;
+
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private array $audioFiles = [];
 
@@ -98,7 +108,7 @@ class Stream
     private ?array $chunkFileNames = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['stream:read'])]
+    #[Groups(['stream:read', 'stream:read:status'])]
     private string $status;
 
     #[ORM\Column(type: Types::JSON)]
@@ -147,7 +157,7 @@ class Stream
         return $stream;
     }
 
-    #[Groups(['stream:read'])]
+    #[Groups(['stream:read', 'stream:read:status'])]
     public function getId(): Uuid
     {
         return $this->id;
@@ -368,6 +378,13 @@ class Stream
         return $this;
     }
 
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
     public function getMimeType(): ?string
     {
         return $this->mimeType;
@@ -571,5 +588,20 @@ class Stream
         $hasUrl = !empty($this->url);
 
         return ProcessingTimeEstimator::estimateRemainingTime(StreamStatusEnum::from($this->status), $sizeInMB, $hasUrl);
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('duration')]
+    public function getDuration(): ?string
+    {
+        if ($this->duration === null) {
+            return null;
+        }
+
+        $hours = floor($this->duration / 3600);
+        $minutes = floor(($this->duration % 3600) / 60);
+        $seconds = $this->duration % 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 }

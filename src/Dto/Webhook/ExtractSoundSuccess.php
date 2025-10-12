@@ -23,6 +23,10 @@ readonly class ExtractSoundSuccess
         #[Assert\NotBlank]
         #[Assert\Type('int')]
         private readonly int $processingTime,
+        #[SerializedName('duration')]
+        #[Assert\NotBlank]
+        #[Assert\Type('int')]
+        private readonly int $duration,
         #[SerializedName('audio_files')]
         #[Assert\NotBlank]
         #[Assert\All([
@@ -52,5 +56,10 @@ readonly class ExtractSoundSuccess
     public function getAudioFiles(): array
     {
         return $this->audioFiles;
+    }
+
+    public function getDuration(): int
+    {
+        return $this->duration;
     }
 }
