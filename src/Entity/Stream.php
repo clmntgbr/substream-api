@@ -17,7 +17,6 @@ use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
 use App\Filter\IncludeDeletedStreamFilter;
 use App\Repository\StreamRepository;
-use App\Service\ProcessingTimeEstimator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -585,7 +584,7 @@ class Stream
     #[SerializedName('duration')]
     public function getDuration(): ?string
     {
-        if ($this->duration === null) {
+        if (null === $this->duration) {
             return null;
         }
 
