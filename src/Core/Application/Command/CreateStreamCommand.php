@@ -14,6 +14,7 @@ readonly class CreateStreamCommand implements SyncCommandInterface
         private User $user,
         private ?string $fileName = null,
         private ?string $originalFileName = null,
+        private ?int $duration = null,
         private ?string $url = null,
         private ?string $mimeType = null,
         private ?int $size = null,
@@ -43,6 +44,11 @@ readonly class CreateStreamCommand implements SyncCommandInterface
     public function getOriginalFileName(): ?string
     {
         return $this->originalFileName;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
     }
 
     public function getUrl(): ?string

@@ -11,6 +11,7 @@ readonly class CreateStreamUrlCommand implements SyncCommandInterface
     private Uuid $streamId;
 
     public function __construct(
+        private string $name,
         private string $url,
         private Uuid $optionId,
         private User $user,
@@ -21,6 +22,11 @@ readonly class CreateStreamUrlCommand implements SyncCommandInterface
     public function getStreamId(): Uuid
     {
         return $this->streamId;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     public function getUrl(): string

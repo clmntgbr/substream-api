@@ -32,6 +32,8 @@ class CreateStreamUrlCommandHandler
     {
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
             user: $command->getUser(),
+            originalFileName: $command->getName(),
+            fileName: $command->getName(),
             streamId: $command->getStreamId(),
             url: $command->getUrl(),
             optionId: $command->getOptionId(),

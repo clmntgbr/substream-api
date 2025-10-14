@@ -45,6 +45,7 @@ class CreateStreamCommandHandler
             url: $command->getUrl(),
             mimeType: $command->getMimeType(),
             size: $command->getSize(),
+            duration: $command->getDuration(),
         );
 
         $this->streamRepository->save($stream, true);

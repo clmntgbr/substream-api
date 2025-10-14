@@ -165,7 +165,6 @@ class Stream
 
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
-    #[Groups(['stream:read'])]
     private Collection $tasks;
 
     public function __construct()
@@ -182,6 +181,7 @@ class Stream
         ?string $url = null,
         ?string $mimeType = null,
         ?int $size = null,
+        ?int $duration = null,
     ): self {
         $stream = new self();
         $stream->id = $id;
@@ -189,8 +189,9 @@ class Stream
         $stream->fileName = $fileName;
         $stream->originalFileName = $originalFileName;
         $stream->url = $url;
-        $stream->mimeType = $mimeType;
+        $stream->mimeType = $mimeType ?? 'video/mp4';
         $stream->size = $size;
+        $stream->duration = $duration;
         $stream->status = StreamStatusEnum::CREATED->value;
         $stream->statuses = [StreamStatusEnum::CREATED->value];
         $stream->user = $user;

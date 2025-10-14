@@ -27,6 +27,7 @@ class CreateStreamUrlController extends AbstractController
         try {
             $createStreamModel = $this->commandBus->dispatch(
                 new CreateStreamUrlCommand(
+                    name: $payload->getName(),
                     url: $payload->getUrl(),
                     optionId: $payload->getOptionId(),
                     user: $user,

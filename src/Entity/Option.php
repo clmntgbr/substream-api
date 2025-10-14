@@ -43,7 +43,7 @@ class Option
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotBlank]
     #[Assert\Positive]
-    #[Assert\Range(min: 8, max: 72)]
+    #[Assert\Range(min: 1, max: 100)]
     #[Groups(['option:read', 'option:write'])]
     private int $subtitleSize;
 
@@ -77,14 +77,14 @@ class Option
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
-    #[Assert\Range(min: 0, max: 10)]
+    #[Assert\Range(min: 0, max: 4)]
     #[Groups(['option:read', 'option:write'])]
     private int $subtitleOutlineThickness;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
-    #[Assert\Range(min: 0, max: 5)]
+    #[Assert\Range(min: 0, max: 4)]
     #[Groups(['option:read', 'option:write'])]
     private int $subtitleShadow;
 
@@ -96,7 +96,7 @@ class Option
 
     #[ORM\Column(type: Types::STRING, length: 30)]
     #[Assert\NotBlank]
-    #[Assert\Length(max: 30)]
+    #[Assert\Length(max: 100)]
     #[Groups(['option:read', 'option:write'])]
     private string $format;
 
