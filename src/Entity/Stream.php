@@ -2,8 +2,7 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -15,7 +14,7 @@ use App\Controller\Stream\CreateStreamVideoController;
 use App\Controller\Stream\DeleteStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
-use App\Filter\IncludeDeletedStreamFilter;
+use App\Filter\PartialSearchFilter;
 use App\Repository\StreamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -45,8 +44,51 @@ use Symfony\Component\Uid\Uuid;
         new GetCollection(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
             parameters: [
-                'status' => new QueryParameter(description: 'Filter streams by status'),
-                'include_deleted' => new QueryParameter(filter: new IncludeDeletedStreamFilter()),
+                'search[status]' => new QueryParameter(
+                    description: 'Search streams by status',
+                    property: 'status',
+                    filter: new PartialSearchFilter(),
+                ),
+                'search[originalFileName]' => new QueryParameter(
+                    description: 'Search streams by original file name',
+                    property: 'originalFileName',
+                    filter: new PartialSearchFilter(),
+                ),
+                'order[createdAt]' => new QueryParameter(
+                    description: 'Order streams by creation date',
+                    property: 'createdAt',
+                    filter: new OrderFilter(),
+                ),
+                'order[status]' => new QueryParameter(
+                    description: 'Order streams by status',
+                    property: 'status',
+                    filter: new OrderFilter(),
+                ),
+                'order[originalFileName]' => new QueryParameter(
+                    description: 'Order streams by original file name',
+                    property: 'originalFileName',
+                    filter: new OrderFilter(),
+                ),
+                'order[processingTime]' => new QueryParameter(
+                    description: 'Order streams by processing time',
+                    property: 'processingTime',
+                    filter: new OrderFilter(),
+                ),
+                'order[progress]' => new QueryParameter(
+                    description: 'Order streams by progress',
+                    property: 'progress',
+                    filter: new OrderFilter(),
+                ),
+                'order[duration]' => new QueryParameter(
+                    description: 'Order streams by duration',
+                    property: 'duration',
+                    filter: new OrderFilter(),
+                ),
+                'order[size]' => new QueryParameter(
+                    description: 'Order streams by size',
+                    property: 'size',
+                    filter: new OrderFilter(),
+                ),
             ]
         ),
         new Post(
@@ -59,7 +101,6 @@ use Symfony\Component\Uid\Uuid;
         ),
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['status'])]
 class Stream
 {
     use UuidTrait;
