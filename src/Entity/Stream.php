@@ -125,6 +125,7 @@ class Stream
 
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    #[Groups(['stream:read'])]
     private Collection $tasks;
 
     public function __construct()
@@ -578,16 +579,6 @@ class Stream
             $this->getResizeFileName(),
             $this->getEmbedFileName(),
         ];
-    }
-
-    #[Groups(['stream:read'])]
-    #[SerializedName('processingTimeEstimate')]
-    public function getProcessingTimeEstimate(): int
-    {
-        $sizeInMB = $this->getSizeInMegabytes();
-        $hasUrl = !empty($this->url);
-
-        return ProcessingTimeEstimator::estimateRemainingTime(StreamStatusEnum::from($this->status), $sizeInMB, $hasUrl);
     }
 
     #[Groups(['stream:read'])]
