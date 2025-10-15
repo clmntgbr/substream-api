@@ -64,6 +64,7 @@ class CreateStreamVideoCommandHandler
             user: $command->getUser(),
             streamId: $command->getStreamId(),
             optionId: $option->getId(),
+            duration: $command->getDuration(),
             fileName: $uploadFileModel->getFileName(),
             originalFileName: $uploadFileModel->getOriginalFileName(),
             mimeType: $command->getFile()->getMimeType(),

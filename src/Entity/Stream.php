@@ -14,6 +14,7 @@ use App\Controller\Stream\CreateStreamVideoController;
 use App\Controller\Stream\DeleteStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
+use App\Filter\ExactStatusSearchFilter;
 use App\Filter\PartialSearchFilter;
 use App\Repository\StreamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -27,7 +28,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StreamRepository::class)]
 #[ApiResource(
-    order: ['createdAt' => 'DESC'],
+    order: ['createdAt' => 'DESC', 'size' => 'DESC', 'originalFileName' => 'DESC'],
     operations: [
         new Get(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
@@ -47,7 +48,7 @@ use Symfony\Component\Uid\Uuid;
                 'search[status]' => new QueryParameter(
                     description: 'Search streams by status',
                     property: 'status',
-                    filter: new PartialSearchFilter(),
+                    filter: new ExactStatusSearchFilter(),
                 ),
                 'search[originalFileName]' => new QueryParameter(
                     description: 'Search streams by original file name',
@@ -253,8 +254,12 @@ class Stream
     }
 
     #[Groups(['stream:read'])]
-    public function getSizeInMegabytes(): int
+    public function getSizeInMegabytes(): ?int
     {
+        if (null === $this->size) {
+            return null;
+        }
+
         return (int) ($this->size / 1024 / 1024);
     }
 

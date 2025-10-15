@@ -12,11 +12,19 @@ class CreateStreamVideoPayload
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
         private Uuid $optionId,
+        #[Assert\NotBlank]
+        #[Assert\Type('string')]
+        private string $duration,
     ) {
     }
 
     public function getOptionId(): Uuid
     {
         return $this->optionId;
+    }
+
+    public function getDuration(): string
+    {
+        return $this->duration;
     }
 }

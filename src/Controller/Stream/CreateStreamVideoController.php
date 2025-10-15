@@ -29,6 +29,7 @@ class CreateStreamVideoController extends AbstractController
             $createStreamModel = $this->commandBus->dispatch(
                 new CreateStreamVideoCommand(
                     file: $video,
+                    duration: $payload->getDuration(),
                     optionId: $payload->getOptionId(),
                     user: $user,
                 ),
@@ -38,6 +39,7 @@ class CreateStreamVideoController extends AbstractController
                 'streamId' => $createStreamModel->streamId,
             ]);
         } catch (\Exception $exception) {
+            dd($exception);
             return Response::errorResponse('Something went wrong.');
         }
     }
