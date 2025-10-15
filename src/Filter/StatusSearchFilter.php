@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\Query\Expr\Comparison;
 use Doctrine\ORM\QueryBuilder;
 
-final class ExactStatusSearchFilter implements FilterInterface
+final class StatusSearchFilter implements FilterInterface
 {
     public function apply(
         QueryBuilder $queryBuilder,

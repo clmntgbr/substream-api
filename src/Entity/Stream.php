@@ -14,7 +14,7 @@ use App\Controller\Stream\CreateStreamVideoController;
 use App\Controller\Stream\DeleteStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
-use App\Filter\ExactStatusSearchFilter;
+use App\Filter\StatusSearchFilter;
 use App\Filter\PartialSearchFilter;
 use App\Repository\StreamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -48,7 +48,7 @@ use Symfony\Component\Uid\Uuid;
                 'search[status]' => new QueryParameter(
                     description: 'Search streams by status',
                     property: 'status',
-                    filter: new ExactStatusSearchFilter(),
+                    filter: new StatusSearchFilter(),
                 ),
                 'search[originalFileName]' => new QueryParameter(
                     description: 'Search streams by original file name',
