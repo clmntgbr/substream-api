@@ -12,6 +12,7 @@ readonly class GenerateSubtitleMessage implements AsyncMessageInterface
         private Uuid $taskId,
         private Uuid $streamId,
         private array $audioFiles,
+        private string $language,
     ) {
     }
 
@@ -36,6 +37,7 @@ readonly class GenerateSubtitleMessage implements AsyncMessageInterface
             'task_id' => (string) $this->taskId,
             'stream_id' => (string) $this->streamId,
             'audio_files' => $this->audioFiles,
+            'language' => $this->language,
         ];
     }
 

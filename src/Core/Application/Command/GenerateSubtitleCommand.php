@@ -11,6 +11,7 @@ final class GenerateSubtitleCommand extends CommandAbstract implements AsyncComm
     public function __construct(
         private Uuid $streamId,
         private array $audioFiles,
+        private string $language,
     ) {
     }
 
@@ -22,5 +23,10 @@ final class GenerateSubtitleCommand extends CommandAbstract implements AsyncComm
     public function getAudioFiles(): array
     {
         return $this->audioFiles;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
     }
 }

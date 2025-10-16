@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Entity\Trait\UuidTrait;
+use App\Enum\LanguageEnum;
 use App\Enum\SubtitleFontEnum;
 use App\Enum\VideoFormatEnum;
 use App\Repository\OptionRepository;
@@ -116,6 +117,11 @@ class Option
     #[Groups(['option:read', 'option:write'])]
     private bool $isResume;
 
+    #[ORM\Column(type: Types::STRING)]
+    #[Assert\NotBlank]
+    #[Groups(['option:read', 'option:write'])]
+    private string $language;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -133,6 +139,7 @@ class Option
         $this->chunkNumber = 1;
         $this->yAxisAlignment = 0;
         $this->isResume = false;
+        $this->language = LanguageEnum::AUTO->value;
     }
 
     #[Groups(['option:read:post', 'option:read'])]
@@ -307,5 +314,17 @@ class Option
     public function getIsResume(): bool
     {
         return $this->isResume;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): self
+    {
+        $this->language = $language;
+
+        return $this;
     }
 }

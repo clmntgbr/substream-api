@@ -62,6 +62,7 @@ class GenerateSubtitleCommandHandler
                 taskId: $task->getId(),
                 streamId: $stream->getId(),
                 audioFiles: $command->getAudioFiles(),
+                language: $command->getLanguage(),
             ));
 
             return;

@@ -51,6 +51,7 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
             $this->commandBus->dispatch(new GenerateSubtitleCommand(
                 streamId: $stream->getId(),
                 audioFiles: $stream->getAudioFiles(),
+                language: $stream->getOption()->getLanguage(),
             ));
         } catch (\Exception $e) {
             $stream->markAsExtractSoundFailed();
