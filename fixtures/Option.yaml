@@ -1,12 +1,12 @@
-App\Entity\Option:
-  option_1:
-    subtitleFont: "Arial"
-    subtitleSize: 16
-    subtitleColor: "#000000"
-    subtitleOutlineColor: "#000000"
-    subtitleOutlineThickness: 0
-    subtitleShadow: 0
-    subtitleShadowColor: "#000000"
-    format: "original"
-    chunkNumber: 1
-    yAxisAlignment: 0
+# App\Entity\Option:
+#   option_1:
+#     subtitleFont: "Arial"
+#     subtitleSize: 16
+#     subtitleColor: "#000000"
+#     subtitleOutlineColor: "#000000"
+#     subtitleOutlineThickness: 0
+#     subtitleShadow: 0
+#     subtitleShadowColor: "#000000"
+#     format: "original"
+#     chunkNumber: 1
+#     yAxisAlignment: 0

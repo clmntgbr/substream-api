@@ -69,13 +69,15 @@ final class StatusSearchFilter implements FilterInterface
         string $value,
     ): Comparison {
         $parameterName = $queryNameGenerator->generateParameterName($property);
-        
-        if (strtolower($value) === 'failed') {
+
+        if ('failed' === strtolower($value)) {
             $queryBuilder->setParameter($parameterName, '%'.$value.'%');
+
             return $queryBuilder->expr()->like($field, ':'.$parameterName);
         }
-        
+
         $queryBuilder->setParameter($parameterName, $value);
+
         return $queryBuilder->expr()->eq($field, ':'.$parameterName);
     }
 
@@ -91,13 +93,15 @@ final class StatusSearchFilter implements FilterInterface
         }
 
         $parameterName = $queryNameGenerator->generateParameterName($property);
-        
-        if (strtolower($value) === 'failed') {
+
+        if ('failed' === strtolower($value)) {
             $queryBuilder->setParameter($parameterName, '%'.$value.'%');
+
             return $queryBuilder->expr()->notLike($field, ':'.$parameterName);
         }
-        
+
         $queryBuilder->setParameter($parameterName, $value);
+
         return $queryBuilder->expr()->neq($field, ':'.$parameterName);
     }
 

@@ -40,6 +40,7 @@ class CreateStreamVideoController extends AbstractController
             ]);
         } catch (\Exception $exception) {
             dd($exception);
+
             return Response::errorResponse('Something went wrong.');
         }
     }

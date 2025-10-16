@@ -12,10 +12,11 @@ use App\Controller\Stream\BuildArchiveStreamController;
 use App\Controller\Stream\CreateStreamUrlController;
 use App\Controller\Stream\CreateStreamVideoController;
 use App\Controller\Stream\DeleteStreamController;
+use App\Controller\Stream\GetSubtitleSrtStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
-use App\Filter\StatusSearchFilter;
 use App\Filter\PartialSearchFilter;
+use App\Filter\StatusSearchFilter;
 use App\Repository\StreamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -41,6 +42,10 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/streams/{id}/download',
             controller: BuildArchiveStreamController::class,
+        ),
+        new Get(
+            uriTemplate: '/streams/{id}/download/subtitle',
+            controller: GetSubtitleSrtStreamController::class,
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
@@ -604,11 +609,20 @@ class Stream
         };
     }
 
+    #[Groups(['stream:read'])]
+    #[SerializedName('isDownloadable')]
     public function isDownloadable(): bool
     {
         return in_array($this->status, [
             StreamStatusEnum::COMPLETED->value,
         ]);
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('isSrtDownloadable')]
+    public function isSrtDownloadable(): bool
+    {
+        return null !== $this->getSubtitleSrtFileName();
     }
 
     public function getCleanableFiles(): array
@@ -620,7 +634,6 @@ class Stream
 
         return [
             ...$audioFiles,
-            'subtitles/'.$this->getSubtitleSrtFileName(),
             'subtitles/'.$this->getSubtitleAssFileName(),
             $this->getResizeFileName(),
             $this->getEmbedFileName(),
