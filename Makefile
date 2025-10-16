@@ -114,3 +114,9 @@ transform-subtitle:
 
 resume-video:
 	$(PHP) php bin/console resume-video
+
+unzip:
+	cat  public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip.part* > public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
+	unzip public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip -d public/debug/
+	rm -r public/debug/__MACOSX
+	rm -r public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
