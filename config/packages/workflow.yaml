@@ -41,6 +41,10 @@ framework:
                 - chunking_video_failed
                 - chunking_video_completed
 
+                - resuming
+                - resuming_failed
+                - resuming_completed
+
                 - completed
 
             transitions:
@@ -117,6 +121,19 @@ framework:
                     from: chunking_video
                     to:   chunking_video_completed
 
-                completed:
+                resuming:
                     from: chunking_video_completed
+                    to:   resuming
+                resuming_failed:
+                    from: resuming
+                    to:   resuming_failed
+                resuming_completed:
+                    from: resuming
+                    to:   resuming_completed
+
+                completed_no_resume:
+                    from: chunking_video_completed
+                    to:   completed
+                completed:
+                    from: resuming_completed
                     to:   completed

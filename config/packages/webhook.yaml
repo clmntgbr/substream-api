@@ -43,3 +43,9 @@ framework:
       chunkvideofailure:
         service: App\Webhook\ChunkVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
+      resumevideosuccess:
+        service: App\Webhook\ResumeVideoSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      resumevideofailure:
+        service: App\Webhook\ResumeVideoFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'

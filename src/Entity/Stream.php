@@ -150,6 +150,9 @@ class Stream
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $embedFileName = null;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $resumeFileName = null;
+
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $chunkFileNames = null;
 
@@ -231,6 +234,8 @@ class Stream
             StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED->value,
             StreamStatusEnum::CHUNKING_VIDEO->value,
             StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value,
+            StreamStatusEnum::RESUMING->value,
+            StreamStatusEnum::RESUMING_COMPLETED->value,
         ]);
     }
 
@@ -255,6 +260,7 @@ class Stream
             StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value,
             StreamStatusEnum::CHUNKING_VIDEO_FAILED->value,
             StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value,
+            StreamStatusEnum::RESUMING_FAILED->value,
         ]);
     }
 
@@ -377,6 +383,14 @@ class Stream
     {
         $this->status = StreamStatusEnum::CHUNKING_VIDEO_FAILED->value;
         $this->statuses[] = StreamStatusEnum::CHUNKING_VIDEO_FAILED->value;
+
+        return $this;
+    }
+
+    public function markAsResumingFailed(): self
+    {
+        $this->status = StreamStatusEnum::RESUMING_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::RESUMING_FAILED->value;
 
         return $this;
     }
@@ -509,6 +523,18 @@ class Stream
         return $this;
     }
 
+    public function setResumeFileName(?string $resumeFileName): self
+    {
+        $this->resumeFileName = $resumeFileName;
+
+        return $this;
+    }
+
+    public function getResumeFileName(): ?string
+    {
+        return $this->resumeFileName;
+    }
+
     /**
      * @return list<string>
      */
@@ -600,9 +626,11 @@ class Stream
             StreamStatusEnum::RESIZING_VIDEO => 75,
             StreamStatusEnum::RESIZING_VIDEO_COMPLETED => 80,
             StreamStatusEnum::EMBEDDING_VIDEO => 85,
-            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED => 90,
-            StreamStatusEnum::CHUNKING_VIDEO => 95,
-            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED,
+            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED => 88,
+            StreamStatusEnum::CHUNKING_VIDEO => 92,
+            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED => 94,
+            StreamStatusEnum::RESUMING => 96,
+            StreamStatusEnum::RESUMING_COMPLETED => 98,
             StreamStatusEnum::COMPLETED,
             StreamStatusEnum::DELETED => 100,
             default => 0,
@@ -613,16 +641,21 @@ class Stream
     #[SerializedName('isDownloadable')]
     public function isDownloadable(): bool
     {
-        return in_array($this->status, [
-            StreamStatusEnum::COMPLETED->value,
-        ]);
+        return in_array(StreamStatusEnum::COMPLETED->value, $this->statuses);
     }
 
     #[Groups(['stream:read'])]
     #[SerializedName('isSrtDownloadable')]
     public function isSrtDownloadable(): bool
     {
-        return null !== $this->getSubtitleSrtFileName();
+        return in_array(StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value, $this->statuses) && null !== $this->getSubtitleSrtFileName();
+    }
+
+    #[Groups(['stream:read'])]
+    #[SerializedName('isResumeDownloadable')]
+    public function isResumeDownloadable(): bool
+    {
+        return in_array(StreamStatusEnum::RESUMING_COMPLETED->value, $this->statuses) && null !== $this->getResumeFileName();
     }
 
     public function getCleanableFiles(): array

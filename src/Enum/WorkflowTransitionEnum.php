@@ -33,5 +33,10 @@ enum WorkflowTransitionEnum: string
     case CHUNKING_VIDEO_FAILED = 'chunking_video_failed';
     case CHUNKING_VIDEO_COMPLETED = 'chunking_video_completed';
 
+    case RESUMING = 'resuming';
+    case RESUMING_FAILED = 'resuming_failed';
+    case RESUMING_COMPLETED = 'resuming_completed';
+
+    case COMPLETED_NO_RESUME = 'completed_no_resume';
     case COMPLETED = 'completed';
 }

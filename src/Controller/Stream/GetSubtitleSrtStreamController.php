@@ -7,6 +7,7 @@ use App\Exception\StreamNotDownloadableException;
 use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Domain\Response\Response;
+use App\Util\Slugify;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -36,7 +37,7 @@ class GetSubtitleSrtStreamController extends AbstractController
                 'Content-Disposition',
                 HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
-                    $stream->getSubtitleSrtFileName(),
+                    sprintf('%s.srt', Slugify::slug($stream->getOriginalFileName()))
                 ),
                 'text/plain'
             );

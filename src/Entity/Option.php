@@ -112,6 +112,10 @@ class Option
     #[Groups(['option:read', 'option:write'])]
     private float $yAxisAlignment;
 
+    #[ORM\Column(type: Types::BOOLEAN)]
+    #[Groups(['option:read', 'option:write'])]
+    private bool $isResume;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -128,6 +132,7 @@ class Option
         $this->format = VideoFormatEnum::ORIGINAL->value;
         $this->chunkNumber = 1;
         $this->yAxisAlignment = 0;
+        $this->isResume = false;
     }
 
     #[Groups(['option:read:post', 'option:read'])]
@@ -290,5 +295,17 @@ class Option
         $this->yAxisAlignment = $yAxisAlignment;
 
         return $this;
+    }
+
+    public function setIsResume(bool $isResume): self
+    {
+        $this->isResume = $isResume;
+
+        return $this;
+    }
+
+    public function getIsResume(): bool
+    {
+        return $this->isResume;
     }
 }
