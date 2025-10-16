@@ -111,3 +111,6 @@ consume:
 
 transform-subtitle:
 	$(PHP) php bin/console transform-subtitle
+
+resume-video:
+	$(PHP) php bin/console resume-video

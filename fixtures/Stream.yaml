@@ -1,28 +1,28 @@
-# App\Entity\Stream:
-#   stream_1:
-#     setIdFromString: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd"
-#     fileName: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.mp4"
-#     originalFileName: "J'ai acheté la voiture de mes rêves (elle est monstrueuse) ft. GMK.mp4"
-#     mimeType: "video/mp4"
-#     size: 406322962
-#     audioFiles:
-#       - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_001.wav"
-#       - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_002.wav"
-#       - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_003.wav"
-#       - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_004.wav"
-#       - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_005.wav"
-#       - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_006.wav"
-#     subtitleSrtFileName: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.srt"
-#     status: "generating_subtitle_completed"
-#     statuses:
-#       - "created"
-#       - "uploaded"
-#       - "extracting_sound"
-#       - "extracting_sound_completed"
-#       - "generating_subtitle"
-#       - "generating_subtitle_completed"
-#     user: "@user_1"
-#     option: "@option_1"
+App\Entity\Stream:
+  stream_1:
+    setIdFromString: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd"
+    fileName: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.mp4"
+    originalFileName: "J'ai acheté la voiture de mes rêves (elle est monstrueuse) ft. GMK.mp4"
+    mimeType: "video/mp4"
+    size: 406322962
+    audioFiles:
+      - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_001.wav"
+      - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_002.wav"
+      - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_003.wav"
+      - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_004.wav"
+      - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_005.wav"
+      - "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_006.wav"
+    subtitleSrtFileName: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.srt"
+    status: "generating_subtitle_completed"
+    statuses:
+      - "created"
+      - "uploaded"
+      - "extracting_sound"
+      - "extracting_sound_completed"
+      - "generating_subtitle"
+      - "generating_subtitle_completed"
+    user: "@user_1"
+    option: "@option_1"
 
 #   stream_created:
 #     setIdFromString: "11111111-1111-1111-1111-111111111111"
