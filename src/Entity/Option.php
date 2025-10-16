@@ -37,13 +37,14 @@ class Option
 
     #[ORM\Column(type: Types::STRING, length: 100)]
     #[Assert\NotBlank]
-    #[Assert\Length(max: 100)]
+    #[Assert\Choice(callback: [SubtitleFontEnum::class, 'values'])]
     #[Groups(['option:read', 'option:write'])]
     private string $subtitleFont;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotBlank]
     #[Assert\Positive]
+    #[Assert\Type(type: 'int')]
     #[Assert\Range(min: 1, max: 100)]
     #[Groups(['option:read', 'option:write'])]
     private int $subtitleSize;
@@ -97,28 +98,35 @@ class Option
 
     #[ORM\Column(type: Types::STRING, length: 30)]
     #[Assert\NotBlank]
-    #[Assert\Length(max: 100)]
+    #[Assert\Choice(callback: [VideoFormatEnum::class, 'values'])]
     #[Groups(['option:read', 'option:write'])]
     private string $format;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotBlank]
     #[Assert\Positive]
+    #[Assert\Type(type: 'int')]
+    #[Assert\Range(min: 1, max: 100)]
     #[Groups(['option:read', 'option:write'])]
     private int $chunkNumber;
 
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Assert\Range(min: 0, max: 4)]
     #[Groups(['option:read', 'option:write'])]
     private float $yAxisAlignment;
 
     #[ORM\Column(type: Types::BOOLEAN)]
+    #[Assert\NotNull]
+    #[Assert\Type(type: 'bool')]
     #[Groups(['option:read', 'option:write'])]
     private bool $isResume;
 
     #[ORM\Column(type: Types::STRING)]
     #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    #[Assert\Choice(callback: [LanguageEnum::class, 'values'])]
     #[Groups(['option:read', 'option:write'])]
     private string $language;
 
