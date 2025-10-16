@@ -12,6 +12,7 @@ use App\Controller\Stream\BuildArchiveStreamController;
 use App\Controller\Stream\CreateStreamUrlController;
 use App\Controller\Stream\CreateStreamVideoController;
 use App\Controller\Stream\DeleteStreamController;
+use App\Controller\Stream\GetResumeVideoStreamController;
 use App\Controller\Stream\GetSubtitleSrtStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
@@ -46,6 +47,10 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/streams/{id}/download/subtitle',
             controller: GetSubtitleSrtStreamController::class,
+        ),
+        new Get(
+            uriTemplate: '/streams/{id}/download/resume',
+            controller: GetResumeVideoStreamController::class,
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
