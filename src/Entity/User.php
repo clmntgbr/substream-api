@@ -48,6 +48,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private string $lastname;
 
+    #[ORM\Column(type: 'uuid', unique: true, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?Uuid $oauthState = null;
+
     /**
      * @var list<string> The user roles
      */
@@ -200,6 +204,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getOauthState(): ?Uuid
+    {
+        return $this->oauthState;
+    }
+
+    public function setOauthState(Uuid $oauthState): static
+    {
+        $this->oauthState = $oauthState;
 
         return $this;
     }
