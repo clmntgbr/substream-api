@@ -37,7 +37,6 @@ class Option
 
     #[ORM\Column(type: Types::STRING, length: 100)]
     #[Assert\NotBlank]
-    #[Assert\Choice(callback: [SubtitleFontEnum::class, 'values'])]
     #[Groups(['option:read', 'option:write'])]
     private string $subtitleFont;
 
@@ -98,7 +97,6 @@ class Option
 
     #[ORM\Column(type: Types::STRING, length: 30)]
     #[Assert\NotBlank]
-    #[Assert\Choice(callback: [VideoFormatEnum::class, 'values'])]
     #[Groups(['option:read', 'option:write'])]
     private string $format;
 
@@ -126,7 +124,6 @@ class Option
     #[ORM\Column(type: Types::STRING)]
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    #[Assert\Choice(callback: [LanguageEnum::class, 'values'])]
     #[Groups(['option:read', 'option:write'])]
     private string $language;
 

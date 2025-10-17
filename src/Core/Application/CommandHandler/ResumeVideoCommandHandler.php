@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\ChunkVideoCommand;
 use App\Core\Application\Command\ResumeVideoCommand;
-use App\Core\Application\Message\ChunkVideoMessage;
 use App\Core\Application\Message\ResumeVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Entity\Task;

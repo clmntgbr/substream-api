@@ -39,3 +39,8 @@ services:
     App\Service\JsonMessageSerializer:
         tags:
             - { name: messenger.serializer }
+
+    App\Serializer\ValidationErrorNormalizer:
+        decorates: 'api_platform.jsonld.normalizer.error'
+        arguments:
+            $decorated: '@.inner'

@@ -39,11 +39,11 @@ class CompleteVideoCommandHandler
             return;
         }
 
-        if (false ===$stream->getOption()->getIsResume()) {
+        if (false === $stream->getOption()->getIsResume()) {
             $this->apply($stream, WorkflowTransitionEnum::COMPLETED_NO_RESUME);
         }
 
-        if (true ===$stream->getOption()->getIsResume()) {
+        if (true === $stream->getOption()->getIsResume()) {
             $this->apply($stream, WorkflowTransitionEnum::COMPLETED);
         }
 

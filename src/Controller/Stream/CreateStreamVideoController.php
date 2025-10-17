@@ -39,8 +39,6 @@ class CreateStreamVideoController extends AbstractController
                 'streamId' => $createStreamModel->streamId,
             ]);
         } catch (\Exception $exception) {
-            dd($exception);
-
             return Response::errorResponse('Something went wrong.');
         }
     }

@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Core\Application\Command\ResumeVideoCommand;
-use App\Core\Application\Command\TransformSubtitleCommand;
 use App\Entity\Stream;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
@@ -78,11 +77,11 @@ class DispatchResumeVideoCommand extends Command
         $stream->setEmbedFileName('1bba6dc7-21ed-41c2-9694-6a2ea4db41fd_embed.mp4');
         $stream->setStatus(StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value);
         $stream->setStatuses([
-            StreamStatusEnum::CREATED->value, 
-            StreamStatusEnum::UPLOADED->value, 
-            StreamStatusEnum::EXTRACTING_SOUND->value, 
-            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value, 
-            StreamStatusEnum::GENERATING_SUBTITLE->value, 
+            StreamStatusEnum::CREATED->value,
+            StreamStatusEnum::UPLOADED->value,
+            StreamStatusEnum::EXTRACTING_SOUND->value,
+            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value,
+            StreamStatusEnum::GENERATING_SUBTITLE->value,
             StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value,
             StreamStatusEnum::TRANSFORMING_SUBTITLE->value,
             StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED->value,
@@ -95,7 +94,7 @@ class DispatchResumeVideoCommand extends Command
         ]);
 
         $this->s3Service->deleteAll($stream->getId());
-        
+
         $this->uploadSubtitleSrtFile($stream);
         $this->uploadSubtitleAssFile($stream);
         $this->uploadAudioFiles($stream);

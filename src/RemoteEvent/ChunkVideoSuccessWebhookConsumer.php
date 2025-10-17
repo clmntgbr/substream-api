@@ -70,7 +70,7 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
                 subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
             ));
         }
-        
+
         if (false === $stream->getOption()->getIsResume()) {
             $this->commandBus->dispatch(new CompleteVideoCommand(
                 streamId: $stream->getId(),

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use App\Controller\User\RegisterController;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
@@ -22,6 +24,10 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             normalizationContext: ['groups' => ['user:read']],
             uriTemplate: '/me',
+        ),
+        new Post(
+            uriTemplate: '/register',
+            controller: RegisterController::class,
         ),
     ]
 )]
@@ -57,6 +63,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->id = Uuid::v4();
+    }
+
+    public static function create(string $firstname, string $lastname, string $email, string $plainPassword): self
+    {
+        $user = new self();
+        $user->firstname = $firstname;
+        $user->lastname = $lastname;
+        $user->email = $email;
+        $user->plainPassword = $plainPassword;
+        $user->roles = ['ROLE_USER'];
+
+        return $user;
     }
 
     #[Groups(['user:read'])]
