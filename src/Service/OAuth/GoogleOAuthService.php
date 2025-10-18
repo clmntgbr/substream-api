@@ -19,15 +19,9 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class GoogleOAuthService
 {
-    private const YOUTUBE_OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2';
-    private const YOUTUBE_CONNECT_URL = self::YOUTUBE_OAUTH_URL.'/auth';
-
     public function __construct(
-        private UserRepository $userRepository,
         private readonly ClientRegistry $clientRegistry,
-        private readonly HttpClientInterface $httpClient,
-        private readonly CommandBusInterface $commandBus,
-        private readonly string $frontendRedirectUrl,
+        private readonly CommandBusInterface $commandBus
 
     ) {
     }

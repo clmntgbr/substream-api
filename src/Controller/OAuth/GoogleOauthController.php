@@ -29,11 +29,10 @@ class GoogleOauthController extends AbstractController
     {
         try {
             $data = $this->googleOAuthService->connect();
+            return Response::successResponse($data);
         } catch (\Exception $e) {
             return Response::errorResponse($e->getMessage());
         }
-
-        return Response::successResponse($data);
     }
 
     #[Route('/exchange-token', name: 'exchange_token', methods: ['POST'])]

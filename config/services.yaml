@@ -8,7 +8,6 @@ services:
             string $apiUrl: '%env(API_URL)%'
             string $env: '%env(APP_ENV)%'
             string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
-            string $backendUrl: "%env(resolve:BACKEND_URL)%"
             string $frontendRedirectUrl: "%env(resolve:GOOGLE_REDIRECT_URI)%"
             
             string $twitterApiKey: "%env(resolve:TWITTER_API_KEY)%"
