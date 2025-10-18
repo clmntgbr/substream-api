@@ -1,20 +1,15 @@
 <?php
 
-namespace App\Dto\OAuth;
+namespace App\Dto\OAuth\Google;
 
-use Symfony\Component\Serializer\Attribute\SerializedName;
+use App\Dto\OAuth\CallbackPayloadInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class TwitterExchangeTokenPayload
+class GoogleExchangeTokenPayload implements CallbackPayloadInterface
 {
     #[Assert\Type('string')]
     #[Assert\NotBlank()]
     public ?string $code = null;
-
-    #[Assert\Type('string')]
-    #[SerializedName('code_verifier')]
-    #[Assert\NotBlank()]
-    public ?string $codeVerifier = null;
 
     #[Assert\Type('string')]
     #[Assert\NotBlank()]
@@ -28,10 +23,5 @@ class TwitterExchangeTokenPayload
     public function getState(): string
     {
         return $this->state;
-    }
-
-    public function getCodeVerifier(): string
-    {
-        return $this->codeVerifier;
     }
 }

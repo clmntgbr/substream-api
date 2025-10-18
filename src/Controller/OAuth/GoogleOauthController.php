@@ -2,19 +2,17 @@
 
 namespace App\Controller\OAuth;
 
-use App\Dto\OAuth\GoogleExchangeTokenPayload;
+use App\Dto\OAuth\Google\GoogleExchangeTokenPayload;
 use App\Service\OAuth\GoogleOAuthService;
 use App\Shared\Domain\Response\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-#[Route('/api/oauth/google', name: 'oauth_google_')]  
+#[Route('/api/oauth/google', name: 'oauth_google_')]
 class GoogleOauthController extends AbstractController
 {
     public function __construct(
@@ -29,6 +27,7 @@ class GoogleOauthController extends AbstractController
     {
         try {
             $data = $this->googleOAuthService->connect();
+
             return Response::successResponse($data);
         } catch (\Exception $e) {
             return Response::errorResponse($e->getMessage());

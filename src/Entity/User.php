@@ -213,19 +213,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getGoogleAccount(): ?SocialAccount
     {
-        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => $socialAccount->getProvider() === 'google')->first();
-        return $result === false ? null : $result;
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'google' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
     }
 
     public function getFacebookAccount(): ?SocialAccount
     {
-        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => $socialAccount->getProvider() === 'facebook')->first();
-        return $result === false ? null : $result;
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'facebook' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
     }
 
     public function getTwitterAccount(): ?SocialAccount
     {
-        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => $socialAccount->getProvider() === 'twitter')->first();
-        return $result === false ? null : $result;
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'twitter' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
     }
 }

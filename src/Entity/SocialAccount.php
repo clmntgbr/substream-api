@@ -18,7 +18,7 @@ class SocialAccount
     use TimestampableEntity;
 
     #[ORM\Column(type: 'string', unique: true)]
-    #[Groups(['social_account:read'])]    
+    #[Groups(['social_account:read'])]
     private string $accountId;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -28,7 +28,7 @@ class SocialAccount
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Groups(['social_account:read'])]
     private ?string $email = null;
-    
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['social_account:read'])]
@@ -46,6 +46,7 @@ class SocialAccount
         $socialAccount->accountId = $accountId;
         $socialAccount->email = $email;
         $socialAccount->user = $user;
+
         return $socialAccount;
     }
 
@@ -63,7 +64,7 @@ class SocialAccount
     {
         return $this->accountId;
     }
-    
+
     public function getEmail(): ?string
     {
         return $this->email;

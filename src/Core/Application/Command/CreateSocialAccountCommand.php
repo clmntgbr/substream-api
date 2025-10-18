@@ -5,8 +5,6 @@ namespace App\Core\Application\Command;
 use App\Entity\User;
 use App\Shared\Application\Command\CommandAbstract;
 use App\Shared\Application\Command\SyncCommandInterface;
-use Symfony\Component\Serializer\Attribute\SerializedName;
-use Symfony\Component\Validator\Constraints as Assert;
 
 final class CreateSocialAccountCommand extends CommandAbstract implements SyncCommandInterface
 {
@@ -27,7 +25,7 @@ final class CreateSocialAccountCommand extends CommandAbstract implements SyncCo
     {
         return $this->accountId;
     }
-    
+
     public function getEmail(): string
     {
         return $this->email;

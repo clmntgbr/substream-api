@@ -1,20 +1,5 @@
-# config/packages/knpu_oauth2_client.yaml
 knpu_oauth2_client:
     clients:
-        twitter:
-            type: generic
-            provider_class: App\Service\OAuth\TwitterProvider
-            client_id: '%env(resolve:TWITTER_CLIENT_ID)%'
-            client_secret: '%env(resolve:TWITTER_CLIENT_SECRET)%'
-            redirect_route: oauth_twitter_exchange_token
-            redirect_params: {}
-            provider_options:
-                urlAuthorize: 'https://twitter.com/i/oauth2/authorize'
-                urlAccessToken: 'https://api.twitter.com/2/oauth2/token'
-                urlResourceOwnerDetails: 'https://api.twitter.com/2/users/me'
-                scopes: 'tweet.read users.read offline.access'
-                scopeSeparator: ' '
-        
         google:
             type: generic
             provider_class: League\OAuth2\Client\Provider\Google

@@ -3,7 +3,6 @@
 namespace App\Controller\User;
 
 use App\Core\Application\Command\CreateUserCommand;
-use App\Core\Domain\Aggregate\CreateUserModel;
 use App\Dto\RegisterPayload;
 use App\Entity\User;
 use App\Repository\UserRepository;

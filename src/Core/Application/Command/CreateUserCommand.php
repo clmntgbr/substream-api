@@ -4,8 +4,6 @@ namespace App\Core\Application\Command;
 
 use App\Shared\Application\Command\CommandAbstract;
 use App\Shared\Application\Command\SyncCommandInterface;
-use Symfony\Component\Serializer\Attribute\SerializedName;
-use Symfony\Component\Validator\Constraints as Assert;
 
 final class CreateUserCommand extends CommandAbstract implements SyncCommandInterface
 {

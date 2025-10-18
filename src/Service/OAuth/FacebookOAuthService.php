@@ -3,7 +3,6 @@
 namespace App\Service\OAuth;
 
 use App\Dto\OAuth\CallbackPayloadInterface;
-use App\Entity\User;
 
 class FacebookOAuthService implements OAuthServiceInterface
 {

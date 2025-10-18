@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto\OAuth;
+namespace App\Dto\OAuth\Google;
 
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -42,7 +42,7 @@ class GoogleAccount
         $account->familyName = $data['family_name'];
         $account->email = $data['email'];
         $account->picture = $data['picture'] ?? null;
-        
+
         return $account;
     }
 
@@ -55,7 +55,7 @@ class GoogleAccount
     {
         return $this->givenName;
     }
-    
+
     public function getFamilyName(): string
     {
         return $this->familyName;

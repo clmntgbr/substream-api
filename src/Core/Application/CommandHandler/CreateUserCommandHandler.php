@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateUserCommand;
-use App\Core\Application\Mapper\CreateUserMapperInterface;
-use App\Core\Application\Trait\WorkflowTrait;
-use App\Core\Domain\Aggregate\CreateUserModel;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -29,6 +26,7 @@ class CreateUserCommandHandler
             plainPassword: $command->getPlainPassword(),
         );
         $this->userRepository->save($user, true);
+
         return $user;
     }
 }

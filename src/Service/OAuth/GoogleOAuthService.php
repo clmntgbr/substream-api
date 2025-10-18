@@ -4,25 +4,18 @@ namespace App\Service\OAuth;
 
 use App\Core\Application\Command\CreateOrUpdateUserCommand;
 use App\Core\Application\Command\CreateSocialAccountCommand;
-use App\Core\Application\Command\CreateUserCommand;
 use App\Dto\OAuth\CallbackPayloadInterface;
-use App\Dto\OAuth\GoogleAccount;
-use App\Dto\OAuth\GoogleExchangeTokenPayload;
+use App\Dto\OAuth\Google\GoogleAccount;
+use App\Dto\OAuth\Google\GoogleExchangeTokenPayload;
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
-use App\Shared\Infrastructure\Bus\CommandBus;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class GoogleOAuthService
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
-        private readonly CommandBusInterface $commandBus
-
+        private readonly CommandBusInterface $commandBus,
     ) {
     }
 
@@ -30,7 +23,7 @@ class GoogleOAuthService
     {
         $client = $this->clientRegistry->getClient('google');
         $client->setAsStateless();
-        
+
         return [
             'url' => $client->getOAuth2Provider()->getAuthorizationUrl(),
         ];
@@ -44,7 +37,7 @@ class GoogleOAuthService
         $client = $this->clientRegistry->getClient('google');
 
         $provider = $client->getOAuth2Provider();
-        
+
         $accessToken = $provider->getAccessToken('authorization_code', [
             'code' => $payload->getCode(),
         ]);
