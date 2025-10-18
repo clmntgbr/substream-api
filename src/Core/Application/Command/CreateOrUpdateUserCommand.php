@@ -10,6 +10,7 @@ final class CreateOrUpdateUserCommand extends CommandAbstract implements SyncCom
     public function __construct(
         public ?string $firstname = null,
         public ?string $lastname = null,
+        public ?string $picture = null,
         public string $email,
     ) {
     }
@@ -22,6 +23,11 @@ final class CreateOrUpdateUserCommand extends CommandAbstract implements SyncCom
     public function getLastname(): ?string
     {
         return $this->lastname;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
     }
 
     public function getEmail(): string

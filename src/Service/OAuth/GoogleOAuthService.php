@@ -11,7 +11,7 @@ use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 
-class GoogleOAuthService
+class GoogleOAuthService implements OAuthServiceInterface
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
@@ -49,6 +49,7 @@ class GoogleOAuthService
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
             firstname: $account->getGivenName(),
             lastname: $account->getFamilyName(),
+            picture: $account->getPicture(),
             email: $account->getEmail(),
         ));
 

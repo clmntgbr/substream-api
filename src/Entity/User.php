@@ -50,6 +50,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $lastname = null;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $picture = null;
+
     /**
      * @var list<string> The user roles
      */
@@ -77,10 +81,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         string $plainPassword,
         ?string $firstname = null,
         ?string $lastname = null,
+        ?string $picture = null,
     ): self {
         $user = new self();
         $user->firstname = $firstname;
         $user->lastname = $lastname;
+        $user->picture = $picture;
         $user->email = $email;
         $user->plainPassword = $plainPassword;
         $user->roles = ['ROLE_USER'];
@@ -248,5 +254,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'linkedin' === $socialAccount->getProvider())->first();
 
         return false === $result ? null : $result;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(string $picture): static
+    {
+        $this->picture = $picture;
+
+        return $this;
     }
 }

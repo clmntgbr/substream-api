@@ -22,6 +22,7 @@ class CreateUserCommandHandler
         $user = User::create(
             firstname: $command->getFirstname(),
             lastname: $command->getLastname(),
+            picture: $command->getPicture(),
             email: $command->getEmail(),
             plainPassword: $command->getPlainPassword(),
         );

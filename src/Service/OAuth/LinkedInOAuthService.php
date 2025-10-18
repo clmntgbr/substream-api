@@ -14,7 +14,7 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class LinkedInOAuthService
+class LinkedInOAuthService implements OAuthServiceInterface
 {
     private const LINKEDIN_API_URL = 'https://api.linkedin.com';
     private const LINKEDIN_ACCOUNT = self::LINKEDIN_API_URL.'/v2/userinfo';
@@ -68,6 +68,7 @@ class LinkedInOAuthService
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
             firstname: $userInfo->getFirstName(),
+            picture: $userInfo->getProfilePicture(),
             lastname: $userInfo->getLastName(),
             email: $userInfo->getEmail(),
         ));

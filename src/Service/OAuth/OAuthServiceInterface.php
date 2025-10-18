@@ -3,12 +3,11 @@
 namespace App\Service\OAuth;
 
 use App\Dto\OAuth\ExchangeTokenPayloadInterface;
+use App\Entity\User;
 
 interface OAuthServiceInterface
 {
-    public const TWITTER_CALLBACK_URL = '/api/oauth/twitter/callback';
+    public function connect(): array;
 
-    public function connect(): string;
-
-    public function callback(ExchangeTokenPayloadInterface $payload): void;
+    public function callback(ExchangeTokenPayloadInterface $payload): User;
 }

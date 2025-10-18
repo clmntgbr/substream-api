@@ -12,7 +12,7 @@ use App\Shared\Application\Bus\CommandBusInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class GithubOAuthService
+class GithubOAuthService implements OAuthServiceInterface
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
@@ -64,6 +64,7 @@ class GithubOAuthService
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
             firstname: $account->getName(),
+            picture: $account->getAvatarUrl(),
             lastname: null,
             email: $email
         ));
