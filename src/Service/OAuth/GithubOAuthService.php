@@ -5,12 +5,10 @@ namespace App\Service\OAuth;
 use App\Core\Application\Command\CreateOrUpdateUserCommand;
 use App\Core\Application\Command\CreateSocialAccountCommand;
 use App\Dto\OAuth\ExchangeTokenPayloadInterface;
-use App\Dto\OAuth\Github\GithubExchangeTokenPayload;
 use App\Dto\OAuth\Github\GithubAccount;
+use App\Dto\OAuth\Github\GithubExchangeTokenPayload;
 use App\Entity\User;
-use App\Exception\OauthException;
 use App\Shared\Application\Bus\CommandBusInterface;
-use finfo;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -29,6 +27,7 @@ class GithubOAuthService
         $client->setAsStateless();
 
         $codeChallenge = CodeChallenge::generate();
+
         return [
             'url' => $client->getOAuth2Provider()->getAuthorizationUrl([
                 'code_challenge' => $codeChallenge->getCodeChallenge(),
@@ -62,8 +61,8 @@ class GithubOAuthService
             $email = $account->getEmail();
         }
 
-         /** @var User $user */
-         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
+        /** @var User $user */
+        $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
             firstname: $account->getName(),
             lastname: null,
             email: $email
@@ -82,42 +81,41 @@ class GithubOAuthService
     }
 
     private function fetchPrimaryEmail(string $accessToken): ?string
-{
-    try {
-        $response = $this->httpClient->request('GET', 'https://api.github.com/user/emails', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
-                'Accept' => 'application/vnd.github+json',
-                'X-GitHub-Api-Version' => '2022-11-28',
-            ],
-        ]);
+    {
+        try {
+            $response = $this->httpClient->request('GET', 'https://api.github.com/user/emails', [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$accessToken,
+                    'Accept' => 'application/vnd.github+json',
+                    'X-GitHub-Api-Version' => '2022-11-28',
+                ],
+            ]);
 
-        $emails = $response->toArray();
+            $emails = $response->toArray();
 
-        $realEmails = array_filter($emails, function ($email) {
-            return !str_contains($email['email'], '@users.noreply.github.com');
-        });
+            $realEmails = array_filter($emails, function ($email) {
+                return !str_contains($email['email'], '@users.noreply.github.com');
+            });
 
-        foreach ($realEmails as $emailData) {
-            if (($emailData['primary'] ?? false) && ($emailData['verified'] ?? false)) {
-                return $emailData['email'];
+            foreach ($realEmails as $emailData) {
+                if (($emailData['primary'] ?? false) && ($emailData['verified'] ?? false)) {
+                    return $emailData['email'];
+                }
             }
-        }
 
-        foreach ($realEmails as $emailData) {
-            if ($emailData['verified'] ?? false) {
-                return $emailData['email'];
+            foreach ($realEmails as $emailData) {
+                if ($emailData['verified'] ?? false) {
+                    return $emailData['email'];
+                }
             }
+
+            if (!empty($realEmails)) {
+                return reset($realEmails)['email'];
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            return null;
         }
-
-        if (!empty($realEmails)) {
-            return reset($realEmails)['email'];
-        }
-
-        return null;
-
-    } catch (\Exception $e) {
-        return null;
     }
-}
 }

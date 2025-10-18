@@ -242,4 +242,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return false === $result ? null : $result;
     }
+
+    public function getLinkedInAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'linkedin' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
+    }
 }

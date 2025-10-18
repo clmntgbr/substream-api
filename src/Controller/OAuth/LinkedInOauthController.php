@@ -2,8 +2,8 @@
 
 namespace App\Controller\OAuth;
 
-use App\Dto\OAuth\Github\GithubExchangeTokenPayload;
-use App\Service\OAuth\GithubOAuthService;
+use App\Dto\OAuth\LinkedIn\LinkedInExchangeTokenPayload;
+use App\Service\OAuth\LinkedInOAuthService;
 use App\Shared\Domain\Response\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,11 +12,11 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-#[Route('/api/oauth/github', name: 'oauth_github_')]
-class GithubOauthController extends AbstractController
+#[Route('/api/oauth/linkedin', name: 'oauth_linkedin_')]
+class LinkedInOauthController extends AbstractController
 {
     public function __construct(
-        private GithubOAuthService $githubOAuthService,
+        private LinkedInOAuthService $linkedInOAuthService,
         private JWTTokenManagerInterface $jwtManager,
         private readonly NormalizerInterface $normalizer,
     ) {
@@ -26,19 +26,19 @@ class GithubOauthController extends AbstractController
     public function connect()
     {
         try {
-            $data = $this->githubOAuthService->connect();
+            $data = $this->linkedInOAuthService->connect();
 
             return Response::successResponse($data);
         } catch (\Exception) {
-            return Response::errorResponse('Could not connect to Github');
+            return Response::errorResponse('Could not connect to LinkedIn');
         }
     }
 
     #[Route('/exchange-token', name: 'exchange_token', methods: ['POST'])]
-    public function exchangeToken(#[MapRequestPayload()] GithubExchangeTokenPayload $payload)
+    public function exchangeToken(#[MapRequestPayload()] LinkedInExchangeTokenPayload $payload)
     {
         try {
-            $user = $this->githubOAuthService->callback($payload);
+            $user = $this->linkedInOAuthService->callback($payload);
             $token = $this->jwtManager->create($user);
 
             return new JsonResponse(

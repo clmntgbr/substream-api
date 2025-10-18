@@ -29,8 +29,8 @@ class GoogleOauthController extends AbstractController
             $data = $this->googleOAuthService->connect();
 
             return Response::successResponse($data);
-        } catch (\Exception $e) {
-            return Response::errorResponse($e->getMessage());
+        } catch (\Exception) {
+            return Response::errorResponse('Could not connect to Google');
         }
     }
 
@@ -48,8 +48,8 @@ class GoogleOauthController extends AbstractController
                 ],
                 status: JsonResponse::HTTP_OK
             );
-        } catch (\Exception $e) {
-            return Response::errorResponse($e->getMessage());
+        } catch (\Exception) {
+            return Response::errorResponse('Could not exchange token');
         }
     }
 }
