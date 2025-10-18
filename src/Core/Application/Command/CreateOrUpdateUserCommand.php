@@ -8,18 +8,18 @@ use App\Shared\Application\Command\SyncCommandInterface;
 final class CreateOrUpdateUserCommand extends CommandAbstract implements SyncCommandInterface
 {
     public function __construct(
-        public string $firstname,
-        public string $lastname,
+        public ?string $firstname = null,
+        public ?string $lastname = null,
         public string $email,
     ) {
     }
 
-    public function getFirstname(): string
+    public function getFirstname(): ?string
     {
         return $this->firstname;
     }
 
-    public function getLastname(): string
+    public function getLastname(): ?string
     {
         return $this->lastname;
     }

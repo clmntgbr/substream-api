@@ -42,13 +42,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $email = null;
 
-    #[ORM\Column(type: Types::STRING)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['user:read'])]
-    private string $firstname;
+    private ?string $firstname = null;
 
-    #[ORM\Column(type: Types::STRING)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['user:read'])]
-    private string $lastname;
+    private ?string $lastname = null;
 
     /**
      * @var list<string> The user roles
@@ -72,8 +72,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->socialAccounts = new ArrayCollection();
     }
 
-    public static function create(string $firstname, string $lastname, string $email, string $plainPassword): self
-    {
+    public static function create(
+        string $email,
+        string $plainPassword,
+        ?string $firstname = null,
+        ?string $lastname = null,
+    ): self {
         $user = new self();
         $user->firstname = $firstname;
         $user->lastname = $lastname;
@@ -228,6 +232,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getTwitterAccount(): ?SocialAccount
     {
         $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'twitter' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
+    }
+
+    public function getGithubAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'github' === $socialAccount->getProvider())->first();
 
         return false === $result ? null : $result;
     }

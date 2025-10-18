@@ -11,3 +11,16 @@ knpu_oauth2_client:
                 urlAuthorize: 'https://accounts.google.com/o/oauth2/v2/auth'
                 urlAccessToken: 'https://oauth2.googleapis.com/token'
                 urlResourceOwnerDetails: 'https://www.googleapis.com/oauth2/v3/userinfo'
+
+        github:
+            type: generic
+            provider_class: League\OAuth2\Client\Provider\Github
+            client_id: '%env(resolve:GITHUB_CLIENT_ID)%'
+            client_secret: '%env(resolve:GITHUB_CLIENT_SECRET)%'
+            redirect_route: '%env(resolve:GITHUB_REDIRECT_URI)%'
+            redirect_params: {}
+            provider_options:
+                urlAuthorize: 'https://github.com/login/oauth/authorize'
+                urlAccessToken: 'https://github.com/login/oauth/access_token'
+                urlResourceOwnerDetails: 'https://api.github.com/user'
+                scopes: 'user:email'

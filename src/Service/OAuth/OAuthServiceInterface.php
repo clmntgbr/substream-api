@@ -2,7 +2,7 @@
 
 namespace App\Service\OAuth;
 
-use App\Dto\OAuth\CallbackPayloadInterface;
+use App\Dto\OAuth\ExchangeTokenPayloadInterface;
 
 interface OAuthServiceInterface
 {
@@ -10,5 +10,5 @@ interface OAuthServiceInterface
 
     public function connect(): string;
 
-    public function callback(CallbackPayloadInterface $payload): void;
+    public function callback(ExchangeTokenPayloadInterface $payload): void;
 }

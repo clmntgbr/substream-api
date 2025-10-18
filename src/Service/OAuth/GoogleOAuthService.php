@@ -4,7 +4,7 @@ namespace App\Service\OAuth;
 
 use App\Core\Application\Command\CreateOrUpdateUserCommand;
 use App\Core\Application\Command\CreateSocialAccountCommand;
-use App\Dto\OAuth\CallbackPayloadInterface;
+use App\Dto\OAuth\ExchangeTokenPayloadInterface;
 use App\Dto\OAuth\Google\GoogleAccount;
 use App\Dto\OAuth\Google\GoogleExchangeTokenPayload;
 use App\Entity\User;
@@ -32,7 +32,7 @@ class GoogleOAuthService
     /**
      * @param GoogleExchangeTokenPayload $payload
      */
-    public function callback(CallbackPayloadInterface $payload): User
+    public function callback(ExchangeTokenPayloadInterface $payload): User
     {
         $client = $this->clientRegistry->getClient('google');
 
