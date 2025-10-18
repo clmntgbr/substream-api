@@ -69,7 +69,7 @@ class GithubOAuthService
             email: $email
         ));
 
-        if (null === $user->getGoogleAccount()) {
+        if (null === $user->getGithubAccount()) {
             $this->commandBus->dispatch(new CreateSocialAccountCommand(
                 provider: 'github',
                 accountId: $account->getId(),
