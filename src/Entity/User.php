@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\User\RegisterController;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -40,13 +42,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $email = null;
 
-    #[ORM\Column(type: Types::STRING)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['user:read'])]
-    private string $firstname;
+    private ?string $firstname = null;
 
-    #[ORM\Column(type: Types::STRING)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['user:read'])]
-    private string $lastname;
+    private ?string $lastname = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $picture = null;
 
     /**
      * @var list<string> The user roles
@@ -54,6 +60,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Groups(['user:read'])]
     private array $roles = [];
+
+    #[ORM\OneToMany(targetEntity: SocialAccount::class, mappedBy: 'user')]
+    #[Groups(['user:read'])]
+    private Collection $socialAccounts;
 
     #[ORM\Column]
     private ?string $password = null;
@@ -63,13 +73,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->id = Uuid::v4();
+        $this->socialAccounts = new ArrayCollection();
     }
 
-    public static function create(string $firstname, string $lastname, string $email, string $plainPassword): self
-    {
+    public static function create(
+        string $email,
+        string $plainPassword,
+        ?string $firstname = null,
+        ?string $lastname = null,
+        ?string $picture = null,
+    ): self {
         $user = new self();
         $user->firstname = $firstname;
         $user->lastname = $lastname;
+        $user->picture = $picture;
         $user->email = $email;
         $user->plainPassword = $plainPassword;
         $user->roles = ['ROLE_USER'];
@@ -200,6 +217,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getGoogleAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'google' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
+    }
+
+    public function getFacebookAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'facebook' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
+    }
+
+    public function getTwitterAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'twitter' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
+    }
+
+    public function getGithubAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'github' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
+    }
+
+    public function getLinkedInAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => 'linkedin' === $socialAccount->getProvider())->first();
+
+        return false === $result ? null : $result;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(string $picture): static
+    {
+        $this->picture = $picture;
 
         return $this;
     }

@@ -5,14 +5,13 @@ namespace App\Core\Application\Command;
 use App\Shared\Application\Command\CommandAbstract;
 use App\Shared\Application\Command\SyncCommandInterface;
 
-final class CreateUserCommand extends CommandAbstract implements SyncCommandInterface
+final class CreateOrUpdateUserCommand extends CommandAbstract implements SyncCommandInterface
 {
     public function __construct(
         public ?string $firstname = null,
         public ?string $lastname = null,
         public ?string $picture = null,
         public string $email,
-        public string $plainPassword,
     ) {
     }
 
@@ -34,10 +33,5 @@ final class CreateUserCommand extends CommandAbstract implements SyncCommandInte
     public function getEmail(): string
     {
         return $this->email;
-    }
-
-    public function getPlainPassword(): string
-    {
-        return $this->plainPassword;
     }
 }

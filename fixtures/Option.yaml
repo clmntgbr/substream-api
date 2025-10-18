@@ -1,16 +1,16 @@
-App\Entity\Option:
-  option_1:
-    subtitleFont: "Times New Roman"
-    subtitleSize: 30
-    subtitleColor: "#FFFFFF"
-    subtitleBold: true
-    subtitleItalic: false
-    subtitleUnderline: false
-    subtitleOutlineColor: "#000000"
-    subtitleOutlineThickness: 2
-    subtitleShadow: 4
-    subtitleShadowColor: "#333333"
-    format: "zoomed_916"
-    isResume: true
-    chunkNumber: 10
-    yAxisAlignment: 0
+# App\Entity\Option:
+#   option_1:
+#     subtitleFont: "Times New Roman"
+#     subtitleSize: 30
+#     subtitleColor: "#FFFFFF"
+#     subtitleBold: true
+#     subtitleItalic: false
+#     subtitleUnderline: false
+#     subtitleOutlineColor: "#000000"
+#     subtitleOutlineThickness: 2
+#     subtitleShadow: 4
+#     subtitleShadowColor: "#333333"
+#     format: "zoomed_916"
+#     isResume: true
+#     chunkNumber: 10
+#     yAxisAlignment: 0
