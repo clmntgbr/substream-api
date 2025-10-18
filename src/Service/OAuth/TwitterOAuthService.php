@@ -2,24 +2,14 @@
 
 namespace App\Service\OAuth;
 
-use Abraham\TwitterOAuth\TwitterOAuth;
-use App\Core\Application\Command\CreateUserCommand;
-use App\Dto\OAuth\AccessTokenInterface;
-use App\Dto\OAuth\CallbackPayloadInterface;
-use App\Dto\OAuth\TwitterAccessToken;
-use App\Dto\OAuth\TwitterAccount;
-use App\Dto\OAuth\TwitterCallbackPayload;
-use App\Dto\OAuth\TwitterRequestToken;
-use App\Entity\User;
+use App\Dto\OAuth\TwitterExchangeTokenPayload;
 use App\Exception\OauthException;
 use App\Repository\UserRepository;
-use App\Shared\Application\Bus\CommandBusInterface;
-use Symfony\Component\Messenger\CommandBus;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Uid\Uuid;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class TwitterOAuthService implements OAuthServiceInterface
+class TwitterOAuthService
 {
     private const TWITTER_API_URL = 'https://api.x.com';
     private const TWITTER_CONNECT_URL = self::TWITTER_API_URL.'/oauth/authenticate';
@@ -27,145 +17,124 @@ class TwitterOAuthService implements OAuthServiceInterface
 
     public function __construct(
         private UserRepository $userRepository,
-        private readonly DenormalizerInterface $denormalizer,
+        private readonly ClientRegistry $clientRegistry,
         private readonly HttpClientInterface $httpClient,
-        private readonly CommandBusInterface $commandBus,
-        private ?TwitterOAuth $twitterOAuth = null,
-        private readonly string $twitterApiKey,
-        private readonly string $twitterApiSecret,
-        private readonly string $twitterClientId,
-        private readonly string $backendUrl,
-        private readonly string $oauthState,
+        private readonly string $frontendRedirectUrl,
     ) {
-        $this->twitterOAuth = new TwitterOAuth($this->twitterApiKey, $this->twitterApiSecret);
     }
 
-    public function connect(): string
+    public function connect(): array
     {
-        try {
-            $requestToken = $this->getRequestToken();
-        } catch (\Exception) {
-            throw new OauthException('Could not obtain request token from Twitter');
-        }
-
-        $params = [
-            'oauth_token' => $requestToken->oauthToken,
-        ];
-
-        return self::TWITTER_CONNECT_URL.'?'.http_build_query($params);
-    }
-
-    public function getScopes(): array
-    {
-        return [
-            'users.read', 
-            'users.email',
-            'created_at',
-            'description',
-            'entities',
-            'id',
-            'location',
-            'most_recent_tweet_id',
-            'name',
-            'pinned_tweet_id',
-            'profile_image_url',
-            'protected',
-            'public_metrics',
-            'url',
-            'username',
-            'verified',
-            'verified_type',
-            'withheld',
-        ];
-    }
-
-    private function getRequestToken(): TwitterRequestToken
-    {
-        $url = $this->backendUrl.OAuthServiceInterface::TWITTER_CALLBACK_URL.'?'.http_build_query([
-            'state' => $this->oauthState,
+        $codeVerifier = $this->generateCodeVerifier();
+        $codeChallenge = $this->generateCodeChallenge($codeVerifier);
+        
+        $client = $this->clientRegistry->getClient('twitter');
+        $client->setAsStateless();
+        
+        $provider = $client->getOAuth2Provider();
+        
+        // Override redirect_uri via reflection since it's protected
+        $reflection = new \ReflectionClass($provider);
+        $property = $reflection->getProperty('redirectUri');
+        $property->setAccessible(true);
+        $property->setValue($provider, $this->frontendRedirectUrl);
+        
+        $url = $provider->getAuthorizationUrl([
+            'scope' => ['tweet.read', 'users.read', 'offline.access'],
+            'code_challenge' => $codeChallenge,
+            'code_challenge_method' => 'S256',
         ]);
-
-        try {
-            $response = $this->twitterOAuth->oauth('oauth/request_token', [
-                'oauth_callback' => $url,
-            ]);
-
-            return $this->denormalizer->denormalize($response, TwitterRequestToken::class);
-        } catch (\Exception) {
-            throw new OauthException('Could not obtain request token from Twitter');
-        }
-    }
-
-    /**
-     * @param TwitterCallbackPayload $payload
-     */
-    public function callback(CallbackPayloadInterface $payload): void
-    {
-        if ($payload->getState() !== $this->oauthState) {
-            throw new OauthException('Invalid state');
-        }
-
-        $accessToken = $this->getAccessToken($payload);
-        $account = $this->getAccountInfo($accessToken);
-
-        // $this->commandBus->dispatch(new CreateUserCommand(
-        //     email: $account->email,
-        //     password: $account->password,
-        //     name: $account->name,
-        //     username: $account->username,
-        //     profileImageUrl: $account->profileImageUrl,
-        // ));
-
-        dd($account);
-    }
-
-    /**
-     * @param TwitterCallbackPayload $payload
-     */
-    public function getAccessToken(CallbackPayloadInterface $payload): TwitterAccessToken
-    {
-        $params = [
-            'oauth_token' => $payload->getOauthToken(),
-            'oauth_verifier' => $payload->getOauthVerifier(),
+        
+        return [
+            'url' => $url,
+            'code_verifier' => $codeVerifier,
         ];
-
-        $url = self::TWITTER_ACCESS_TOKEN.'?'.http_build_query($params);
-
-        try {
-            $response = $this->httpClient->request('POST', $url);
-
-            $statusCode = $response->getStatusCode();
-
-            if (200 !== $statusCode) {
-                throw new OauthException("Twitter API error: received status code {$statusCode} when requesting access token.", $statusCode);
-            }
-
-            return TwitterAccessToken::fromString($response->getContent());
-        } catch (\Exception) {
-            throw new OauthException('Could not retrieve access token from Twitter API: an exception occurred during the request.');
-        }
+    }
+    
+    private function generateCodeVerifier(): string
+    {
+        return rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+    }
+    
+    private function generateCodeChallenge(string $codeVerifier): string
+    {
+        return rtrim(strtr(base64_encode(hash('sha256', $codeVerifier, true)), '+/', '-_'), '=');
     }
 
     /**
-     * @param TwitterAccessToken $token
+     * For API mode: Frontend must send code_verifier in the request
      */
-    public function getAccountInfo(AccessTokenInterface $token): TwitterAccount
+    public function callback(TwitterExchangeTokenPayload $payload): array
     {
         try {
-            $twitterOAuth = new TwitterOAuth($this->twitterApiKey, $this->twitterApiSecret, $token->oauthToken, $token->oauthTokenSecret);
-            $twitterOAuth->setApiVersion('2');
-
-            $response = $twitterOAuth->get('users/me', [
-                'expansions' => ['pinned_tweet_id'],
-                'user.fields' => implode(',', $this->getScopes()),
+            $code = $payload->getCode();
+            $codeVerifier = $payload->getCodeVerifier();
+            
+            // Get access token with code_verifier
+            $client = $this->clientRegistry->getClient('twitter');
+            $provider = $client->getOAuth2Provider();
+            
+            // CRITICAL: redirect_uri must be exactly the same as in connect()
+            $reflection = new \ReflectionClass($provider);
+            $property = $reflection->getProperty('redirectUri');
+            $property->setAccessible(true);
+            $property->setValue($provider, $this->frontendRedirectUrl);
+            
+            // Debug: log what we're sending
+            error_log('=== Twitter OAuth Debug ===');
+            error_log('Code: ' . $code);
+            error_log('Code Verifier: ' . $codeVerifier);
+            error_log('Redirect URI: ' . $this->frontendRedirectUrl);
+            
+            $accessToken = $provider->getAccessToken('authorization_code', [
+                'code' => $code,
+                'code_verifier' => $codeVerifier,
             ]);
-
-            $response = $response->data ?? $response;
-            dd($response);
-
-            return $this->denormalizer->denormalize($response, TwitterAccount::class);
-        } catch (\Exception) {
-            throw new OauthException('Could not retrieve Twitter accounts: an exception occurred during the request.');
+            
+            error_log('✅ Access token obtained: ' . substr($accessToken->getToken(), 0, 20) . '...');
+            error_log('Refresh token: ' . ($accessToken->getRefreshToken() ? 'Yes' : 'No'));
+            
+            // Get user info from Twitter
+            try {
+                $response = $this->httpClient->request('GET', 'https://api.twitter.com/2/users/me', [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $accessToken->getToken(),
+                    ],
+                    'query' => [
+                        'user.fields' => 'id,name,username,profile_image_url,description,created_at,verified,verified_type',
+                    ],
+                ]);
+                
+                $userData = json_decode($response->getContent(), true);
+                error_log('✅ User data: ' . json_encode($userData));
+            } catch (\Exception $userError) {
+                error_log('❌ Failed to get user info: ' . $userError->getMessage());
+                // Twitter rate limit - return token anyway, fetch user later
+                $userData = ['data' => [
+                    'id' => null,
+                    'username' => null,
+                    'name' => 'Twitter User (rate limited)',
+                    'note' => 'User info can be fetched later with the access token'
+                ]];
+            }
+            
+            error_log('✅ User data: ' . json_encode($userData));
+            error_log('✅ Access token: ' . $accessToken->getToken());
+            error_log('✅ Refresh token: ' . $accessToken->getRefreshToken());
+            error_log('✅ Expires in: ' . $accessToken->getExpires());
+            
+            return [
+                'access_token' => $accessToken->getToken(),
+                'refresh_token' => $accessToken->getRefreshToken(),
+                'expires_in' => $accessToken->getExpires(),
+                'user' => $userData['data'] ?? null,
+            ];
+        } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            error_log('Twitter API Error: ' . json_encode($e->getResponseBody()));
+            throw new OauthException('Failed to exchange token: ' . json_encode($e->getResponseBody()));
+        } catch (\Exception $e) {
+            error_log('General Error: ' . $e->getMessage());
+            throw new OauthException('Failed to exchange token: '.$e->getMessage());
         }
     }
 }

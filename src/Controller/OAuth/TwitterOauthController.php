@@ -2,14 +2,12 @@
 
 namespace App\Controller\OAuth;
 
-use Abraham\TwitterOAuth\TwitterOAuth;
-use App\Dto\OAuth\TwitterCallbackPayload;
-use App\Entity\User;
+use App\Dto\OAuth\TwitterExchangeTokenPayload;
 use App\Service\OAuth\TwitterOAuthService;
 use App\Shared\Domain\Response\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/oauth/twitter', name: 'oauth_twitter_')]  
@@ -23,15 +21,23 @@ class TwitterOauthController extends AbstractController
     #[Route('/connect', name: 'connect', methods: ['GET'])]
     public function connect()
     {
-        return Response::successResponse(
-            ['url' => $this->twitterOAuthService->connect()],
-        );
+        try {
+            $data = $this->twitterOAuthService->connect();
+        } catch (\Exception $e) {
+            return Response::errorResponse($e->getMessage());
+        }
+
+        return Response::successResponse($data);
     }
 
-    #[Route('/callback', name: 'callback', methods: ['GET'])]
-    public function callback(#[MapQueryString()] TwitterCallbackPayload $payload)
+    #[Route('/exchange-token', name: 'exchange_token', methods: ['POST'])]
+    public function exchangeToken(#[MapRequestPayload()] TwitterExchangeTokenPayload $payload)
     {
-        $this->twitterOAuthService->callback($payload);
-        dd($payload);
+        try {
+            $data = $this->twitterOAuthService->callback($payload);
+            return Response::successResponse($data);
+        } catch (\Exception $e) {
+            return Response::errorResponse($e->getMessage());
+        }
     }
 }

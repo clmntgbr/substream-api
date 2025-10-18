@@ -10,6 +10,5 @@ interface OAuthServiceInterface
     public const TWITTER_CALLBACK_URL = '/api/oauth/twitter/callback';
 
     public function connect(): string;
-    public function getScopes(): array;
     public function callback(CallbackPayloadInterface $payload): void;
 }

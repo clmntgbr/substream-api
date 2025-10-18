@@ -9,8 +9,7 @@ services:
             string $env: '%env(APP_ENV)%'
             string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
             string $backendUrl: "%env(resolve:BACKEND_URL)%"
-
-            string $oauthState: "%env(resolve:OAUTH_STATE)%"
+            string $frontendRedirectUrl: "%env(resolve:TWITTER_REDIRECT_URI)%"
             
             string $twitterApiKey: "%env(resolve:TWITTER_API_KEY)%"
             string $twitterApiSecret: "%env(resolve:TWITTER_API_SECRET)%"

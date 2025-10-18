@@ -33,7 +33,7 @@ security:
             logout:
                 path: app_logout
     access_control:
-        - { path: ^/api/oauth, roles: PUBLIC_ACCESS, methods: GET }
+        - { path: ^/api/oauth, roles: PUBLIC_ACCESS, methods: [GET, POST] }
         - { path: ^/api/docs, roles: PUBLIC_ACCESS, methods: GET }
         - { path: ^/api/token, roles: PUBLIC_ACCESS, methods: POST }
         - { path: ^/api/register, roles: PUBLIC_ACCESS, methods: POST }
