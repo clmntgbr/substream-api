@@ -10,22 +10,17 @@ use App\Core\Application\Trait\WorkflowTrait;
 use App\Core\Domain\Aggregate\CreateUserModel;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class CreateUserCommandHandler
 {
-    use WorkflowTrait;
-
     public function __construct(
         private UserRepository $userRepository,
-        private LoggerInterface $logger,
-        private CreateUserMapperInterface $createUserMapper,
     ) {
     }
 
-    public function __invoke(CreateUserCommand $command): CreateUserModel
+    public function __invoke(CreateUserCommand $command): User
     {
         $user = User::create(
             firstname: $command->getFirstname(),
@@ -34,7 +29,6 @@ class CreateUserCommandHandler
             plainPassword: $command->getPlainPassword(),
         );
         $this->userRepository->save($user, true);
-
-        return $this->createUserMapper->fromEntity($user);
+        return $user;
     }
 }

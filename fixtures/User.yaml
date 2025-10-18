@@ -7,8 +7,15 @@ App\Entity\User:
     lastname: 'dummy'
 
   user_2:
-    email: "dummy2@gmail.com"
+    email: "dummmmy@gmail.com"
     plainPassword: "dummy"
     roles: ["ROLE_USER"]
     firstname: 'dummy'
     lastname: 'dummy'
+
+  user_{2..100}:
+    email: "<email()>"
+    plainPassword: "password123"
+    roles: ["ROLE_USER"]
+    firstname: '<firstName()>'
+    lastname: '<lastName()>'

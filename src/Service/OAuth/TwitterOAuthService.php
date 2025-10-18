@@ -11,10 +11,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class TwitterOAuthService
 {
-    private const TWITTER_API_URL = 'https://api.x.com';
-    private const TWITTER_CONNECT_URL = self::TWITTER_API_URL.'/oauth/authenticate';
-    private const TWITTER_ACCESS_TOKEN = self::TWITTER_API_URL.'/oauth/access_token';
-
     public function __construct(
         private UserRepository $userRepository,
         private readonly ClientRegistry $clientRegistry,

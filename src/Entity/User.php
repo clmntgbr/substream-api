@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\User\RegisterController;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -48,16 +50,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private string $lastname;
 
-    #[ORM\Column(type: 'uuid', unique: true, nullable: true)]
-    #[Groups(['user:read'])]
-    private ?Uuid $oauthState = null;
-
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
     #[Groups(['user:read'])]
     private array $roles = [];
+
+    #[ORM\OneToMany(targetEntity: SocialAccount::class, mappedBy: 'user')]
+    #[Groups(['user:read'])]
+    private Collection $socialAccounts;
 
     #[ORM\Column]
     private ?string $password = null;
@@ -67,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->id = Uuid::v4();
+        $this->socialAccounts = new ArrayCollection();
     }
 
     public static function create(string $firstname, string $lastname, string $email, string $plainPassword): self
@@ -208,15 +211,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getOauthState(): ?Uuid
+    public function getGoogleAccount(): ?SocialAccount
     {
-        return $this->oauthState;
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => $socialAccount->getProvider() === 'google')->first();
+        return $result === false ? null : $result;
     }
 
-    public function setOauthState(Uuid $oauthState): static
+    public function getFacebookAccount(): ?SocialAccount
     {
-        $this->oauthState = $oauthState;
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => $socialAccount->getProvider() === 'facebook')->first();
+        return $result === false ? null : $result;
+    }
 
-        return $this;
+    public function getTwitterAccount(): ?SocialAccount
+    {
+        $result = $this->socialAccounts->filter(fn (SocialAccount $socialAccount) => $socialAccount->getProvider() === 'twitter')->first();
+        return $result === false ? null : $result;
     }
 }

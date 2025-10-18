@@ -7,13 +7,12 @@ use App\Shared\Application\Command\SyncCommandInterface;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class CreateUserCommand extends CommandAbstract implements SyncCommandInterface
+final class CreateOrUpdateUserCommand extends CommandAbstract implements SyncCommandInterface
 {
     public function __construct(
         public string $firstname,
         public string $lastname,
         public string $email,
-        public string $plainPassword,
     ) {
     }
 
@@ -30,10 +29,5 @@ final class CreateUserCommand extends CommandAbstract implements SyncCommandInte
     public function getEmail(): string
     {
         return $this->email;
-    }
-
-    public function getPlainPassword(): string
-    {
-        return $this->plainPassword;
     }
 }

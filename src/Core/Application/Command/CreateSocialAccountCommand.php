@@ -2,38 +2,39 @@
 
 namespace App\Core\Application\Command;
 
+use App\Entity\User;
 use App\Shared\Application\Command\CommandAbstract;
 use App\Shared\Application\Command\SyncCommandInterface;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class CreateUserCommand extends CommandAbstract implements SyncCommandInterface
+final class CreateSocialAccountCommand extends CommandAbstract implements SyncCommandInterface
 {
     public function __construct(
-        public string $firstname,
-        public string $lastname,
+        public string $provider,
+        public string $accountId,
         public string $email,
-        public string $plainPassword,
+        public User $user,
     ) {
     }
 
-    public function getFirstname(): string
+    public function getProvider(): string
     {
-        return $this->firstname;
+        return $this->provider;
     }
 
-    public function getLastname(): string
+    public function getAccountId(): string
     {
-        return $this->lastname;
+        return $this->accountId;
     }
-
+    
     public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getPlainPassword(): string
+    public function getUser(): User
     {
-        return $this->plainPassword;
+        return $this->user;
     }
 }
