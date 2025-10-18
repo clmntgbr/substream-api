@@ -95,7 +95,7 @@ class LinkedInOAuthService implements OAuthServiceInterface
                 'headers' => [
                     'Authorization' => 'Bearer '.$token->getToken(),
                     'Connection' => 'Keep-Alive',
-                    'Accept' => 'application / json',
+                    'Accept' => 'application/json',
                 ],
             ]);
 
