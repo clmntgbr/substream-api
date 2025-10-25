@@ -130,6 +130,10 @@ class Stream
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['stream:read'])]
+    private ?string $thumbnailUrl = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['stream:read'])]
     private ?string $mimeType = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
@@ -691,5 +695,17 @@ class Stream
         $seconds = $this->duration % 60;
 
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+
+    public function getThumbnailUrl(): ?string
+    {
+        return $this->thumbnailUrl;
+    }
+
+    public function setThumbnailUrl(?string $thumbnailUrl): self
+    {
+        $this->thumbnailUrl = $thumbnailUrl;
+
+        return $this;
     }
 }

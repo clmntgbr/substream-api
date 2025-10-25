@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -17,6 +18,12 @@ class CreateStreamUrlPayload
         #[Assert\Length(max: 2048)]
         #[Assert\Regex(pattern: '/^https?:\/\/.+$/i', message: 'Invalid URL')]
         private string $url,
+        #[SerializedName('thumbnail_url')]
+        #[Assert\NotBlank]
+        #[Assert\Url]
+        #[Assert\Length(max: 2048)]
+        #[Assert\Regex(pattern: '/^https?:\/\/.+$/i', message: 'Invalid URL')]
+        private string $thumbnailUrl,
         #[Assert\NotBlank]
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
@@ -37,5 +44,10 @@ class CreateStreamUrlPayload
     public function getOptionId(): Uuid
     {
         return $this->optionId;
+    }
+
+    public function getThumbnailUrl(): string
+    {
+        return $this->thumbnailUrl;
     }
 }

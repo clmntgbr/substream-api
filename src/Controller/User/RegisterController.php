@@ -2,6 +2,7 @@
 
 namespace App\Controller\User;
 
+
 use App\Core\Application\Command\CreateUserCommand;
 use App\Dto\RegisterPayload;
 use App\Entity\User;
@@ -23,6 +24,7 @@ class RegisterController extends AbstractController
         private readonly NormalizerInterface $normalizer,
         private readonly UserRepository $userRepository,
         private JWTTokenManagerInterface $jwtManager,
+        private readonly string $backendUrl,
     ) {
     }
 
@@ -33,6 +35,7 @@ class RegisterController extends AbstractController
             $user = $this->commandBus->dispatch(new CreateUserCommand(
                 firstname: $payload->getFirstname(),
                 lastname: $payload->getLastname(),
+                picture: $this->backendUrl.'/uploads/avatar.jpg',
                 email: $payload->getEmail(),
                 plainPassword: $payload->getPlainPassword(),
             ));

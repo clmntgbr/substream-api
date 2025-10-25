@@ -1,5 +1,8 @@
 when@dev: &dev
     nelmio_alice:
+        locale: en_US
+        seed: 1
+        max_unique_values_retry: 15
         functions_blacklist:
             - 'current'
             - 'shuffle'

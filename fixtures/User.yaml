@@ -1,11 +1,11 @@
 App\Entity\User:
   user_1:
     email: "dummy@gmail.com"
-    plainPassword: "dummy"
+    plainPassword: "dummy@@@@@@@@"
     roles: ["ROLE_ADMIN"]
     firstname: 'dummy'
     lastname: 'dummy'
-    picture: 'https://placehold.co/600x400/EEE/31343C?font=montserrat&text=Montserrat'
+    picture: '<envar("BACKEND_URL")>/uploads/avatar.jpg'
 
   # user_2:
   #   email: "dummmmy@gmail.com"
@@ -20,3 +20,5 @@ App\Entity\User:
   #   roles: ["ROLE_USER"]
   #   firstname: '<firstName()>'
   #   lastname: '<lastName()>'
+
+  

@@ -6,6 +6,7 @@ services:
         autoconfigure: true
         bind:
             string $apiUrl: '%env(API_URL)%'
+            string $backendUrl: '%env(BACKEND_URL)%'
             string $env: '%env(APP_ENV)%'
             string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
 
@@ -44,3 +45,7 @@ services:
         decorates: 'api_platform.jsonld.normalizer.error'
         arguments:
             $decorated: '@.inner'
+
+    App\Fixture\AliceProvider:
+        tags:
+            - { name: nelmio_alice.faker.provider }

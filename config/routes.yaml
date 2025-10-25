@@ -7,3 +7,4 @@ controllers:
 token:
     path: /api/token
     methods: [ "POST" ]
+    

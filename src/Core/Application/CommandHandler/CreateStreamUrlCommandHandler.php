@@ -5,6 +5,7 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateStreamCommand;
 use App\Core\Application\Command\CreateStreamUrlCommand;
 use App\Core\Application\Command\GetVideoCommand;
+use App\Core\Application\Command\UploadThumbnailCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Enum\WorkflowTransitionEnum;
@@ -44,6 +45,12 @@ class CreateStreamUrlCommandHandler
         if (null === $stream) {
             throw new StreamNotFoundException();
         }
+
+        $this->commandBus->dispatch(new UploadThumbnailCommand(
+            streamId: $stream->getId(),
+            thumbnailUrl: $command->getThumbnailUrl(),
+            thumbnail: null,
+        ));
 
         $this->apply($stream, WorkflowTransitionEnum::UPLOADING);
         $this->streamRepository->save($stream);
