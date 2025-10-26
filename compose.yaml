@@ -27,6 +27,7 @@ services:
         volumes:
             - caddy_data:/data
             - caddy_config:/config
+            - uploads_data:/app/public/uploads
         healthcheck:
             test: ["CMD", "curl", "-f", "https://localhost/status"]
             interval: 30s
@@ -166,3 +167,4 @@ volumes:
     rabbitmq_data:
     minio_data:
     minio_setup_data:
+    uploads_data:
