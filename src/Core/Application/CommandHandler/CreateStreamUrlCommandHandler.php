@@ -12,6 +12,7 @@ use App\Enum\WorkflowTransitionEnum;
 use App\Exception\StreamNotFoundException;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -46,10 +47,13 @@ class CreateStreamUrlCommandHandler
             throw new StreamNotFoundException();
         }
 
+        // Convert base64 data to temporary file
+        $thumbnailFile = $this->convertBase64ToFile($command->getThumbnailFile());
+        
         $this->commandBus->dispatch(new UploadThumbnailCommand(
             streamId: $stream->getId(),
-            thumbnailUrl: $command->getThumbnailUrl(),
-            thumbnail: null,
+            thumbnailUrl: null,
+            thumbnail: $thumbnailFile,
         ));
 
         $this->apply($stream, WorkflowTransitionEnum::UPLOADING);
@@ -61,5 +65,51 @@ class CreateStreamUrlCommandHandler
         ));
 
         return $createStreamModel;
+    }
+
+    private function convertBase64ToFile(string $base64Data): UploadedFile
+    {
+        // Parse the data URL to extract the mime type and base64 content
+        if (!preg_match('/^data:image\/(jpeg|jpg|png|gif|webp);base64,(.+)$/', $base64Data, $matches)) {
+            throw new \InvalidArgumentException('Invalid base64 image format');
+        }
+
+        $mimeType = 'image/' . $matches[1];
+        $base64Content = $matches[2];
+        
+        // Decode the base64 content
+        $imageData = base64_decode($base64Content);
+        if ($imageData === false) {
+            throw new \InvalidArgumentException('Invalid base64 data');
+        }
+
+        // Create a temporary file
+        $tempFile = tempnam(sys_get_temp_dir(), 'thumbnail_');
+        if ($tempFile === false) {
+            throw new \RuntimeException('Could not create temporary file');
+        }
+
+        // Write the image data to the temporary file
+        if (file_put_contents($tempFile, $imageData) === false) {
+            throw new \RuntimeException('Could not write to temporary file');
+        }
+
+        // Determine the file extension based on mime type
+        $extension = match ($mimeType) {
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+            default => 'jpg',
+        };
+
+        // Create an UploadedFile instance
+        return new UploadedFile(
+            path: $tempFile,
+            originalName: 'thumbnail.' . $extension,
+            mimeType: $mimeType,
+            error: \UPLOAD_ERR_OK,
+            test: true
+        );
     }
 }

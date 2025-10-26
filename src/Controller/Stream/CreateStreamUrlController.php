@@ -29,7 +29,7 @@ class CreateStreamUrlController extends AbstractController
                 new CreateStreamUrlCommand(
                     name: $payload->getName(),
                     url: $payload->getUrl(),
-                    thumbnailUrl: $payload->getThumbnailUrl(),
+                    thumbnailFile: $payload->getThumbnailFile(),
                     optionId: $payload->getOptionId(),
                     user: $user,
                 ),
@@ -39,7 +39,6 @@ class CreateStreamUrlController extends AbstractController
                 'streamId' => $createStreamModel->streamId,
             ]);
         } catch (\Exception $exception) {
-            dd($exception);
             return Response::errorResponse('Something went wrong.');
         }
     }

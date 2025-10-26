@@ -13,7 +13,7 @@ readonly class CreateStreamUrlCommand implements SyncCommandInterface
     public function __construct(
         private string $name,
         private string $url,
-        private string $thumbnailUrl,
+        private string $thumbnailFile,
         private Uuid $optionId,
         private User $user,
     ) {
@@ -40,9 +40,9 @@ readonly class CreateStreamUrlCommand implements SyncCommandInterface
         return $this->optionId;
     }
 
-    public function getThumbnailUrl(): string
+    public function getThumbnailFile(): string
     {
-        return $this->thumbnailUrl;
+        return $this->thumbnailFile;
     }
 
     public function getUser(): User

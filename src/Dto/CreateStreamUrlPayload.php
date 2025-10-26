@@ -18,12 +18,11 @@ class CreateStreamUrlPayload
         #[Assert\Length(max: 2048)]
         #[Assert\Regex(pattern: '/^https?:\/\/.+$/i', message: 'Invalid URL')]
         private string $url,
-        #[SerializedName('thumbnail_url')]
+        #[SerializedName('thumbnail_file')]
         #[Assert\NotBlank]
-        #[Assert\Url]
-        #[Assert\Length(max: 2048)]
-        #[Assert\Regex(pattern: '/^https?:\/\/.+$/i', message: 'Invalid URL')]
-        private string $thumbnailUrl,
+        #[Assert\Type('string')]
+        #[Assert\Regex(pattern: '/^data:image\/(jpeg|jpg|png|gif|webp);base64,/', message: 'Invalid base64 image format')]
+        private string $thumbnailFile,
         #[Assert\NotBlank]
         #[Assert\Uuid]
         #[Assert\Length(max: 36)]
@@ -46,8 +45,8 @@ class CreateStreamUrlPayload
         return $this->optionId;
     }
 
-    public function getThumbnailUrl(): string
+    public function getThumbnailFile(): string
     {
-        return $this->thumbnailUrl;
+        return $this->thumbnailFile;
     }
 }
