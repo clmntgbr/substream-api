@@ -73,6 +73,28 @@ db:
 
 jwt:
 	$(PHP) php bin/console lexik:jwt:generate-keypair --skip-if-exists
+
+trust-cert:
+	@echo "Installing local SSL certificate..."
+	@docker cp $(CONTAINER_PHP):/data/caddy/pki/authorities/local/root.crt /tmp/root.crt
+	@if [ "$$(uname)" = "Darwin" ]; then \
+		echo "Detected macOS. Installing certificate..."; \
+		sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/root.crt; \
+		echo "Certificate installed successfully!"; \
+	elif [ "$$(uname)" = "Linux" ]; then \
+		echo "Detected Linux. Installing certificate..."; \
+		sudo cp /tmp/root.crt /usr/local/share/ca-certificates/root.crt; \
+		sudo update-ca-certificates; \
+		echo "Certificate installed successfully!"; \
+	elif [ "$$(uname)" = "MINGW64_NT" ] || [ "$$(uname)" = "MINGW32_NT" ]; then \
+		echo "Detected Windows. Opening certificate installer..."; \
+		certutil -addstore -f "ROOT" /tmp/root.crt; \
+		echo "Certificate installed successfully!"; \
+	else \
+		echo "Unknown operating system. Please install the certificate manually from: /tmp/root.crt"; \
+	fi
+	@rm /tmp/root.crt
+
 migration:
 	$(PHP) php bin/console make:migration
 
