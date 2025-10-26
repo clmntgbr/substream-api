@@ -17,6 +17,7 @@
         "doctrine/doctrine-migrations-bundle": ">=3.5.0",
         "doctrine/orm": ">=3.5.2",
         "dragonmantank/cron-expression": "^3.4",
+        "friendsofsymfony/elastica-bundle": "*",
         "hautelook/alice-bundle": ">=2.15.1",
         "knpuniversity/oauth2-client-bundle": "^2.19",
         "league/flysystem-aws-s3-v3": "^3.29",

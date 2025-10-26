@@ -14,6 +14,7 @@ use App\Controller\Stream\CreateStreamVideoController;
 use App\Controller\Stream\DeleteStreamController;
 use App\Controller\Stream\GetResumeVideoStreamController;
 use App\Controller\Stream\GetSubtitleSrtStreamController;
+use App\Controller\Stream\SearchStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
 use App\Filter\PartialSearchFilter;
@@ -51,6 +52,11 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/streams/{id}/download/resume',
             controller: GetResumeVideoStreamController::class,
+        ),
+        new Get(
+            uriTemplate: '/search/streams',
+            controller: SearchStreamController::class,
+            normalizationContext: ['groups' => ['stream:read', 'option:read']],
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
@@ -121,7 +127,7 @@ class Stream
     private ?string $fileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['stream:read'])]
+    #[Groups(['stream:read', 'stream:search'])]
     private ?string $originalFileName = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
@@ -707,5 +713,41 @@ class Stream
         $this->thumbnailUrl = $thumbnailUrl;
 
         return $this;
+    }
+
+    #[Groups(['stream:search', 'stream:read'])]
+    public function getFilterStatus(): ?string
+    {
+        return match ($this->status) {
+            StreamStatusEnum::CREATED->value => 'created',
+            StreamStatusEnum::UPLOADING->value => 'uploading',
+            StreamStatusEnum::UPLOADED->value => 'uploaded',
+            StreamStatusEnum::EXTRACTING_SOUND->value => 'extracting_sound',
+            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value => 'extracting_sound_completed',
+            StreamStatusEnum::GENERATING_SUBTITLE->value => 'generating_subtitle',
+            StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value => 'generating_subtitle_completed',
+            StreamStatusEnum::TRANSFORMING_SUBTITLE->value => 'transforming_subtitle',
+            StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED->value => 'transforming_subtitle_completed',
+            StreamStatusEnum::RESIZING_VIDEO->value => 'resizing_video',
+            StreamStatusEnum::RESIZING_VIDEO_COMPLETED->value => 'resizing_video_completed',
+            StreamStatusEnum::EMBEDDING_VIDEO->value => 'embedding_video',
+            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED->value => 'embedding_video_completed',
+            StreamStatusEnum::CHUNKING_VIDEO->value => 'chunking_video',
+            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value => 'chunking_video_completed',
+            StreamStatusEnum::RESUMING->value => 'resuming',
+            StreamStatusEnum::RESUMING_COMPLETED->value => 'resuming_completed',
+            StreamStatusEnum::COMPLETED->value => 'completed',
+            StreamStatusEnum::DELETED->value => 'deleted',
+
+            StreamStatusEnum::FAILED->value => 'failed',
+            StreamStatusEnum::UPLOAD_FAILED->value => 'failed',
+            StreamStatusEnum::EXTRACTING_SOUND_FAILED->value => 'failed',
+            StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value => 'failed',
+            StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value => 'failed',
+            StreamStatusEnum::RESIZING_VIDEO_FAILED->value => 'failed',
+            StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value => 'failed',
+            StreamStatusEnum::CHUNKING_VIDEO_FAILED->value => 'failed',
+            StreamStatusEnum::RESUMING_FAILED->value => 'failed',
+        };
     }
 }

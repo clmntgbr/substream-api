@@ -142,3 +142,8 @@ unzip:
 	unzip public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip -d public/debug/
 	rm -r public/debug/__MACOSX
 	rm -r public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
+
+elastica:
+	$(PHP) php bin/console fos:elastica:delete
+	$(PHP) php bin/console fos:elastica:create
+	$(PHP) php bin/console fos:elastica:populate

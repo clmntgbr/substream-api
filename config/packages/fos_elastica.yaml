@@ -1,0 +1,22 @@
+fos_elastica:
+    clients:
+        default:
+            hosts: ["%env(resolve:ELASTICSEARCH_HOST)%:%env(ELASTICSEARCH_PORT)%"]
+            username: "%env(ELASTICSEARCH_USERNAME)%"
+            password: "%env(ELASTICSEARCH_PASSWORD)%"
+    indexes:
+        stream:
+            properties:
+                name: { type: text }
+                status: { type: text }
+                filterStatus: { type: text }
+                originalFileName: { type: text }
+                createdAt: { type: date }
+                updatedAt: { type: date }
+            persistence:
+                driver: orm
+                model: App\Entity\Stream
+                provider: ~
+                finder: ~
+                elastica_to_model_transformer:
+                    ignore_missing: true
