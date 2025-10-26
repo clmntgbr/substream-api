@@ -39,7 +39,7 @@ class SearchStreamController extends AbstractController
             $searchRequest->itemsPerPage
         );
 
-        $normalizedResponse = $this->normalizer->normalize($response, null, ['groups' => ['stream:read']]);
+        $normalizedResponse = $this->normalizer->normalize($response, null, ['groups' => ['stream:read', 'option:read']]);
 
         return new JsonResponse($normalizedResponse, JsonResponse::HTTP_OK);
     }

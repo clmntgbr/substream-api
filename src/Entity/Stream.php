@@ -129,7 +129,7 @@ class Stream
 
     #[ORM\ManyToOne(targetEntity: Option::class)]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['stream:read'])]
+    #[Groups(['option:read'])]
     private Option $option;
 
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
