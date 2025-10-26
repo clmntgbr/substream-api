@@ -43,13 +43,20 @@ class GetVideoCommandHandler
             return;
         }
 
-        $task = Task::create(GetVideoCommand::class, $stream);
-        $this->taskRepository->save($task, true);
+        try {
+            $task = Task::create(GetVideoCommand::class, $stream);
+            $this->taskRepository->save($task, true);
 
-        $this->coreBus->dispatch(new GetVideoMessage(
-            streamId: $stream->getId(),
-            taskId: $task->getId(),
-            url: $command->getUrl(),
-        ));
+            $this->coreBus->dispatch(new GetVideoMessage(
+                streamId: $stream->getId(),
+                taskId: $task->getId(),
+                url: $command->getUrl(),
+            ));
+        } catch (\Exception $e) {
+            $stream->markAsUploadFailed();
+            $this->streamRepository->save($stream);
+
+            return;
+        }
     }
 }

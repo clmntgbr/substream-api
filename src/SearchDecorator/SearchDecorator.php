@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\SearchDecorator;
 
+use App\SearchDecorator\Filter\SearchFilter;
 use App\SearchDecorator\Filter\StatusFilter;
 use App\SearchDecorator\Query\SearchAbstract;
 
@@ -14,6 +15,7 @@ class SearchDecorator
      */
     private array $searchQueries = [
         StatusFilter::class,
+        SearchFilter::class,
     ];
 
     private SearchAbstract $search;

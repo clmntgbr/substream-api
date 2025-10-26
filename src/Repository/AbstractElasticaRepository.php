@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\User;
 use App\SearchDecorator\Aggregation\AggregationInterface;
 use App\SearchDecorator\SearchInterface;
 use Elastica\Query;

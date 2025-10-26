@@ -42,16 +42,23 @@ class ExtractSoundCommandHandler
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND);
-        $this->streamRepository->save($stream);
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND);
+            $this->streamRepository->save($stream);
 
-        $task = Task::create(ExtractSoundCommand::class, $stream);
-        $this->taskRepository->save($task, true);
+            $task = Task::create(ExtractSoundCommand::class, $stream);
+            $this->taskRepository->save($task, true);
 
-        $this->coreBus->dispatch(new ExtractSoundMessage(
-            streamId: $stream->getId(),
-            taskId: $task->getId(),
-            fileName: $command->getFileName(),
-        ));
+            $this->coreBus->dispatch(new ExtractSoundMessage(
+                streamId: $stream->getId(),
+                taskId: $task->getId(),
+                fileName: $command->getFileName(),
+            ));
+        } catch (\Exception) {
+            $stream->markAsExtractingSoundFailed();
+            $this->streamRepository->save($stream);
+
+            return;
+        }
     }
 }

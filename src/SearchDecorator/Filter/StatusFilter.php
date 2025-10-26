@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\SearchDecorator\Filter;
 
 use App\SearchDecorator\Query\SearchAbstract;
-use Elastica\Query\Term;
 use Elastica\Query\BoolQuery;
+use Elastica\Query\Term;
 
 class StatusFilter extends SearchAbstract
 {

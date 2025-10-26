@@ -17,8 +17,8 @@ final class AliceProvider extends Base
     public function envar(string $name): string
     {
         $value = $_SERVER[$name] ?? $_ENV[$name] ?? getenv($name);
-        
-        if ($value === false) {
+
+        if (false === $value) {
             throw new \RuntimeException(sprintf('Environment variable "%s" is not set.', $name));
         }
 

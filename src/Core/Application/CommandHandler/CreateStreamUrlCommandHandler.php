@@ -49,7 +49,7 @@ class CreateStreamUrlCommandHandler
 
         // Convert base64 data to temporary file
         $thumbnailFile = $this->convertBase64ToFile($command->getThumbnailFile());
-        
+
         $this->commandBus->dispatch(new UploadThumbnailCommand(
             streamId: $stream->getId(),
             thumbnailUrl: null,
@@ -74,23 +74,23 @@ class CreateStreamUrlCommandHandler
             throw new \InvalidArgumentException('Invalid base64 image format');
         }
 
-        $mimeType = 'image/' . $matches[1];
+        $mimeType = 'image/'.$matches[1];
         $base64Content = $matches[2];
-        
+
         // Decode the base64 content
         $imageData = base64_decode($base64Content);
-        if ($imageData === false) {
+        if (false === $imageData) {
             throw new \InvalidArgumentException('Invalid base64 data');
         }
 
         // Create a temporary file
         $tempFile = tempnam(sys_get_temp_dir(), 'thumbnail_');
-        if ($tempFile === false) {
+        if (false === $tempFile) {
             throw new \RuntimeException('Could not create temporary file');
         }
 
         // Write the image data to the temporary file
-        if (file_put_contents($tempFile, $imageData) === false) {
+        if (false === file_put_contents($tempFile, $imageData)) {
             throw new \RuntimeException('Could not write to temporary file');
         }
 
@@ -106,7 +106,7 @@ class CreateStreamUrlCommandHandler
         // Create an UploadedFile instance
         return new UploadedFile(
             path: $tempFile,
-            originalName: 'thumbnail.' . $extension,
+            originalName: 'thumbnail.'.$extension,
             mimeType: $mimeType,
             error: \UPLOAD_ERR_OK,
             test: true

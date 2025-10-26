@@ -41,18 +41,24 @@ class EmbedVideoCommandHandler
 
             return;
         }
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO);
+            $this->streamRepository->save($stream);
 
-        $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO);
-        $this->streamRepository->save($stream);
+            $task = Task::create(EmbedVideoCommand::class, $stream);
+            $this->taskRepository->save($task, true);
 
-        $task = Task::create(EmbedVideoCommand::class, $stream);
-        $this->taskRepository->save($task, true);
+            $this->coreBus->dispatch(new EmbedVideoMessage(
+                streamId: $stream->getId(),
+                taskId: $task->getId(),
+                subtitleAssFileName: $command->getSubtitleAssFileName(),
+                resizeFileName: $command->getResizeFileName(),
+            ));
+        } catch (\Exception) {
+            $stream->markAsEmbeddingVideoFailed();
+            $this->streamRepository->save($stream);
 
-        $this->coreBus->dispatch(new EmbedVideoMessage(
-            streamId: $stream->getId(),
-            taskId: $task->getId(),
-            subtitleAssFileName: $command->getSubtitleAssFileName(),
-            resizeFileName: $command->getResizeFileName(),
-        ));
+            return;
+        }
     }
 }

@@ -42,17 +42,24 @@ class TransformSubtitleCommandHandler
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE);
-        $this->streamRepository->save($stream);
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE);
+            $this->streamRepository->save($stream);
 
-        $task = Task::create(TransformSubtitleCommand::class, $stream);
-        $this->taskRepository->save($task, true);
+            $task = Task::create(TransformSubtitleCommand::class, $stream);
+            $this->taskRepository->save($task, true);
 
-        $this->coreBus->dispatch(new TransformSubtitleMessage(
-            taskId: $task->getId(),
-            streamId: $stream->getId(),
-            option: $stream->getOption(),
-            subtitleSrtFileName: $command->getSubtitleSrtFileName(),
-        ));
+            $this->coreBus->dispatch(new TransformSubtitleMessage(
+                taskId: $task->getId(),
+                streamId: $stream->getId(),
+                option: $stream->getOption(),
+                subtitleSrtFileName: $command->getSubtitleSrtFileName(),
+            ));
+        } catch (\Exception) {
+            $stream->markAsTransformingSubtitleFailed();
+            $this->streamRepository->save($stream);
+
+            return;
+        }
     }
 }

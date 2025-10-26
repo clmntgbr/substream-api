@@ -42,17 +42,24 @@ class ChunkVideoCommandHandler
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO);
-        $this->streamRepository->save($stream);
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO);
+            $this->streamRepository->save($stream);
 
-        $task = Task::create(ChunkVideoCommand::class, $stream);
-        $this->taskRepository->save($task, true);
+            $task = Task::create(ChunkVideoCommand::class, $stream);
+            $this->taskRepository->save($task, true);
 
-        $this->coreBus->dispatch(new ChunkVideoMessage(
-            streamId: $stream->getId(),
-            taskId: $task->getId(),
-            chunkNumber: $stream->getOption()->getChunkNumber(),
-            embedFileName: $command->getEmbedFileName(),
-        ));
+            $this->coreBus->dispatch(new ChunkVideoMessage(
+                streamId: $stream->getId(),
+                taskId: $task->getId(),
+                chunkNumber: $stream->getOption()->getChunkNumber(),
+                embedFileName: $command->getEmbedFileName(),
+            ));
+        } catch (\Exception) {
+            $stream->markAsChunkingVideoFailed();
+            $this->streamRepository->save($stream);
+
+            return;
+        }
     }
 }

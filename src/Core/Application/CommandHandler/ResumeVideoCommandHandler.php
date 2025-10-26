@@ -42,16 +42,23 @@ class ResumeVideoCommandHandler
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::RESUMING);
-        $this->streamRepository->save($stream);
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::RESUMING);
+            $this->streamRepository->save($stream);
 
-        $task = Task::create(ResumeVideoCommand::class, $stream);
-        $this->taskRepository->save($task, true);
+            $task = Task::create(ResumeVideoCommand::class, $stream);
+            $this->taskRepository->save($task, true);
 
-        $this->coreBus->dispatch(new ResumeVideoMessage(
-            streamId: $stream->getId(),
-            taskId: $task->getId(),
-            subtitleSrtFileName: $command->getSubtitleSrtFileName(),
-        ));
+            $this->coreBus->dispatch(new ResumeVideoMessage(
+                streamId: $stream->getId(),
+                taskId: $task->getId(),
+                subtitleSrtFileName: $command->getSubtitleSrtFileName(),
+            ));
+        } catch (\Exception) {
+            $stream->markAsResumingFailed();
+            $this->streamRepository->save($stream);
+
+            return;
+        }
     }
 }

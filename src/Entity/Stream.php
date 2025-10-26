@@ -2,12 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\QueryParameter;
 use App\Controller\Stream\BuildArchiveStreamController;
 use App\Controller\Stream\CreateStreamUrlController;
 use App\Controller\Stream\CreateStreamVideoController;
@@ -17,8 +14,6 @@ use App\Controller\Stream\GetSubtitleSrtStreamController;
 use App\Controller\Stream\SearchStreamController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\StreamStatusEnum;
-use App\Filter\PartialSearchFilter;
-use App\Filter\StatusSearchFilter;
 use App\Repository\StreamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -57,56 +52,6 @@ use Symfony\Component\Uid\Uuid;
             uriTemplate: '/search/streams',
             controller: SearchStreamController::class,
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
-        ),
-        new GetCollection(
-            normalizationContext: ['groups' => ['stream:read', 'option:read']],
-            parameters: [
-                'search[status]' => new QueryParameter(
-                    description: 'Search streams by status',
-                    property: 'status',
-                    filter: new StatusSearchFilter(),
-                ),
-                'search[originalFileName]' => new QueryParameter(
-                    description: 'Search streams by original file name',
-                    property: 'originalFileName',
-                    filter: new PartialSearchFilter(),
-                ),
-                'order[createdAt]' => new QueryParameter(
-                    description: 'Order streams by creation date',
-                    property: 'createdAt',
-                    filter: new OrderFilter(),
-                ),
-                'order[status]' => new QueryParameter(
-                    description: 'Order streams by status',
-                    property: 'status',
-                    filter: new OrderFilter(),
-                ),
-                'order[originalFileName]' => new QueryParameter(
-                    description: 'Order streams by original file name',
-                    property: 'originalFileName',
-                    filter: new OrderFilter(),
-                ),
-                'order[processingTime]' => new QueryParameter(
-                    description: 'Order streams by processing time',
-                    property: 'processingTime',
-                    filter: new OrderFilter(),
-                ),
-                'order[progress]' => new QueryParameter(
-                    description: 'Order streams by progress',
-                    property: 'progress',
-                    filter: new OrderFilter(),
-                ),
-                'order[duration]' => new QueryParameter(
-                    description: 'Order streams by duration',
-                    property: 'duration',
-                    filter: new OrderFilter(),
-                ),
-                'order[size]' => new QueryParameter(
-                    description: 'Order streams by size',
-                    property: 'size',
-                    filter: new OrderFilter(),
-                ),
-            ]
         ),
         new Post(
             uriTemplate: '/streams/video',
@@ -414,6 +359,14 @@ class Stream
     {
         $this->status = StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value;
         $this->statuses[] = StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value;
+
+        return $this;
+    }
+
+    public function markAsExtractingSoundFailed(): self
+    {
+        $this->status = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
+        $this->statuses[] = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
 
         return $this;
     }

@@ -10,7 +10,16 @@ fos_elastica:
                 name: { type: text }
                 status: { type: text }
                 filterStatus: { type: text }
-                originalFileName: { type: text }
+                originalFileName: 
+                    type: text
+                    fields:
+                        keyword:
+                            type: keyword
+                fileName: 
+                    type: text
+                    fields:
+                        keyword:
+                            type: keyword
                 createdAt: { type: date }
                 updatedAt: { type: date }
             persistence:

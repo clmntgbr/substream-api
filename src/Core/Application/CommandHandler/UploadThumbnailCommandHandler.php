@@ -4,21 +4,13 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Core\Application\Command\ChunkVideoCommand;
 use App\Core\Application\Command\UploadThumbnailCommand;
-use App\Core\Application\Message\ChunkVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Entity\Stream;
-use App\Entity\Task;
-use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
-use App\Repository\TaskRepository;
-use App\Shared\Application\Bus\CoreBusInterface;
 use League\Flysystem\FilesystemOperator;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
 class UploadThumbnailCommandHandler
@@ -77,7 +69,7 @@ class UploadThumbnailCommandHandler
     {
         try {
             $imageContents = @file_get_contents($url);
-            if ($imageContents === false) {
+            if (false === $imageContents) {
                 return;
             }
 
@@ -90,8 +82,8 @@ class UploadThumbnailCommandHandler
                 default => 'jpg',
             };
 
-            $fileName = 'thumbnail.' . $extension;
-            $path = $stream->getId() . '/' . $fileName;
+            $fileName = 'thumbnail.'.$extension;
+            $path = $stream->getId().'/'.$fileName;
 
             $tempStream = fopen('php://temp', 'r+');
             fwrite($tempStream, $imageContents);
@@ -101,7 +93,7 @@ class UploadThumbnailCommandHandler
 
             fclose($tempStream);
 
-            $stream->setThumbnailUrl($this->backendUrl . '/uploads/' . $path);
+            $stream->setThumbnailUrl($this->backendUrl.'/uploads/'.$path);
         } catch (\Throwable $e) {
             return;
         }

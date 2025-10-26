@@ -50,25 +50,32 @@ class GenerateSubtitleCommandHandler
             return;
         }
 
-        $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE);
-        $this->streamRepository->save($stream);
+        try {
+            $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE);
+            $this->streamRepository->save($stream);
 
-        $task = Task::create(GenerateSubtitleCommand::class, $stream);
-        $this->taskRepository->save($task, true);
+            $task = Task::create(GenerateSubtitleCommand::class, $stream);
+            $this->taskRepository->save($task, true);
 
-        // TODO: Remove this after testing
-        if ('prod' === $this->env) {
-            $this->coreBus->dispatch(new GenerateSubtitleMessage(
-                taskId: $task->getId(),
-                streamId: $stream->getId(),
-                audioFiles: $command->getAudioFiles(),
-                language: $command->getLanguage(),
-            ));
+            // TODO: Remove this after testing
+            if ('prod' === $this->env) {
+                $this->coreBus->dispatch(new GenerateSubtitleMessage(
+                    taskId: $task->getId(),
+                    streamId: $stream->getId(),
+                    audioFiles: $command->getAudioFiles(),
+                    language: $command->getLanguage(),
+                ));
+
+                return;
+            }
+
+            $this->mockGenerateSubtitle($stream, $task);
+        } catch (\Exception) {
+            $stream->markAsGeneratingSubtitleFailed();
+            $this->streamRepository->save($stream);
 
             return;
         }
-
-        $this->mockGenerateSubtitle($stream, $task);
     }
 
     private function mockGenerateSubtitle(Stream $stream, Task $task): void
