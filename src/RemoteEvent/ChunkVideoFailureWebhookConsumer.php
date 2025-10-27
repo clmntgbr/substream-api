@@ -46,9 +46,13 @@ final class ChunkVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_FAILED);
+            $this->streamRepository->save($stream);
         } catch (\Exception $e) {
+            $this->logger->error('Error chunking video', [
+                'stream_id' => $response->getStreamId(),
+                'error' => $e->getMessage(),
+            ]);
             $stream->markAsChunkingVideoFailed();
-        } finally {
             $this->streamRepository->save($stream);
         }
 

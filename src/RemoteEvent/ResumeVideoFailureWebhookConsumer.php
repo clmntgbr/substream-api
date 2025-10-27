@@ -46,9 +46,13 @@ final class ResumeVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::RESUMING_FAILED);
+            $this->streamRepository->save($stream);
         } catch (\Exception $e) {
+            $this->logger->error('Error resuming video', [
+                'stream_id' => $response->getStreamId(),
+                'error' => $e->getMessage(),
+            ]);
             $stream->markAsResumingFailed();
-        } finally {
             $this->streamRepository->save($stream);
         }
 

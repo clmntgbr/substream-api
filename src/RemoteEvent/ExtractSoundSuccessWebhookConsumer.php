@@ -47,6 +47,7 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
             $stream->setAudioFiles($response->getAudioFiles());
             $stream->setDuration($response->getDuration());
             $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_COMPLETED);
+            $this->streamRepository->save($stream);
 
             $this->commandBus->dispatch(new GenerateSubtitleCommand(
                 streamId: $stream->getId(),
@@ -54,8 +55,11 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
                 language: $stream->getOption()->getLanguage(),
             ));
         } catch (\Exception $e) {
+            $this->logger->error('Error extracting sound', [
+                'stream_id' => $response->getStreamId(),
+                'error' => $e->getMessage(),
+            ]);
             $stream->markAsExtractSoundFailed();
-        } finally {
             $this->streamRepository->save($stream);
         }
 

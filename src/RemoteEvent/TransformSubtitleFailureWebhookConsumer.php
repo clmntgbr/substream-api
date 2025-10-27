@@ -44,9 +44,13 @@ final class TransformSubtitleFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_FAILED);
+            $this->streamRepository->save($stream);
         } catch (\Exception $e) {
+            $this->logger->error('Error transforming subtitle', [
+                'stream_id' => $response->getStreamId(),
+                'error' => $e->getMessage(),
+            ]);
             $stream->markAsTransformingSubtitleFailed();
-        } finally {
             $this->streamRepository->save($stream);
         }
 

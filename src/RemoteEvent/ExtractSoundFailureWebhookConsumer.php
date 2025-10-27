@@ -44,9 +44,13 @@ final class ExtractSoundFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND_FAILED);
+            $this->streamRepository->save($stream);
         } catch (\Exception $e) {
+            $this->logger->error('Error extracting sound', [
+                'stream_id' => $response->getStreamId(),
+                'error' => $e->getMessage(),
+            ]);
             $stream->markAsExtractSoundFailed();
-        } finally {
             $this->streamRepository->save($stream);
         }
 

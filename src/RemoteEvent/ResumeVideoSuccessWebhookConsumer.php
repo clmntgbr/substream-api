@@ -46,13 +46,17 @@ final class ResumeVideoSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setResumeFileName($response->getResumeFileName());
             $this->apply($stream, WorkflowTransitionEnum::RESUMING_COMPLETED);
+            $this->streamRepository->save($stream);
 
             $this->commandBus->dispatch(new CompleteVideoCommand(
                 streamId: $stream->getId(),
             ));
         } catch (\Exception $e) {
+            $this->logger->error('Error resuming video', [
+                'stream_id' => $response->getStreamId(),
+                'error' => $e->getMessage(),
+            ]);
             $stream->markAsResumingFailed();
-        } finally {
             $this->streamRepository->save($stream);
         }
 

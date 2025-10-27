@@ -44,9 +44,13 @@ final class EmbedVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_FAILED);
+            $this->streamRepository->save($stream);
         } catch (\Exception $e) {
+            $this->logger->error('Error embedding video', [
+                'stream_id' => $response->getStreamId(),
+                'error' => $e->getMessage(),
+            ]);
             $stream->markAsEmbeddingVideoFailed();
-        } finally {
             $this->streamRepository->save($stream);
         }
 

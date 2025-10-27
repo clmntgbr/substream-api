@@ -121,6 +121,7 @@ class Stream
     private string $status;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['stream:read', 'stream:read:status'])]
     private array $statuses = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
