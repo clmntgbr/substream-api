@@ -131,6 +131,9 @@ framework:
                     from: resuming
                     to:   resuming_completed
 
+                completed_resume_failed:
+                    from: resuming_failed
+                    to:   completed
                 completed_no_resume:
                     from: chunking_video_completed
                     to:   completed

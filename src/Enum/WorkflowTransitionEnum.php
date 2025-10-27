@@ -37,6 +37,7 @@ enum WorkflowTransitionEnum: string
     case RESUMING_FAILED = 'resuming_failed';
     case RESUMING_COMPLETED = 'resuming_completed';
 
+    case COMPLETED_RESUME_FAILED = 'completed_resume_failed';
     case COMPLETED_NO_RESUME = 'completed_no_resume';
     case COMPLETED = 'completed';
 }

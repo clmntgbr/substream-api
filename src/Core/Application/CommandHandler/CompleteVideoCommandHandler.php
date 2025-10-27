@@ -7,6 +7,8 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CleanStreamCommand;
 use App\Core\Application\Command\CompleteVideoCommand;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Stream;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -39,18 +41,31 @@ class CompleteVideoCommandHandler
             return;
         }
 
-        if (false === $stream->getOption()->getIsResume()) {
-            $this->apply($stream, WorkflowTransitionEnum::COMPLETED_NO_RESUME);
-        }
-
-        if (true === $stream->getOption()->getIsResume()) {
-            $this->apply($stream, WorkflowTransitionEnum::COMPLETED);
-        }
-
-        $this->streamRepository->save($stream);
+        $this->complete($stream);
 
         $this->commandBus->dispatch(new CleanStreamCommand(
             streamId: $stream->getId(),
         ));
+    }
+
+    private function complete(Stream $stream): void
+    {
+        if ($stream->getStatus() === StreamStatusEnum::RESUMING_FAILED->value) {
+            $this->apply($stream, WorkflowTransitionEnum::COMPLETED_RESUME_FAILED);
+            $this->streamRepository->save($stream);
+            return;
+        }
+
+        if (false === $stream->getOption()->getIsResume()) {
+            $this->apply($stream, WorkflowTransitionEnum::COMPLETED_NO_RESUME);
+            $this->streamRepository->save($stream);
+            return;
+        }
+
+        if (true === $stream->getOption()->getIsResume()) {
+            $this->apply($stream, WorkflowTransitionEnum::COMPLETED);
+            $this->streamRepository->save($stream);
+            return;
+        }
     }
 }
