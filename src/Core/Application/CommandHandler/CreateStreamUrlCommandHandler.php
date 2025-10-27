@@ -47,7 +47,6 @@ class CreateStreamUrlCommandHandler
             throw new StreamNotFoundException();
         }
 
-        // Convert base64 data to temporary file
         $thumbnailFile = $this->convertBase64ToFile($command->getThumbnailFile());
 
         $this->commandBus->dispatch(new UploadThumbnailCommand(
@@ -64,6 +63,7 @@ class CreateStreamUrlCommandHandler
             url: $command->getUrl(),
         ));
 
+        sleep(3);
         return $createStreamModel;
     }
 
