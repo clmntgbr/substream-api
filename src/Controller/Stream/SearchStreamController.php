@@ -34,6 +34,7 @@ class SearchStreamController extends AbstractController
         $search = new SearchDecorator($parameters);
 
         $response = $this->elasticaStreamRepository->search(
+            $user,
             $search->getSearch(),
             $searchRequest->page,
             $searchRequest->itemsPerPage

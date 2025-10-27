@@ -22,6 +22,7 @@ fos_elastica:
                             type: keyword
                 createdAt: { type: date }
                 updatedAt: { type: date }
+                userUuid: { type: keyword }
             persistence:
                 driver: orm
                 model: App\Entity\Stream
@@ -29,3 +30,7 @@ fos_elastica:
                 finder: ~
                 elastica_to_model_transformer:
                     ignore_missing: true
+                listener:
+                    insert: true
+                    update: true
+                    delete: true

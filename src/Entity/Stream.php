@@ -703,4 +703,10 @@ class Stream
             StreamStatusEnum::RESUMING_FAILED->value => 'failed',
         };
     }
+
+    #[Groups(['stream:search', 'elastica'])]
+    public function getUserUuid(): string
+    {
+        return (string) $this->user->getId();
+    }
 }

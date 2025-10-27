@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\SearchDecorator\Aggregation\AggregationInterface;
 use App\SearchDecorator\SearchInterface;
 use Elastica\Query;
@@ -30,9 +31,9 @@ class AbstractElasticaRepository extends Repository
      * "aggregations":mixed[]|null
      * }
      */
-    public function search(SearchInterface $search, int $page = 1, int $limit = 15, ?Query $query = null): array
+    public function search(?User $user = null, SearchInterface $search, int $page = 1, int $limit = 15, ?Query $query = null): array
     {
-        $query = $this->getSearchQuery($search);
+        $query = $this->getSearchQuery($user, $search);
         $results = $this->finder->findPaginated($query);
         $results->setMaxPerPage($limit);
         $results->setCurrentPage($page);
@@ -54,7 +55,7 @@ class AbstractElasticaRepository extends Repository
         ];
     }
 
-    public function getSearchQuery(SearchInterface $search): Query
+    public function getSearchQuery(?User $user = null, SearchInterface $search): Query
     {
         $queries = $search->getQueries();
         $bool = new BoolQuery();
@@ -101,9 +102,15 @@ class AbstractElasticaRepository extends Repository
 
         $query = $this->addAggregations(new Query(), $request);
 
+        if ($user instanceof User) {
+            $userQuery = (new Query\Term())
+                ->setTerm('userUuid', (string) $user->getId());
+
+            $bool->addMust($userQuery);
+        }
+
         $query->setQuery($bool);
 
-        // Gérer le tri
         if (isset($request['order'])) {
             /** @var array<string, string> $requestOrder */
             $requestOrder = $request['order'];

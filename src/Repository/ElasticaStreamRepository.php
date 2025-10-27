@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\SearchDecorator\SearchInterface;
 use Elastica\Query;
 use FOS\ElasticaBundle\Finder\PaginatedFinderInterface;
@@ -15,9 +16,9 @@ class ElasticaStreamRepository extends AbstractElasticaRepository
         parent::__construct($finder);
     }
 
-    public function getSearchQuery(SearchInterface $search): Query
+    public function getSearchQuery(?User $user = null, SearchInterface $search): Query
     {
-        $query = parent::getSearchQuery($search);
+        $query = parent::getSearchQuery($user, $search);
 
         $request = $search->getRequest();
 

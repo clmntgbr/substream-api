@@ -6,7 +6,6 @@ namespace App\SearchDecorator\Filter;
 
 use App\SearchDecorator\Query\SearchAbstract;
 use Elastica\Query\Range;
-use Elastica\Query\BoolQuery;
 
 class DateFilter extends SearchAbstract
 {
@@ -64,9 +63,10 @@ class DateFilter extends SearchAbstract
         // Try to parse as ISO 8601 date (e.g., 2025-10-26T21:34:25+00:00)
         // Fix: Replace space with + for timezone (URL decoding issue)
         $date = str_replace(' ', '+', $date);
-        
+
         try {
             $dateTime = new \DateTime($date);
+
             // Return in UTC format for Elasticsearch
             return $dateTime->format('Y-m-d\TH:i:s\Z');
         } catch (\Exception $e) {
