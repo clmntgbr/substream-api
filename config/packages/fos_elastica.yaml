@@ -37,8 +37,11 @@ fos_elastica:
                     delete: true
         notification:
             properties:
-                context: { type: text }
+                title: { type: text }
+                message: { type: text }
                 isRead: { type: boolean }
+                createdAt: { type: date }
+                updatedAt: { type: date }
                 userUuid: { type: keyword }
             persistence:
                 driver: orm

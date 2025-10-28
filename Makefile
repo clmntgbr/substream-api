@@ -70,6 +70,9 @@ db:
 	$(PHP) php bin/console doctrine:database:create
 	$(PHP) php bin/console doctrine:schema:update -f
 	$(PHP) php bin/console hautelook:fixtures:load -n
+	$(PHP) php bin/console fos:elastica:delete
+	$(PHP) php bin/console fos:elastica:create
+	$(PHP) php bin/console fos:elastica:populate
 
 jwt:
 	$(PHP) php bin/console lexik:jwt:generate-keypair --skip-if-exists
@@ -103,6 +106,9 @@ migrate:
 
 fixture:
 	$(PHP) php bin/console hautelook:fixtures:load -n
+	$(PHP) php bin/console fos:elastica:delete
+	$(PHP) php bin/console fos:elastica:create
+	$(PHP) php bin/console fos:elastica:populate
 
 schema:
 	$(PHP) php bin/console doctrine:schema:update -f

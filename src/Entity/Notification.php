@@ -60,7 +60,6 @@ class Notification
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['notification:read'])]
     private User $user;
 
     public function __construct()
@@ -108,7 +107,7 @@ class Notification
         return $this->contextId;
     }
 
-    public function isRead(): bool
+    public function getIsRead(): bool
     {
         return $this->isRead;
     }
@@ -167,6 +166,13 @@ class Notification
         return $this;
     }
 
+    public function setContextIdFromString(string $uuid): self
+    {
+        $this->contextId = Uuid::fromString($uuid);
+
+        return $this;
+    }
+
     public function getContextMessage(): string
     {
         return $this->contextMessage;
@@ -176,5 +182,17 @@ class Notification
     public function getUserUuid(): string
     {
         return (string) $this->user->getId();
+    }
+
+    #[Groups(['notification:read'])]
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    #[Groups(['notification:read'])]
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
     }
 }
