@@ -2,8 +2,8 @@
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\CompleteVideoCommand;
 use App\Core\Application\Command\ResumeVideoCommand;
+use App\Core\Application\Command\StreamSuccessCommand;
 use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ChunkVideoSuccess;
@@ -76,7 +76,7 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
         }
 
         if (false === $stream->getOption()->getIsResume()) {
-            $this->commandBus->dispatch(new CompleteVideoCommand(
+            $this->commandBus->dispatch(new StreamSuccessCommand(
                 streamId: $stream->getId(),
             ));
         }

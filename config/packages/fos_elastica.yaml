@@ -34,3 +34,20 @@ fos_elastica:
                     insert: true
                     update: true
                     delete: true
+        notification:
+            properties:
+                context: { type: text }
+                contextId: { type: keyword }
+                isRead: { type: boolean }
+                userUuid: { type: keyword }
+            persistence:
+                driver: orm
+                model: App\Entity\Notification
+                provider: ~
+                finder: ~
+                elastica_to_model_transformer:
+                    ignore_missing: true
+                listener:
+                    insert: true
+                    update: true
+                    delete: true

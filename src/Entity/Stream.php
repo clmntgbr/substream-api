@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\Stream\BuildArchiveStreamController;
 use App\Controller\Stream\CreateStreamUrlController;
@@ -48,7 +49,7 @@ use Symfony\Component\Uid\Uuid;
             uriTemplate: '/streams/{id}/download/resume',
             controller: GetResumeVideoStreamController::class,
         ),
-        new Get(
+        new GetCollection(
             uriTemplate: '/search/streams',
             controller: SearchStreamController::class,
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
@@ -121,7 +122,6 @@ class Stream
     private string $status;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['stream:read', 'stream:read:status'])]
     private array $statuses = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -669,7 +669,7 @@ class Stream
         return $this;
     }
 
-    #[Groups(['stream:search', 'stream:read'])]
+    #[Groups(['stream:search'])]
     public function getFilterStatus(): ?string
     {
         return match ($this->status) {

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\LanguageEnum;
@@ -20,9 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: OptionRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(
-            normalizationContext: ['groups' => ['option:read']],
-        ),
         new Post(
             normalizationContext: ['groups' => ['option:read:post']],
             denormalizationContext: ['groups' => ['option:write']],
@@ -111,7 +107,7 @@ class Option
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
-    #[Assert\Range(min: 0, max: 4)]
+    #[Assert\Range(min: 0, max: 200)]
     #[Groups(['option:read', 'option:write'])]
     private float $yAxisAlignment;
 

@@ -64,6 +64,7 @@ class CreateStreamUrlCommandHandler
         ));
 
         sleep(3);
+
         return $createStreamModel;
     }
 

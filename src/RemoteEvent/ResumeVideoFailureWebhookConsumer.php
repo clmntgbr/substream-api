@@ -2,7 +2,7 @@
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\CompleteVideoCommand;
+use App\Core\Application\Command\StreamSuccessCommand;
 use App\Core\Application\Command\UpdateTaskFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ResumeVideoFailure;
@@ -49,7 +49,7 @@ final class ResumeVideoFailureWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::RESUMING_FAILED);
             $this->streamRepository->save($stream);
 
-            $this->commandBus->dispatch(new CompleteVideoCommand(
+            $this->commandBus->dispatch(new StreamSuccessCommand(
                 streamId: $stream->getId(),
             ));
         } catch (\Exception $e) {
