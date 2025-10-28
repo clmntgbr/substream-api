@@ -28,6 +28,7 @@ fos_elastica:
                 model: App\Entity\Stream
                 provider: ~
                 finder: ~
+                repository: App\Repository\ElasticaStreamRepository
                 elastica_to_model_transformer:
                     ignore_missing: true
                 listener:
@@ -37,12 +38,12 @@ fos_elastica:
         notification:
             properties:
                 context: { type: text }
-                contextId: { type: keyword }
                 isRead: { type: boolean }
                 userUuid: { type: keyword }
             persistence:
                 driver: orm
                 model: App\Entity\Notification
+                repository: App\Repository\ElasticaNotificationRepository
                 provider: ~
                 finder: ~
                 elastica_to_model_transformer:

@@ -50,5 +50,11 @@ services:
         tags:
             - { name: nelmio_alice.faker.provider }
 
-    FOS\ElasticaBundle\Finder\PaginatedFinderInterface:
-        alias: fos_elastica.finder.stream
+    # Elastica
+    App\Repository\ElasticaStreamRepository:
+        arguments:
+            $finder: '@fos_elastica.finder.stream'
+
+    App\Repository\ElasticaNotificationRepository:
+        arguments:
+            $finder: '@fos_elastica.finder.notification'

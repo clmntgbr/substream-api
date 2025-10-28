@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
 use App\Controller\Notification\SearchNotificationController;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\NotificationRepository;
@@ -21,6 +22,11 @@ use Symfony\Component\Uid\Uuid;
             controller: SearchNotificationController::class,
             normalizationContext: ['groups' => ['notification:read']],
         ),
+        new Put(
+            uriTemplate: '/notifications/{id}/read',
+            normalizationContext: ['groups' => ['notification:read']],
+            denormalizationContext: ['groups' => ['notification:write']],
+        )
     ],
 )]
 class Notification
@@ -44,12 +50,12 @@ class Notification
     #[Groups(['notification:read'])]
     private string $contextMessage;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: 'uuid')]
     #[Groups(['notification:read'])]
     private Uuid $contextId;
 
     #[ORM\Column(type: Types::BOOLEAN)]
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read', 'notification:write'])]
     private bool $isRead = false;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -164,5 +170,11 @@ class Notification
     public function getContextMessage(): string
     {
         return $this->contextMessage;
+    }
+
+    #[Groups(['notification:search', 'elastica'])]
+    public function getUserUuid(): string
+    {
+        return (string) $this->user->getId();
     }
 }
