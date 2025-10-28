@@ -2,7 +2,6 @@
 
 namespace App\Core\Application\Command;
 
-use App\Entity\User;
 use App\Shared\Application\Command\AsyncCommandInterface;
 use App\Shared\Application\Command\CommandAbstract;
 use Symfony\Component\Uid\Uuid;
@@ -14,7 +13,6 @@ final class CreateNotificationCommand extends CommandAbstract implements AsyncCo
         private string $message,
         private string $context,
         private Uuid $contextId,
-        private User $user,
     ) {
     }
 
@@ -36,10 +34,5 @@ final class CreateNotificationCommand extends CommandAbstract implements AsyncCo
     public function getContextId(): Uuid
     {
         return $this->contextId;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
     }
 }

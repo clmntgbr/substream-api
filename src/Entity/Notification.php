@@ -42,6 +42,10 @@ class Notification
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['notification:read'])]
+    private string $contextMessage;
+
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['notification:read'])]
     private Uuid $contextId;
 
     #[ORM\Column(type: Types::BOOLEAN)]
@@ -64,6 +68,7 @@ class Notification
         string $message,
         string $context,
         Uuid $contextId,
+        string $contextMessage,
         User $user,
     ): self {
         $notification = new self();
@@ -71,6 +76,7 @@ class Notification
         $notification->message = $message;
         $notification->context = $context;
         $notification->contextId = $contextId;
+        $notification->contextMessage = $contextMessage;
         $notification->user = $user;
 
         return $notification;
@@ -146,5 +152,17 @@ class Notification
         $this->user = $user;
 
         return $this;
+    }
+
+    public function setContextMessage(string $contextMessage): self
+    {
+        $this->contextMessage = $contextMessage;
+
+        return $this;
+    }
+
+    public function getContextMessage(): string
+    {
+        return $this->contextMessage;
     }
 }

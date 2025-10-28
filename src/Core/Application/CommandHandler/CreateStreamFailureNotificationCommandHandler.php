@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateFailureStreamNotificationCommand;
+use App\Core\Application\Command\CreateNotificationCommand;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
@@ -32,8 +33,11 @@ class CreateStreamFailureNotificationCommandHandler
             return;
         }
 
-        $this->commandBus->dispatch(new CreateFailureStreamNotificationCommand(
-            streamId: $stream->getId(),
+        $this->commandBus->dispatch(new CreateNotificationCommand(
+            title: 'stream_failure',
+            message: 'stream_failure_message',
+            context: 'stream',
+            contextId: $stream->getId(),
         ));
     }
 }

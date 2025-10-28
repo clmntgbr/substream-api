@@ -38,7 +38,6 @@ class CreateStreamSuccessNotificationCommandHandler
             message: 'stream_success_message',
             context: 'stream',
             contextId: $stream->getId(),
-            user: $stream->getUser(),
         ));
     }
 }
