@@ -135,7 +135,7 @@ php-stan:
 	$(PHP) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1
 
 consume:
-	$(PHP) php bin/console messenger:consume async --limit=100 -vv
+	$(PHP) php bin/console messenger:consume async -vv
 
 transform-subtitle:
 	$(PHP) php bin/console transform-subtitle

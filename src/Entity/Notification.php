@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use App\Controller\Notification\SearchNotificationController;
 use App\Entity\Trait\UuidTrait;
@@ -22,7 +23,7 @@ use Symfony\Component\Uid\Uuid;
             controller: SearchNotificationController::class,
             normalizationContext: ['groups' => ['notification:read']],
         ),
-        new Put(
+        new Patch(
             uriTemplate: '/notifications/{id}/read',
             normalizationContext: ['groups' => ['notification:read']],
             denormalizationContext: ['groups' => ['notification:write']],
@@ -85,6 +86,12 @@ class Notification
         $notification->user = $user;
 
         return $notification;
+    }
+
+    #[Groups(['notification:read'])]
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 
     public function getTitle(): string
