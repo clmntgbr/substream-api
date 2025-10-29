@@ -15,9 +15,6 @@ services:
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
-      MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
-      MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}/.well-known/mercure}
-      MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
     volumes:
       - caddy_data:/data
       - caddy_config:/config
@@ -68,18 +65,20 @@ services:
       - .env.local
     image: dunglas/mercure
     restart: unless-stopped
+    ports:
+      - "9010:80"
     environment:
       # Uncomment the following line to disable HTTPS,
-      #SERVER_NAME: ':80'
+      SERVER_NAME: ':80'
       MERCURE_PUBLISHER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
       MERCURE_SUBSCRIBER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
       # Set the URL of your Symfony project (without trailing slash!) as value of the cors_origins directive
       MERCURE_EXTRA_DIRECTIVES: |
-        cors_origins http://127.0.0.1:8000
+        cors_origins http://127.0.0.1:8000 http://localhost:3001
     # Comment the following line to disable the development mode
     command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost/healthz"]
+      test: ["CMD", "curl", "-f", "http://localhost/healthz"]
       timeout: 5s
       retries: 5
       start_period: 60s

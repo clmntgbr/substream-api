@@ -162,3 +162,9 @@ elastica:
 	$(SYMFONY) fos:elastica:delete
 	$(SYMFONY) fos:elastica:create
 	$(SYMFONY) fos:elastica:populate
+
+debug:
+	$(SYMFONY) debug:dotenv
+
+dummy:
+	$(SYMFONY) dummy:command
