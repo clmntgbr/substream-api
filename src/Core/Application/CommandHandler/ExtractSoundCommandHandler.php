@@ -60,7 +60,7 @@ class ExtractSoundCommandHandler
             $stream->markAsExtractingSoundFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser());
+            $this->publishService->dispatchSearchStreams($stream->getUser(), ExtractSoundCommand::class);
         }
     }
 }

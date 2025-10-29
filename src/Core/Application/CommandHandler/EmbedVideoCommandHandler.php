@@ -60,7 +60,7 @@ class EmbedVideoCommandHandler
             $stream->markAsEmbeddingVideoFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser());
+            $this->publishService->dispatchSearchStreams($stream->getUser(), EmbedVideoCommand::class);
         }
     }
 }

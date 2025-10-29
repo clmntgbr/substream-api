@@ -61,7 +61,7 @@ class ChunkVideoCommandHandler
             $stream->markAsChunkingVideoFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser());
+            $this->publishService->dispatchSearchStreams($stream->getUser(), ChunkVideoCommand::class);
         }
     }
 }

@@ -61,7 +61,7 @@ class TransformSubtitleCommandHandler
             $stream->markAsTransformingSubtitleFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser());
+            $this->publishService->dispatchSearchStreams($stream->getUser(), TransformSubtitleCommand::class);
         }
     }
 }

@@ -41,7 +41,5 @@ class CreateStreamFailureNotificationCommandHandler
             context: 'stream',
             contextId: $stream->getId(),
         ));
-
-        $this->publishService->dispatchSearchNotifications($stream->getUser());
     }
 }

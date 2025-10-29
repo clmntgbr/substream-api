@@ -61,7 +61,7 @@ class ResizeVideoCommandHandler
             $stream->markAsResizingVideoFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser());
+            $this->publishService->dispatchSearchStreams($stream->getUser(), ResizeVideoCommand::class);
         }
     }
 }

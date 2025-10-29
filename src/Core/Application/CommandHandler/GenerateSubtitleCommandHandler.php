@@ -76,7 +76,7 @@ class GenerateSubtitleCommandHandler
             $stream->markAsGeneratingSubtitleFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser());
+            $this->publishService->dispatchSearchStreams($stream->getUser(), GenerateSubtitleCommand::class);
         }
     }
 

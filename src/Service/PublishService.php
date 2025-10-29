@@ -17,40 +17,44 @@ class PublishService implements PublishServiceInterface
     ) {
     }
 
-    public function dispatchSearchStreams(User $user): void
+    public function dispatchSearchStreams(User $user, ?string $context = null): void
     {
         $this->commandBus->dispatch(new UpdateSearchStreamsCommand(
             userId: $user->getId(),
+            context: $context,
         ));
     }
 
-    public function dispatchSearchNotifications(User $user): void
+    public function dispatchSearchNotifications(User $user, ?string $context = null): void
     {
         $this->commandBus->dispatch(new UpdateSearchNotificationsCommand(
             userId: $user->getId(),
+            context: $context,
         ));
     }
 
-    public function refreshSearchStreams(User $user): void
+    public function refreshSearchStreams(User $user, ?string $context = null): void
     {
         $update = new Update(
             "/users/{$user->getId()}/search/streams",
             json_encode([
                 'type' => 'streams.refresh',
                 'userId' => $user->getId(),
+                'context' => $context,
             ])
         );
 
         $this->hub->publish($update);
     }
 
-    public function refreshSearchNotifications(User $user): void
+    public function refreshSearchNotifications(User $user, ?string $context = null): void
     {
         $update = new Update(
             "/users/{$user->getId()}/search/notifications",
             json_encode([
                 'type' => 'notifications.refresh',
                 'userId' => $user->getId(),
+                'context' => $context,
             ])
         );
 

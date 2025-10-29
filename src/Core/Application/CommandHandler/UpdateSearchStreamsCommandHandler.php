@@ -41,6 +41,6 @@ class UpdateSearchStreamsCommandHandler
             return;
         }
 
-        $this->publishService->refreshSearchStreams($user);
+        $this->publishService->refreshSearchStreams($user, $command->getContext());
     }
 }

@@ -42,6 +42,6 @@ class UpdateSearchNotificationsCommandHandler
             return;
         }
 
-        $this->publishService->refreshSearchNotifications($user);
+        $this->publishService->refreshSearchNotifications($user, $command->getContext());
     }
 }

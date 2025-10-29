@@ -39,6 +39,6 @@ class StreamFailureCommandHandler
             return;
         }
 
-        $this->publishService->dispatchSearchStreams($stream->getUser());
+        $this->publishService->dispatchSearchStreams($stream->getUser(), StreamFailureCommand::class);
     }
 }

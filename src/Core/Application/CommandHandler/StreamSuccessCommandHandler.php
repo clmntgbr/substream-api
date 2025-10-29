@@ -54,7 +54,7 @@ class StreamSuccessCommandHandler
             streamId: $stream->getId(),
         ));
 
-        $this->publishService->dispatchSearchStreams($stream->getUser());
+        $this->publishService->dispatchSearchStreams($stream->getUser(), StreamSuccessCommand::class);
     }
 
     private function complete(Stream $stream): void

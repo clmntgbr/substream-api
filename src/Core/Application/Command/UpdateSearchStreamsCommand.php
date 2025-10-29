@@ -11,12 +11,18 @@ final class UpdateSearchStreamsCommand extends CommandAbstract implements AsyncC
 {
     public function __construct(
         private Uuid $userId,
+        private ?string $context = null,
     ) {
     }
     
     public function getUserId(): Uuid
     {
         return $this->userId;
+    }
+
+    public function getContext(): ?string
+    {
+        return $this->context;
     }
 
     /**
