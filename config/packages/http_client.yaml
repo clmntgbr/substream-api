@@ -1,3 +1,0 @@
-framework:
-    http_client:
-        scoped_clients: ~

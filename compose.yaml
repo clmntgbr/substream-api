@@ -1,198 +1,194 @@
+---
 services:
-    php:
-        container_name: ${PROJECT_NAME}-php
-        image: ${IMAGES_PREFIX:-}app-php
-        restart: unless-stopped
-        env_file:
-            - .env
-        build:
-            context: .
-            target: frankenphp_dev
-        networks:
-            - substream-network
-        depends_on:
-            database:
-                condition: service_healthy
-            rabbitmq:
-                condition: service_healthy
-            minio:
-                condition: service_healthy
-        environment:
-            SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
-            MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-            MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-            MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
-            MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}/.well-known/mercure}
-            MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-        volumes:
-            - caddy_data:/data
-            - caddy_config:/config
-            - ./public/uploads:/app/public/uploads
-        healthcheck:
-            test: ["CMD", "curl", "-f", "https://localhost/status"]
-            interval: 30s
-            timeout: 10s
-            retries: 3
-            start_period: 60s
-        ports:
-            - target: 80
-              published: ${HTTP_PORT:-80}
-              protocol: tcp
-            - target: 443
-              published: ${HTTPS_PORT:-443}
-              protocol: tcp
-            - target: 443
-              published: ${HTTP3_PORT:-443}
-              protocol: udp
-            - target: 2019
-              published: 2019
-              protocol: tcp
-            
-    database:
-        image: postgres:latest
-        container_name: ${PROJECT_NAME}-db
-        networks:
-            - substream-network
-        env_file:
-            - .env
-        environment:
-            POSTGRES_DB: ${POSTGRES_DB:-postgres}
-            POSTGRES_USER: ${POSTGRES_USER:-postgres}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-        volumes:
-            - database_data:/var/lib/postgresql/data
-        ports:
-            - "9001:5432"
-        restart: unless-stopped
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
-            interval: 10s
-            timeout: 5s
-            retries: 5
-            start_period: 30s
+  php:
+    container_name: ${PROJECT_NAME}-php
+    image: ${IMAGES_PREFIX:-}app-php
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
+      DEFAULT_URI: https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}
+      MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
+      MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
+      MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}/.well-known/mercure}
+      MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - name: http
+        target: 80
+        published: ${HTTP_PORT:-80}
+        protocol: tcp
+      - name: https
+        target: 443
+        published: ${HTTPS_PORT:-443}
+        protocol: tcp
+      - name: http3
+        target: 443
+        published: ${HTTP3_PORT:-443}
+        protocol: udp
 
-    rabbitmq:
-        container_name: ${PROJECT_NAME}-rabbitmq
-        restart: unless-stopped
-        image: rabbitmq:3-management
-        hostname: rabbitmq
-        networks:
-            - substream-network
-        environment:
-            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
-            RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
-            RABBITMQ_USER: ${RABBITMQ_USER}
-            RABBITMQ_PASS: ${RABBITMQ_PASS}
-            RABBITMQ_VHOST: ${RABBITMQ_VHOST}
-        volumes:
-            - rabbitmq_data:/var/lib/rabbitmq/mnesia/rabbit@my-rabbit
-        ports:
-            - "9002:5672"
-            - "9003:15672"
-        healthcheck:
-            test: ["CMD", "rabbitmq-diagnostics", "ping"]
-            interval: 30s
-            timeout: 10s
-            retries: 5
-            start_period: 30s
-    
-    minio:
-        container_name: ${PROJECT_NAME}-minio
-        image: minio/minio:latest
-        env_file:
-            - .env
-        ports:
-            - '9004:9000'
-            - '9005:9001'
-        networks:
-            - substream-network
-        volumes:
-            - minio_data:/data/minio
-        command: 'minio server /data/minio --console-address ":9001"'
-        environment:
-            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-            MINIO_BROWSER: "on"
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-            interval: 30s
-            timeout: 20s
-            retries: 3
-            start_period: 30s
-        restart: unless-stopped
-   
-    minio-setup:
-        container_name: ${PROJECT_NAME}-minio-setup
-        image: minio/mc:latest
-        depends_on:
-            minio:
-                condition: service_healthy
-        env_file:
-            - .env
-        volumes:
-            - ./scripts:/scripts
-        entrypoint: >
-            /bin/sh -c "
-            chmod +x /scripts/setup-minio.sh;
-            sleep 15;
-            /scripts/setup-minio.sh;
-            "
-        networks:
-            - substream-network
-        environment:
-            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-            MINIO_USER: ${MINIO_USER:-substream}
-            MINIO_PASSWORD: ${MINIO_PASSWORD:-substream123}
-            S3_BUCKET_NAME: ${S3_BUCKET_NAME:-substream-bucket}
+  database:
+    image: postgres:latest
+    container_name: ${PROJECT_NAME}-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    ports:
+      - "9001:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-    maildev:
-        container_name: ${PROJECT_NAME}-maildev
-        image: maildev/maildev
-        ports:
-            - "9006:1080"
-            - "9007:1025"
-        networks:
-            - substream-network
-    
-    elasticsearch:
-        container_name: ${PROJECT_NAME}-elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-        restart: always
-        networks:
-            - substream-network
-        environment:
-            - cluster.name=elasticsearch-cluster
-            - node.name=elasticsearch-node1
-            - discovery.type=single-node
-            - ELASTIC_PASSWORD=admin
-            - xpack.security.enabled=true
-            - xpack.security.transport.ssl.enabled=false
-            - xpack.security.http.ssl.enabled=false
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        ulimits:
-            memlock:
-                soft: -1
-                hard: -1
-            nofile:
-                soft: 65536
-                hard: 65536
-        volumes:
-            - elasticsearch_data:/usr/share/elasticsearch/data
-        ports:
-            - "9008:9200"
-            - "9009:9300"
+  mercure:
+    container_name: ${PROJECT_NAME}-mercure
+    env_file:
+      - .env
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      # Uncomment the following line to disable HTTPS,
+      #SERVER_NAME: ':80'
+      MERCURE_PUBLISHER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
+      MERCURE_SUBSCRIBER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
+      # Set the URL of your Symfony project (without trailing slash!) as value of the cors_origins directive
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://127.0.0.1:8000
+    # Comment the following line to disable the development mode
+    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost/healthz"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - mercure_data:/data
+      - mercure_config:/config
 
-networks:
-  substream-network:
-    external: true
+  rabbitmq:
+    container_name: ${PROJECT_NAME}-rabbitmq
+    env_file:
+      - .env
+    restart: unless-stopped
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_VHOST: ${RABBITMQ_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia/rabbit@my-rabbit
+    ports:
+      - "9002:5672"
+      - "9003:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+  
+  minio:
+      container_name: ${PROJECT_NAME}-minio
+      image: minio/minio:latest
+      env_file:
+          - .env
+      ports:
+          - '9004:9000'
+          - '9005:9001'
+      volumes:
+          - minio_data:/data/minio
+      command: 'minio server /data/minio --console-address ":9001"'
+      environment:
+          MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+          MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+          MINIO_BROWSER: "on"
+      healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+          interval: 30s
+          timeout: 20s
+          retries: 3
+          start_period: 30s
+      restart: unless-stopped
+  
+  minio-setup:
+      container_name: ${PROJECT_NAME}-minio-setup
+      image: minio/mc:latest
+      depends_on:
+          minio:
+              condition: service_healthy
+      env_file:
+          - .env
+      volumes:
+          - ./scripts:/scripts
+      entrypoint: >
+          /bin/sh -c "
+          chmod +x /scripts/setup-minio.sh;
+          sleep 15;
+          /scripts/setup-minio.sh;
+          "
+      environment:
+          MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+          MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+          MINIO_USER: ${MINIO_USER:-substream}
+          MINIO_PASSWORD: ${MINIO_PASSWORD:-substream123}
+          S3_BUCKET_NAME: ${S3_BUCKET_NAME:-substream-bucket}
+
+  maildev:
+      container_name: ${PROJECT_NAME}-maildev
+      image: maildev/maildev
+      ports:
+          - "9006:1080"
+          - "9007:1025"
+  
+  elasticsearch:
+      container_name: ${PROJECT_NAME}-elasticsearch
+      image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+      restart: always
+      environment:
+          - cluster.name=elasticsearch-cluster
+          - node.name=elasticsearch-node1
+          - discovery.type=single-node
+          - ELASTIC_PASSWORD=admin
+          - xpack.security.enabled=true
+          - xpack.security.transport.ssl.enabled=false
+          - xpack.security.http.ssl.enabled=false
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      ulimits:
+          memlock:
+              soft: -1
+              hard: -1
+          nofile:
+              soft: 65536
+              hard: 65536
+      volumes:
+          - elasticsearch_data:/usr/share/elasticsearch/data
+      ports:
+          - "9008:9200"
+          - "9009:9300"
 
 volumes:
-    caddy_data:
-    caddy_config:
-    database_data:
-    rabbitmq_data:
-    minio_data:
-    minio_setup_data:
-    elasticsearch_data:
+  caddy_data:
+  caddy_config:
+  database_data:
+  mercure_data:
+  mercure_config:
+  rabbitmq_data:
+  minio_data:
+  elasticsearch_data:

@@ -1,8 +1,0 @@
-App\Entity\Notification:
-  notification_1:
-    title: "stream_success"
-    message: "stream_success_message"
-    context: "stream"
-    setContextIdFromString: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd"
-    contextMessage: "J'ai acheté la voiture de mes rêves (elle est monstrueuse) ft. GMK.mp4"
-    user: "@user_1"

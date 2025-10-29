@@ -1,8 +1,0 @@
-stof_doctrine_extensions:
-    default_locale: fr_FR
-    orm:
-        default:
-            timestampable: true
-            blameable: true
-            sluggable: true
-            tree: false

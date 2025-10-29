@@ -1,6 +1,10 @@
+---
 # Production environment override
 services:
   php:
+    container_name: ${PROJECT_NAME}-php
+    env_file:
+        - .env
     build:
       context: .
       target: frankenphp_prod
