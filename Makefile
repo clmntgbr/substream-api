@@ -1,58 +1,67 @@
-#!/usr/bin/env bash
+# Executables (local)
+DOCKER_COMP = docker compose
 
-include .env
-export $(shell sed 's/=.*//' .env)
+# Docker containers
+PHP_CONT = $(DOCKER_COMP) exec php
 
-DOCKER_COMPOSE = docker compose -p $(PROJECT_NAME)
+# Executables
+PHP      = $(PHP_CONT) php
+COMPOSER = $(PHP_CONT) composer
+SYMFONY  = $(PHP) bin/console
 
-CONTAINER_PHP := $(shell docker container ls -f "name=$(PROJECT_NAME)-php" -q)
-CONTAINER_DB := $(shell docker container ls -f "name=$(PROJECT_NAME)-database" -q)
-CONTAINER_QA := $(shell docker container ls -f "name=$(PROJECT_NAME)-qa" -q)
+# Misc
+.DEFAULT_GOAL = help
+.PHONY        : help build up start down logs sh composer vendor sf cc test
 
-PHP := docker exec -ti $(CONTAINER_PHP)
-DATABASE := docker exec -ti $(CONTAINER_DB)
-QA := docker exec -ti $(CONTAINER_QA)
+## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
+help: ## Outputs this help screen
+	@grep -E '(^[a-zA-Z0-9\./_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
-init: install update npm fabric db jwt
+## —— Docker 🐳 ————————————————————————————————————————————————————————————————
+build: ## Builds the Docker images
+	@$(DOCKER_COMP) build --pull --no-cache
 
-## Kill all containers
-kill:
-	@$(DOCKER_COMPOSE) kill $(CONTAINER) || true
+up: ## Start the docker hub in detached mode (no logs)
+	@$(DOCKER_COMP) up --detach
 
-## Build containers
-build:
-	@$(DOCKER_COMPOSE) build --pull --no-cache
+start: build up ## Build and start the containers
 
-## Init project
-init: install update
+down: ## Stop the docker hub
+	@$(DOCKER_COMP) down --remove-orphans
 
-## Start containers
-start:
-	@$(DOCKER_COMPOSE) up -d
+logs: ## Show live logs
+	@$(DOCKER_COMP) logs --tail=0 --follow
 
-## Stop containers
-stop:
-	@$(DOCKER_COMPOSE) down
+sh: ## Connect to the FrankenPHP container
+	@$(PHP_CONT) sh
 
-restart: stop start
+bash: ## Connect to the FrankenPHP container via bash so up and down arrows go to previous commands
+	@$(PHP_CONT) bash
 
-## Init project
-init: install update npm fabric db
+test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
+	@$(eval c ?=)
+	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
 
-npm: 
-	$(PHP) npm install
-	$(PHP) npm run build
 
-cache:
-	$(PHP) rm -r var/cache
+## —— Composer 🧙 ——————————————————————————————————————————————————————————————
+composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
+	@$(eval c ?=)
+	@$(COMPOSER) $(c)
 
-## Entering php shell
-php:
-	@$(DOCKER_COMPOSE) exec php sh
+vendor: ## Install vendors according to the current composer.lock file
+vendor: c=install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
+vendor: composer
 
-## Entering database shell
-database:
-	@$(DOCKER_COMPOSE) exec database sh
+## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
+sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
+	@$(eval c ?=)
+	@$(SYMFONY) $(c)
+
+cc: c=c:c ## Clear the cache
+cc: sf
+
+env:
+	$(COMPOSER) dump-env dev
 
 ## Composer install
 install:
@@ -63,23 +72,23 @@ update:
 	$(PHP) composer update
 
 fabric: 
-	$(PHP) php bin/console messenger:setup-transports
+	$(SYMFONY) messenger:setup-transports
 
 db: 
-	$(PHP) php bin/console doctrine:database:drop -f --if-exists
-	$(PHP) php bin/console doctrine:database:create
-	$(PHP) php bin/console doctrine:schema:update -f
-	$(PHP) php bin/console hautelook:fixtures:load -n
-	$(PHP) php bin/console fos:elastica:delete
-	$(PHP) php bin/console fos:elastica:create
-	$(PHP) php bin/console fos:elastica:populate
+	$(SYMFONY) doctrine:database:drop -f --if-exists
+	$(SYMFONY) doctrine:database:create
+	$(SYMFONY) doctrine:schema:update -f
+	$(SYMFONY) hautelook:fixtures:load -n
+	$(SYMFONY) fos:elastica:delete
+	$(SYMFONY) fos:elastica:create
+	$(SYMFONY) fos:elastica:populate
 
 jwt:
-	$(PHP) php bin/console lexik:jwt:generate-keypair --skip-if-exists
+	$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists
 
 trust-cert:
 	@echo "Installing local SSL certificate..."
-	@docker cp $(CONTAINER_PHP):/data/caddy/pki/authorities/local/root.crt /tmp/root.crt
+	@docker cp substream-php:/data/caddy/pki/authorities/local/root.crt /tmp/root.crt
 	@if [ "$$(uname)" = "Darwin" ]; then \
 		echo "Detected macOS. Installing certificate..."; \
 		sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/root.crt; \
@@ -99,49 +108,49 @@ trust-cert:
 	@rm /tmp/root.crt
 
 migration:
-	$(PHP) php bin/console make:migration
+	$(SYMFONY) make:migration
 
 migrate:
-	$(PHP) php bin/console doctrine:migration:migrate
+	$(SYMFONY) doctrine:migration:migrate
 
 fixture:
-	$(PHP) php bin/console hautelook:fixtures:load -n
-	$(PHP) php bin/console fos:elastica:delete
-	$(PHP) php bin/console fos:elastica:create
-	$(PHP) php bin/console fos:elastica:populate
+	$(SYMFONY) hautelook:fixtures:load -n
+	$(SYMFONY) fos:elastica:delete
+	$(SYMFONY) fos:elastica:create
+	$(SYMFONY) fos:elastica:populate
 
 schema:
-	$(PHP) php bin/console doctrine:schema:update -f
+	$(SYMFONY) doctrine:schema:update -f
 
 regenerate:
-	$(PHP) php bin/console make:entity --regenerate App
+	$(SYMFONY) make:entity --regenerate App
 
 entity:
-	$(PHP) php bin/console make:entity
+	$(SYMFONY) make:entity
 
 message:
-	$(PHP) php bin/console make:message
+	$(SYMFONY) make:message
 
 command:
-	$(PHP) php bin/console make:command
+	$(SYMFONY) make:command
 
 dotenv:
-	$(PHP) php bin/console debug:dotenv
+	$(SYMFONY) debug:dotenv
 
 php-cs-fixer:
-	$(PHP) ./vendor/bin/php-cs-fixer fix src --rules=@Symfony --verbose --diff
+	$(PHP_CONT) ./vendor/bin/php-cs-fixer fix src --rules=@Symfony --verbose --diff
 
 php-stan:
-	$(PHP) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1
+	$(PHP_CONT) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1
 
 consume:
-	$(PHP) php bin/console messenger:consume async -vv
+	$(SYMFONY) messenger:consume async -vv
 
 transform-subtitle:
-	$(PHP) php bin/console transform-subtitle
+	$(SYMFONY) transform-subtitle
 
 resume-video:
-	$(PHP) php bin/console resume-video
+	$(SYMFONY) resume-video
 
 unzip:
 	cat  public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip.part* > public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
@@ -150,6 +159,6 @@ unzip:
 	rm -r public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
 
 elastica:
-	$(PHP) php bin/console fos:elastica:delete
-	$(PHP) php bin/console fos:elastica:create
-	$(PHP) php bin/console fos:elastica:populate
+	$(SYMFONY) fos:elastica:delete
+	$(SYMFONY) fos:elastica:create
+	$(SYMFONY) fos:elastica:populate
