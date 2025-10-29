@@ -63,8 +63,102 @@ cc: sf
 env:
 	$(COMPOSER) dump-env dev
 
+## Composer install
+install:
+	$(PHP) composer install
+
+## Composer update
+update:
+	$(PHP) composer update
+
+fabric: 
+	$(SYMFONY) messenger:setup-transports
+
 db: 
 	$(SYMFONY) doctrine:database:drop -f --if-exists
 	$(SYMFONY) doctrine:database:create
 	$(SYMFONY) doctrine:schema:update -f
 	$(SYMFONY) hautelook:fixtures:load -n
+	$(SYMFONY) fos:elastica:delete
+	$(SYMFONY) fos:elastica:create
+	$(SYMFONY) fos:elastica:populate
+
+jwt:
+	$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists
+
+trust-cert:
+	@echo "Installing local SSL certificate..."
+	@docker cp substream-php:/data/caddy/pki/authorities/local/root.crt /tmp/root.crt
+	@if [ "$$(uname)" = "Darwin" ]; then \
+		echo "Detected macOS. Installing certificate..."; \
+		sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/root.crt; \
+		echo "Certificate installed successfully!"; \
+	elif [ "$$(uname)" = "Linux" ]; then \
+		echo "Detected Linux. Installing certificate..."; \
+		sudo cp /tmp/root.crt /usr/local/share/ca-certificates/root.crt; \
+		sudo update-ca-certificates; \
+		echo "Certificate installed successfully!"; \
+	elif [ "$$(uname)" = "MINGW64_NT" ] || [ "$$(uname)" = "MINGW32_NT" ]; then \
+		echo "Detected Windows. Opening certificate installer..."; \
+		certutil -addstore -f "ROOT" /tmp/root.crt; \
+		echo "Certificate installed successfully!"; \
+	else \
+		echo "Unknown operating system. Please install the certificate manually from: /tmp/root.crt"; \
+	fi
+	@rm /tmp/root.crt
+
+migration:
+	$(SYMFONY) make:migration
+
+migrate:
+	$(SYMFONY) doctrine:migration:migrate
+
+fixture:
+	$(SYMFONY) hautelook:fixtures:load -n
+	$(SYMFONY) fos:elastica:delete
+	$(SYMFONY) fos:elastica:create
+	$(SYMFONY) fos:elastica:populate
+
+schema:
+	$(SYMFONY) doctrine:schema:update -f
+
+regenerate:
+	$(SYMFONY) make:entity --regenerate App
+
+entity:
+	$(SYMFONY) make:entity
+
+message:
+	$(SYMFONY) make:message
+
+command:
+	$(SYMFONY) make:command
+
+dotenv:
+	$(SYMFONY) debug:dotenv
+
+php-cs-fixer:
+	$(PHP_CONT) ./vendor/bin/php-cs-fixer fix src --rules=@Symfony --verbose --diff
+
+php-stan:
+	$(PHP_CONT) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1
+
+consume:
+	$(SYMFONY) messenger:consume async -vv
+
+transform-subtitle:
+	$(SYMFONY) transform-subtitle
+
+resume-video:
+	$(SYMFONY) resume-video
+
+unzip:
+	cat  public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip.part* > public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
+	unzip public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip -d public/debug/
+	rm -r public/debug/__MACOSX
+	rm -r public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
+
+elastica:
+	$(SYMFONY) fos:elastica:delete
+	$(SYMFONY) fos:elastica:create
+	$(SYMFONY) fos:elastica:populate
