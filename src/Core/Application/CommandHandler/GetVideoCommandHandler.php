@@ -12,6 +12,7 @@ use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
+use App\Service\PublishServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -28,6 +29,7 @@ class GetVideoCommandHandler
         private CoreBusInterface $coreBus,
         private LoggerInterface $logger,
         private TaskRepository $taskRepository,
+        private PublishServiceInterface $publishService,
     ) {
     }
 
@@ -52,11 +54,11 @@ class GetVideoCommandHandler
                 taskId: $task->getId(),
                 url: $command->getUrl(),
             ));
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $stream->markAsUploadFailed();
             $this->streamRepository->save($stream);
-
-            return;
+        } finally {
+            $this->publishService->refreshSearchStreams($stream->getUser());
         }
     }
 }

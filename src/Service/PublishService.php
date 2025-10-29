@@ -16,9 +16,22 @@ class PublishService implements PublishServiceInterface
     public function refreshSearchStreams(User $user): void
     {
         $update = new Update(
-            '/search/streams',
+            "/users/{$user->getId()}/search/streams",
             json_encode([
                 'type' => 'streams.refresh',
+                'userId' => $user->getId(),
+            ])
+        );
+
+        $this->hub->publish($update);
+    }
+
+    public function refreshSearchNotifications(User $user): void
+    {
+        $update = new Update(
+            "/users/{$user->getId()}/search/notifications",
+            json_encode([
+                'type' => 'notifications.refresh',
                 'userId' => $user->getId(),
             ])
         );

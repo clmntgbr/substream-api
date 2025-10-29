@@ -9,4 +9,6 @@ use Symfony\Component\Mercure\Update;
 interface PublishServiceInterface
 {
     public function refreshSearchStreams(User $user): void;
+    public function refreshSearchNotifications(User $user): void;
+
 }

@@ -8,6 +8,7 @@ use App\Core\Application\Command\CreateNotificationCommand;
 use App\Core\Application\Command\CreateStreamSuccessNotificationCommand;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Service\PublishServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,6 +19,7 @@ class CreateStreamSuccessNotificationCommandHandler
         private StreamRepository $streamRepository,
         private LoggerInterface $logger,
         private CommandBusInterface $commandBus,
+        private PublishServiceInterface $publishService,
     ) {
     }
 
@@ -39,5 +41,7 @@ class CreateStreamSuccessNotificationCommandHandler
             context: 'stream',
             contextId: $stream->getId(),
         ));
+
+        $this->publishService->refreshSearchNotifications($stream->getUser());
     }
 }

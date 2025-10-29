@@ -12,6 +12,7 @@ use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CoreBusInterface;
+use App\Service\PublishServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -27,6 +28,7 @@ class ExtractSoundCommandHandler
         private LoggerInterface $logger,
         private CoreBusInterface $coreBus,
         private TaskRepository $taskRepository,
+        private PublishServiceInterface $publishService,
     ) {
     }
 
@@ -57,8 +59,8 @@ class ExtractSoundCommandHandler
         } catch (\Exception) {
             $stream->markAsExtractingSoundFailed();
             $this->streamRepository->save($stream);
-
-            return;
+        } finally {
+            $this->publishService->refreshSearchStreams($stream->getUser());
         }
     }
 }

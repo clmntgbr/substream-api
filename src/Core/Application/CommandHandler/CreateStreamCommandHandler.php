@@ -13,6 +13,7 @@ use App\Exception\OptionNotFoundException;
 use App\Repository\OptionRepository;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Service\PublishServiceInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -25,6 +26,7 @@ class CreateStreamCommandHandler
         private CommandBusInterface $commandBus,
         private EventDispatcherInterface $eventDispatcher,
         private OptionRepository $optionRepository,
+        private PublishServiceInterface $publishService,
     ) {
     }
 
@@ -51,6 +53,7 @@ class CreateStreamCommandHandler
         $this->streamRepository->save($stream, true);
 
         $this->eventDispatcher->dispatch(new CreateStreamEvent($command->getStreamId()));
+        $this->publishService->refreshSearchStreams($stream->getUser());
 
         return $this->createStreamMapper->fromEntity($stream);
     }

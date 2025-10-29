@@ -16,6 +16,7 @@ use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
+use App\Service\PublishServiceInterface;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -34,6 +35,7 @@ class GenerateSubtitleCommandHandler
         private TaskRepository $taskRepository,
         private FilesystemOperator $awsStorage,
         private CommandBusInterface $commandBus,
+        private PublishServiceInterface $publishService,
         private string $env,
     ) {
     }
@@ -73,8 +75,8 @@ class GenerateSubtitleCommandHandler
         } catch (\Exception) {
             $stream->markAsGeneratingSubtitleFailed();
             $this->streamRepository->save($stream);
-
-            return;
+        } finally {
+            $this->publishService->refreshSearchStreams($stream->getUser());
         }
     }
 

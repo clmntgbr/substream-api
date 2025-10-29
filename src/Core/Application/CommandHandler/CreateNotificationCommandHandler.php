@@ -9,6 +9,7 @@ use App\Entity\Notification;
 use App\Exception\StreamNotFoundException;
 use App\Repository\NotificationRepository;
 use App\Repository\StreamRepository;
+use App\Service\PublishServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -17,6 +18,7 @@ class CreateNotificationCommandHandler
     public function __construct(
         private NotificationRepository $notificationRepository,
         private StreamRepository $streamRepository,
+        private PublishServiceInterface $publishService,
     ) {
     }
 
@@ -38,5 +40,6 @@ class CreateNotificationCommandHandler
         );
 
         $this->notificationRepository->save($notification, true);
+        $this->publishService->refreshSearchNotifications($stream->getUser());
     }
 }

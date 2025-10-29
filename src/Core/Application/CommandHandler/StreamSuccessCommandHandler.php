@@ -13,6 +13,7 @@ use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Service\PublishServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -27,6 +28,7 @@ class StreamSuccessCommandHandler
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
         private CommandBusInterface $commandBus,
+        private PublishServiceInterface $publishService,
     ) {
     }
 
@@ -51,6 +53,8 @@ class StreamSuccessCommandHandler
         $this->commandBus->dispatch(new CreateStreamSuccessNotificationCommand(
             streamId: $stream->getId(),
         ));
+
+        $this->publishService->refreshSearchStreams($stream->getUser());
     }
 
     private function complete(Stream $stream): void

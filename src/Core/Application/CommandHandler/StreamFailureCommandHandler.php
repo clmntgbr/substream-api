@@ -8,6 +8,7 @@ use App\Core\Application\Command\StreamFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Service\PublishServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -22,6 +23,7 @@ class StreamFailureCommandHandler
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
         private CommandBusInterface $commandBus,
+        private PublishServiceInterface $publishService,
     ) {
     }
 
@@ -36,5 +38,7 @@ class StreamFailureCommandHandler
 
             return;
         }
+
+        $this->publishService->refreshSearchStreams($stream->getUser());
     }
 }
