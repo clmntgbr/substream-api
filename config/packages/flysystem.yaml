@@ -1,0 +1,11 @@
+flysystem:
+    storages:
+        aws.storage:
+            adapter: 'aws'
+            options:
+                client: Aws\S3\S3Client
+                bucket: '%env(S3_BUCKET_NAME)%'
+        local.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/public/uploads'

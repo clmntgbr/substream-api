@@ -1,0 +1,24 @@
+App\Entity\User:
+  user_1:
+    email: "dummy@gmail.com"
+    plainPassword: "password123"
+    roles: ["ROLE_ADMIN"]
+    firstname: 'dummy'
+    lastname: 'dummy'
+    picture: '<envar("BACKEND_URL")>/uploads/avatar.jpg'
+
+  user_2:
+    email: "dummmmy@gmail.com"
+    plainPassword: "password123"
+    roles: ["ROLE_USER"]
+    firstname: 'dummy'
+    lastname: 'dummy'
+
+  user_{2..100}:
+    email: "<email()>"
+    plainPassword: "password123"
+    roles: ["ROLE_USER"]
+    firstname: '<firstName()>'
+    lastname: '<lastName()>'
+
+  

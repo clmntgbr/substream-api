@@ -1,0 +1,51 @@
+framework:
+  webhook:
+    routing:
+      getvideosuccess:
+        service: App\Webhook\GetVideoSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      getvideofailure:
+        service: App\Webhook\GetVideoFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      extractsoundsuccess:
+        service: App\Webhook\ExtractSoundSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      extractsoundfailure:
+        service: App\Webhook\ExtractSoundFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      generatesubtitlesuccess:
+        service: App\Webhook\GenerateSubtitleSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      generatesubtitlefailure:
+        service: App\Webhook\GenerateSubtitleFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      transformsubtitlesuccess:
+        service: App\Webhook\TransformSubtitleSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      transformsubtitlefailure:
+        service: App\Webhook\TransformSubtitleFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      resizevideosuccess:
+        service: App\Webhook\ResizeVideoSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      resizevideofailure:
+        service: App\Webhook\ResizeVideoFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      embedvideofailure:
+        service: App\Webhook\EmbedVideoFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      embedvideosuccess:
+        service: App\Webhook\EmbedVideoSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      chunkvideosuccess:
+        service: App\Webhook\ChunkVideoSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      chunkvideofailure:
+        service: App\Webhook\ChunkVideoFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      resumevideosuccess:
+        service: App\Webhook\ResumeVideoSuccessRequestParser
+        secret: '%env(CORE_TOKEN)%'
+      resumevideofailure:
+        service: App\Webhook\ResumeVideoFailureRequestParser
+        secret: '%env(CORE_TOKEN)%'
