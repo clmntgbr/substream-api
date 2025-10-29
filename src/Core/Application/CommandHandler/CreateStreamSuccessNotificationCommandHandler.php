@@ -41,7 +41,5 @@ class CreateStreamSuccessNotificationCommandHandler
             context: 'stream',
             contextId: $stream->getId(),
         ));
-
-        $this->publishService->refreshSearchNotifications($stream->getUser());
     }
 }
