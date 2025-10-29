@@ -33,8 +33,8 @@ class DummyCommand extends Command
             throw new \Exception('User not found');
         }
 
-        $this->publishService->refreshSearchStreams($user);
-        $this->publishService->refreshSearchNotifications($user);
+        $this->publishService->dispatchSearchStreams($user);
+        $this->publishService->dispatchSearchNotifications($user);
 
         return Command::SUCCESS;
     }

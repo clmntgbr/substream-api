@@ -2,15 +2,33 @@
 
 namespace App\Service;
 
+use App\Core\Application\Command\UpdateSearchNotificationsCommand;
+use App\Core\Application\Command\UpdateSearchStreamsCommand;
 use App\Entity\User;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use App\Shared\Application\Bus\CommandBusInterface;
 
 class PublishService implements PublishServiceInterface
 {
     public function __construct(
         private HubInterface $hub,
+        private CommandBusInterface $commandBus,
     ) {
+    }
+
+    public function dispatchSearchStreams(User $user): void
+    {
+        $this->commandBus->dispatch(new UpdateSearchStreamsCommand(
+            userId: $user->getId(),
+        ));
+    }
+
+    public function dispatchSearchNotifications(User $user): void
+    {
+        $this->commandBus->dispatch(new UpdateSearchNotificationsCommand(
+            userId: $user->getId(),
+        ));
     }
 
     public function refreshSearchStreams(User $user): void

@@ -58,7 +58,7 @@ class GetVideoCommandHandler
             $stream->markAsUploadFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->refreshSearchStreams($stream->getUser());
+            $this->publishService->dispatchSearchStreams($stream->getUser());
         }
     }
 }

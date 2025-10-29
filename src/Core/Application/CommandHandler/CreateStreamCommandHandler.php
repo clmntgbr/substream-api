@@ -53,7 +53,7 @@ class CreateStreamCommandHandler
         $this->streamRepository->save($stream, true);
 
         $this->eventDispatcher->dispatch(new CreateStreamEvent($command->getStreamId()));
-        $this->publishService->refreshSearchStreams($stream->getUser());
+        $this->publishService->dispatchSearchStreams($stream->getUser());
 
         return $this->createStreamMapper->fromEntity($stream);
     }
