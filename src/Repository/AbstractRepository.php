@@ -38,6 +38,16 @@ abstract class AbstractRepository extends ServiceEntityRepository
     public function delete(object $entity): void
     {
         $this->getEntityManager()->remove($entity);
+        // No flush here - let the doctrine_transaction middleware handle it
+        // or use deleteAndFlush() when you really need immediate flush
+    }
+
+    /**
+     * @param T $entity
+     */
+    public function deleteAndFlush(object $entity): void
+    {
+        $this->delete($entity);
         $this->getEntityManager()->flush();
     }
 
@@ -49,7 +59,16 @@ abstract class AbstractRepository extends ServiceEntityRepository
         if (null === $entity->getId() || $persist) {
             $this->getEntityManager()->persist($entity);
         }
+        // No flush here - let the doctrine_transaction middleware handle it
+        // or use saveAndFlush() when you really need immediate flush
+    }
 
+    /**
+     * @param T $entity
+     */
+    public function saveAndFlush(object $entity, bool $persist = false): void
+    {
+        $this->save($entity, $persist);
         $this->getEntityManager()->flush();
     }
 

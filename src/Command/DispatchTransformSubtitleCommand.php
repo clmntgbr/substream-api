@@ -74,7 +74,8 @@ class DispatchTransformSubtitleCommand extends Command
         $this->uploadAudioFiles($stream);
         $this->uploadVideoFile($stream);
 
-        $this->streamRepository->save($stream);
+        // Console commands don't have doctrine_transaction middleware, need explicit flush
+        $this->streamRepository->saveAndFlush($stream);
 
         return $stream;
     }

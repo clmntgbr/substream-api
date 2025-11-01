@@ -23,7 +23,8 @@ class DeleteStreamController extends AbstractController
     {
         $stream->markAsDeleted();
 
-        $this->streamRepository->save($stream);
+        // API Platform controllers don't have doctrine_transaction middleware, need explicit flush
+        $this->streamRepository->saveAndFlush($stream);
 
         return $stream;
     }
