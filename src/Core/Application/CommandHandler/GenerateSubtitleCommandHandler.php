@@ -59,7 +59,7 @@ class GenerateSubtitleCommandHandler
             $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(GenerateSubtitleCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             if ('prod' === $this->env) {
                 $this->coreBus->dispatch(new GenerateSubtitleMessage(

@@ -51,7 +51,7 @@ class ChunkVideoCommandHandler
             $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ChunkVideoCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             $this->coreBus->dispatch(new ChunkVideoMessage(
                 streamId: $stream->getId(),

@@ -51,7 +51,7 @@ class ExtractSoundCommandHandler
             $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ExtractSoundCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             $this->coreBus->dispatch(new ExtractSoundMessage(
                 streamId: $stream->getId(),

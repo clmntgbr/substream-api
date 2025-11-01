@@ -48,7 +48,7 @@ class GetVideoCommandHandler
 
         try {
             $task = Task::create(GetVideoCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             $this->coreBus->dispatch(new GetVideoMessage(
                 streamId: $stream->getId(),

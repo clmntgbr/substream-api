@@ -52,7 +52,7 @@ class CreateStreamCommandHandler
             duration: $command->getDuration(),
         );
 
-        $this->streamRepository->saveAndFlush($stream, true);
+        $this->streamRepository->saveAndFlush($stream);
 
         $this->eventDispatcher->dispatch(new CreateStreamEvent($command->getStreamId()));
 

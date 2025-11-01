@@ -51,7 +51,7 @@ class ResizeVideoCommandHandler
             $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ResizeVideoCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             $this->coreBus->dispatch(new ResizeVideoMessage(
                 streamId: $stream->getId(),

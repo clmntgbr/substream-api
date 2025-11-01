@@ -39,7 +39,7 @@ class CreateNotificationCommandHandler
             contextMessage: $stream->getOriginalFileName(),
         );
 
-        $this->notificationRepository->saveAndFlush($notification, true);
+        $this->notificationRepository->saveAndFlush($notification);
         $this->publishService->refreshSearchNotifications($stream->getUser(), CreateNotificationCommand::class);
     }
 }

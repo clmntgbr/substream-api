@@ -30,7 +30,7 @@ class CreateSocialAccountCommandHandler
             user: $command->getUser(),
         );
 
-        $this->socialAccountRepository->saveAndFlush($socialAccount, true);
+        $this->socialAccountRepository->saveAndFlush($socialAccount);
 
         return $socialAccount;
     }

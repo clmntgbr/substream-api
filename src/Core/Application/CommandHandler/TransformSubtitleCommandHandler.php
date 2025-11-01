@@ -51,7 +51,7 @@ class TransformSubtitleCommandHandler
             $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(TransformSubtitleCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             $this->coreBus->dispatch(new TransformSubtitleMessage(
                 taskId: $task->getId(),

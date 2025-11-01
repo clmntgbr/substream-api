@@ -51,7 +51,7 @@ class ResumeVideoCommandHandler
             $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ResumeVideoCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             $this->coreBus->dispatch(new ResumeVideoMessage(
                 streamId: $stream->getId(),

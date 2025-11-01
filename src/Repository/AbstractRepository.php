@@ -38,8 +38,6 @@ abstract class AbstractRepository extends ServiceEntityRepository
     public function delete(object $entity): void
     {
         $this->getEntityManager()->remove($entity);
-        // No flush here - let the doctrine_transaction middleware handle it
-        // or use deleteAndFlush() when you really need immediate flush
     }
 
     /**
@@ -54,11 +52,9 @@ abstract class AbstractRepository extends ServiceEntityRepository
     /**
      * @param T $entity
      */
-    public function save(object $entity, bool $persist = false): void
+    public function save(object $entity): void
     {
-        if (null === $entity->getId() || $persist) {
-            $this->getEntityManager()->persist($entity);
-        }
+        $this->getEntityManager()->persist($entity);
     }
 
     public function flush(): void
@@ -69,16 +65,16 @@ abstract class AbstractRepository extends ServiceEntityRepository
     /**
      * @param T $entity
      */
-    public function saveAndFlush(object $entity, bool $persist = false): void
+    public function saveAndFlush(object $entity): void
     {
-        $this->save($entity, $persist);
+        $this->save($entity);
         $this->getEntityManager()->flush();
     }
 
-    public function saveAll(array $entities, bool $persist = false): void
+    public function saveAll(array $entities): void
     {
         foreach ($entities as $entity) {
-            $this->save($entity, $persist);
+            $this->save($entity);
         }
     }
 
@@ -101,30 +97,5 @@ abstract class AbstractRepository extends ServiceEntityRepository
             $em->flush();
             $em->clear();
         }
-    }
-
-    /**
-     * @param T $entity
-     *
-     * @return T
-     */
-    public function update(object $entity, array $data): object
-    {
-        foreach ($data as $key => $value) {
-            $method = 'set'.ucfirst($key);
-            if (method_exists($entity, $method)) {
-                $entity->$method($value);
-                continue;
-            }
-
-            $method = 'add'.ucfirst($key);
-            if (method_exists($entity, $method)) {
-                $entity->$method($value);
-            }
-        }
-
-        $this->save($entity);
-
-        return $entity;
     }
 }

@@ -50,7 +50,7 @@ class EmbedVideoCommandHandler
             $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(EmbedVideoCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task, true);
+            $this->taskRepository->saveAndFlush($task);
 
             $this->coreBus->dispatch(new EmbedVideoMessage(
                 streamId: $stream->getId(),
