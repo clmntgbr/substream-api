@@ -7,8 +7,8 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateFailureStreamNotificationCommand;
 use App\Core\Application\Command\CreateNotificationCommand;
 use App\Repository\StreamRepository;
-use App\Shared\Application\Bus\CommandBusInterface;
 use App\Service\PublishServiceInterface;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

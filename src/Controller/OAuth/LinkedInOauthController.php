@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\OAuth;
 
 use App\Dto\OAuth\LinkedIn\LinkedInExchangeTokenPayload;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\Application\Command;
 
 use App\Shared\Application\Command\AsyncCommandInterface;
@@ -34,5 +36,4 @@ final class GetVideoCommand extends CommandAbstract implements AsyncCommandInter
             new DelayStamp(10000),
         ];
     }
-
 }

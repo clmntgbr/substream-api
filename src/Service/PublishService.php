@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Entity\Stream;
 use App\Entity\User;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
-use App\Shared\Application\Bus\CommandBusInterface;
 
 class PublishService implements PublishServiceInterface
 {

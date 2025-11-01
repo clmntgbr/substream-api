@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
@@ -16,8 +18,6 @@ use App\Repository\StreamRepository;
 use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
@@ -28,7 +28,6 @@ class CreateStreamVideoCommandHandler
     public function __construct(
         private StreamRepository $streamRepository,
         private S3ServiceInterface $s3Service,
-        private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
         private OptionRepository $optionRepository,
@@ -37,19 +36,6 @@ class CreateStreamVideoCommandHandler
 
     public function __invoke(CreateStreamVideoCommand $command): CreateStreamModel
     {
-        $constraints = new File([
-            'mimeTypes' => [
-                'video/mp4',
-            ],
-            'mimeTypesMessage' => 'Please upload a valid video file (MP4).',
-        ]);
-
-        $violations = $this->validator->validate($command->getFile(), $constraints);
-
-        if (count($violations) > 0) {
-            throw new \RuntimeException($command->getFile()->getMimeType());
-        }
-
         $uploadFileModel = $this->s3Service->upload(
             uuid: $command->getStreamId(),
             file: $command->getFile(),
@@ -58,7 +44,7 @@ class CreateStreamVideoCommandHandler
         $option = $this->optionRepository->findByUuid($command->getOptionId());
 
         if (null === $option) {
-            throw new OptionNotFoundException();
+            throw new OptionNotFoundException($command->getOptionId()->toRfc4122());
         }
 
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
@@ -75,7 +61,7 @@ class CreateStreamVideoCommandHandler
         $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
-            throw new StreamNotFoundException();
+            throw new StreamNotFoundException($command->getStreamId()->toRfc4122());
         }
 
         $this->commandBus->dispatch(new UploadThumbnailCommand(

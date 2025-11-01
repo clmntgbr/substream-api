@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Stream;
 
 use App\Core\Application\Command\CreateStreamVideoCommand;
 use App\Dto\CreateStreamVideoPayload;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
-use App\Shared\Domain\Response\Response;
+use App\Validator\UploadedFileValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +21,8 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class CreateStreamVideoController extends AbstractController
 {
     public function __construct(
-        private CommandBusInterface $commandBus,
+        private readonly CommandBusInterface $commandBus,
+        private readonly UploadedFileValidator $fileValidator,
     ) {
     }
 
@@ -29,22 +32,25 @@ class CreateStreamVideoController extends AbstractController
         #[CurrentUser] User $user,
         #[MapRequestPayload()] CreateStreamVideoPayload $payload,
     ): JsonResponse {
-        try {
-            $createStreamModel = $this->commandBus->dispatch(
-                new CreateStreamVideoCommand(
-                    file: $video,
-                    thumbnail: $thumbnail,
-                    duration: $payload->getDuration(),
-                    optionId: $payload->getOptionId(),
-                    user: $user,
-                ),
-            );
+        // Validate files before processing
+        $this->fileValidator->validateVideo($video);
+        $this->fileValidator->validateThumbnail($thumbnail);
 
-            return Response::successResponse([
+        $createStreamModel = $this->commandBus->dispatch(
+            new CreateStreamVideoCommand(
+                file: $video,
+                thumbnail: $thumbnail,
+                duration: $payload->getDuration(),
+                optionId: $payload->getOptionId(),
+                user: $user,
+            ),
+        );
+
+        return new JsonResponse([
+            'success' => true,
+            'data' => [
                 'streamId' => $createStreamModel->streamId,
-            ]);
-        } catch (\Exception $exception) {
-            return Response::errorResponse('Something went wrong.');
-        }
+            ],
+        ]);
     }
 }

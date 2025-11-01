@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Put;
 use App\Controller\Notification\SearchNotificationController;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\NotificationRepository;
@@ -27,7 +28,7 @@ use Symfony\Component\Uid\Uuid;
             uriTemplate: '/notifications/{id}/read',
             normalizationContext: ['groups' => ['notification:read']],
             denormalizationContext: ['groups' => ['notification:write']],
-        )
+        ),
     ],
 )]
 class Notification

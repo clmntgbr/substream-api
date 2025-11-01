@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto\OAuth\Github;
 
 use Symfony\Component\Serializer\Attribute\SerializedName;

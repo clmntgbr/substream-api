@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto\OAuth\Google;
 
 use App\Dto\OAuth\ExchangeTokenPayloadInterface;
