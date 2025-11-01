@@ -5,11 +5,9 @@ framework:
             command.bus:
                 middleware:
                     - validation
-                    - doctrine_transaction
             sync.command.bus:
                 middleware:
                     - validation
-                    - doctrine_transaction
             async.command.bus:
                 middleware:
                     - validation
