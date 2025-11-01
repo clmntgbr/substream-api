@@ -26,7 +26,7 @@ class CreateUserCommandHandler
             email: $command->getEmail(),
             plainPassword: $command->getPlainPassword(),
         );
-        $this->userRepository->save($user, true);
+        $this->userRepository->saveAndFlush($user, true);
 
         return $user;
     }
