@@ -71,7 +71,7 @@ class CreateStreamVideoCommandHandler
         ));
 
         $this->apply($stream, WorkflowTransitionEnum::UPLOADED_SIMPLE);
-        $this->streamRepository->save($stream);
+        $this->streamRepository->saveAndFlush($stream);
 
         $this->commandBus->dispatch(new ExtractSoundCommand(
             streamId: $command->getStreamId(),

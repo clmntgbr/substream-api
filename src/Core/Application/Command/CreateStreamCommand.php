@@ -25,7 +25,7 @@ readonly class CreateStreamCommand implements SyncCommandInterface
 
     public function getStreamId(): Uuid
     {
-        return Uuid::fromString($this->streamId);
+        return $this->streamId;
     }
 
     public function getOptionId(): Uuid

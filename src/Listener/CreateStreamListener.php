@@ -29,6 +29,7 @@ class CreateStreamListener
             return;
         }
 
+        // Schedule deletion after 14 days
         $this->commandBus->dispatch(new DeleteStreamAfter14DaysCommand(
             streamId: $streamId,
         ));

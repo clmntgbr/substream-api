@@ -48,7 +48,7 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setSubtitleSrtFileName($response->getSubtitleSrtFileName());
             $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $this->commandBus->dispatch(new TransformSubtitleCommand(
                 streamId: $stream->getId(),
@@ -60,7 +60,7 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
                 'error' => $e->getMessage(),
             ]);
             $stream->markAsGenerateSubtitleFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         }
 
         $this->commandBus->dispatch(new UpdateTaskSuccessCommand(

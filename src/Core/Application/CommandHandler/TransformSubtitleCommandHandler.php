@@ -47,10 +47,10 @@ class TransformSubtitleCommandHandler
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(TransformSubtitleCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
             $this->coreBus->dispatch(new TransformSubtitleMessage(
                 taskId: $task->getId(),
@@ -60,7 +60,7 @@ class TransformSubtitleCommandHandler
             ));
         } catch (\Exception) {
             $stream->markAsTransformingSubtitleFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, TransformSubtitleCommand::class);
             $this->publishService->refreshSearchStreams($stream, TransformSubtitleCommand::class);

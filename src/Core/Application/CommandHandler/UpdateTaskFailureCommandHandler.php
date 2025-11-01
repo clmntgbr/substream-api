@@ -40,6 +40,6 @@ class UpdateTaskFailureCommandHandler
         }
 
         $task->markAsFailed();
-        $this->taskRepository->save($task);
+        $this->taskRepository->saveAndFlush($task);
     }
 }

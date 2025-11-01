@@ -47,10 +47,10 @@ class ExtractSoundCommandHandler
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ExtractSoundCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
             $this->coreBus->dispatch(new ExtractSoundMessage(
                 streamId: $stream->getId(),
@@ -59,7 +59,7 @@ class ExtractSoundCommandHandler
             ));
         } catch (\Exception) {
             $stream->markAsExtractingSoundFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, ExtractSoundCommand::class);
             $this->publishService->refreshSearchStreams($stream, ExtractSoundCommand::class);

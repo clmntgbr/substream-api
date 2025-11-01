@@ -12,7 +12,7 @@ final class UpdateTaskSuccessCommand extends CommandAbstract implements AsyncCom
 {
     public function __construct(
         private Uuid $taskId,
-        private float $processingTime,
+        private int $processingTime,
     ) {
     }
 

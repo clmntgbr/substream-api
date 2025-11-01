@@ -50,7 +50,7 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setChunkFileNames($response->getChunkFileNames());
             $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO_COMPLETED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $this->dispatch($stream);
         } catch (\Exception $e) {
@@ -59,7 +59,7 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
                 'error' => $e->getMessage(),
             ]);
             $stream->markAsChunkingVideoFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         }
 
         $this->commandBus->dispatch(new UpdateTaskSuccessCommand(

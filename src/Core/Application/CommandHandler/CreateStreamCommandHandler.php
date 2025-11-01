@@ -37,7 +37,7 @@ class CreateStreamCommandHandler
         $option = $this->optionRepository->findByUuid($command->getOptionId());
 
         if (null === $option) {
-            throw new OptionNotFoundException();
+            throw new OptionNotFoundException($command->getOptionId()->toRfc4122());
         }
 
         $stream = Stream::create(

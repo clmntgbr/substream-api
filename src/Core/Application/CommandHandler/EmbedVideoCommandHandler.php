@@ -46,10 +46,10 @@ class EmbedVideoCommandHandler
         }
         try {
             $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(EmbedVideoCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
             $this->coreBus->dispatch(new EmbedVideoMessage(
                 streamId: $stream->getId(),
@@ -59,7 +59,7 @@ class EmbedVideoCommandHandler
             ));
         } catch (\Exception) {
             $stream->markAsEmbeddingVideoFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, EmbedVideoCommand::class);
             $this->publishService->refreshSearchStreams($stream, EmbedVideoCommand::class);

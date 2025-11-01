@@ -63,21 +63,21 @@ class StreamSuccessCommandHandler
     {
         if ($stream->getStatus() === StreamStatusEnum::RESUMING_FAILED->value) {
             $this->apply($stream, WorkflowTransitionEnum::COMPLETED_RESUME_FAILED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             return;
         }
 
         if (false === $stream->getOption()->getIsResume()) {
             $this->apply($stream, WorkflowTransitionEnum::COMPLETED_NO_RESUME);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             return;
         }
 
         if (true === $stream->getOption()->getIsResume()) {
             $this->apply($stream, WorkflowTransitionEnum::COMPLETED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             return;
         }

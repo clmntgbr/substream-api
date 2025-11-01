@@ -53,7 +53,7 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
             $stream->setMimeType($response->getMimeType());
             $stream->setSize($response->getSize());
             $this->apply($stream, WorkflowTransitionEnum::UPLOADED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $this->commandBus->dispatch(new ExtractSoundCommand(
                 streamId: $stream->getId(),
@@ -65,7 +65,7 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
                 'error' => $e->getMessage(),
             ]);
             $stream->markAsUploadFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         }
 
         $this->commandBus->dispatch(new UpdateTaskSuccessCommand(

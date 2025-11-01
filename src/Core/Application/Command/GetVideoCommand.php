@@ -6,7 +6,6 @@ namespace App\Core\Application\Command;
 
 use App\Shared\Application\Command\AsyncCommandInterface;
 use App\Shared\Application\Command\CommandAbstract;
-use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Uid\Uuid;
 
 final class GetVideoCommand extends CommandAbstract implements AsyncCommandInterface
@@ -32,8 +31,6 @@ final class GetVideoCommand extends CommandAbstract implements AsyncCommandInter
      */
     public function getStamps(): array
     {
-        return [
-            new DelayStamp(10000),
-        ];
+        return [];
     }
 }

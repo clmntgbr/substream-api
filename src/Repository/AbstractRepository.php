@@ -59,8 +59,6 @@ abstract class AbstractRepository extends ServiceEntityRepository
         if (null === $entity->getId() || $persist) {
             $this->getEntityManager()->persist($entity);
         }
-        // No flush here - let the doctrine_transaction middleware handle it
-        // or use saveAndFlush() when you really need immediate flush
     }
 
     /**

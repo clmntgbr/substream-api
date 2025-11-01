@@ -49,7 +49,7 @@ final class ResumeVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::RESUMING_FAILED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $this->commandBus->dispatch(new StreamSuccessCommand(
                 streamId: $stream->getId(),
@@ -60,7 +60,7 @@ final class ResumeVideoFailureWebhookConsumer implements ConsumerInterface
                 'error' => $e->getMessage(),
             ]);
             $stream->markAsResumingFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         }
 
         $this->commandBus->dispatch(new UpdateTaskFailureCommand(

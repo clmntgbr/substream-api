@@ -47,10 +47,10 @@ class ResizeVideoCommandHandler
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::RESIZING_VIDEO);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ResizeVideoCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
             $this->coreBus->dispatch(new ResizeVideoMessage(
                 streamId: $stream->getId(),
@@ -60,7 +60,7 @@ class ResizeVideoCommandHandler
             ));
         } catch (\Exception) {
             $stream->markAsResizingVideoFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, ResizeVideoCommand::class);
             $this->publishService->refreshSearchStreams($stream, ResizeVideoCommand::class);

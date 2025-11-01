@@ -47,10 +47,10 @@ class ChunkVideoCommandHandler
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::CHUNKING_VIDEO);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ChunkVideoCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
             $this->coreBus->dispatch(new ChunkVideoMessage(
                 streamId: $stream->getId(),
@@ -60,7 +60,7 @@ class ChunkVideoCommandHandler
             ));
         } catch (\Exception) {
             $stream->markAsChunkingVideoFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, ChunkVideoCommand::class);
             $this->publishService->refreshSearchStreams($stream, ChunkVideoCommand::class);

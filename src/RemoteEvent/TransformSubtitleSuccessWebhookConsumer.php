@@ -48,7 +48,7 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
         try {
             $stream->setSubtitleAssFileName($response->getSubtitleAssFileName());
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_COMPLETED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $this->commandBus->dispatch(new ResizeVideoCommand(
                 streamId: $stream->getId(),
@@ -60,7 +60,7 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
                 'error' => $e->getMessage(),
             ]);
             $stream->markAsTransformingSubtitleFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         }
 
         $this->commandBus->dispatch(new UpdateTaskSuccessCommand(

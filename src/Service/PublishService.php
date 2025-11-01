@@ -15,11 +15,14 @@ class PublishService implements PublishServiceInterface
     public function __construct(
         private HubInterface $hub,
         private CommandBusInterface $commandBus,
+        private ElasticsearchRefreshService $elasticsearchRefreshService,
     ) {
     }
 
     public function refreshStream(Stream $stream, ?string $context = null): void
     {
+        $this->elasticsearchRefreshService->refreshStreamIndex();
+
         $user = $stream->getUser();
 
         $streamUpdate = new Update(
@@ -53,6 +56,8 @@ class PublishService implements PublishServiceInterface
 
     public function refreshSearchNotifications(User $user, ?string $context = null): void
     {
+        $this->elasticsearchRefreshService->refreshNotificationIndex();
+
         $update = new Update(
             "/users/{$user->getId()}/search/notifications",
             json_encode([

@@ -46,14 +46,14 @@ final class ResizeVideoFailureWebhookConsumer implements ConsumerInterface
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::RESIZING_VIDEO_FAILED);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } catch (\Exception $e) {
             $this->logger->error('Error resizing video', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
             $stream->markAsResizingVideoFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         }
 
         $this->commandBus->dispatch(new UpdateTaskFailureCommand(

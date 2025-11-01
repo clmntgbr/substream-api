@@ -55,12 +55,11 @@ class GenerateSubtitleCommandHandler
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(GenerateSubtitleCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
-            // TODO: Remove this after testing
             if ('prod' === $this->env) {
                 $this->coreBus->dispatch(new GenerateSubtitleMessage(
                     taskId: $task->getId(),
@@ -75,7 +74,7 @@ class GenerateSubtitleCommandHandler
             $this->mockGenerateSubtitle($stream, $task);
         } catch (\Exception) {
             $stream->markAsGeneratingSubtitleFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, GenerateSubtitleCommand::class);
             $this->publishService->refreshSearchStreams($stream, GenerateSubtitleCommand::class);
@@ -100,6 +99,7 @@ class GenerateSubtitleCommandHandler
         try {
             $stream->setSubtitleSrtFileName($subtitleSrtFileName);
             $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
+            $this->streamRepository->saveAndFlush($stream);
 
             $this->commandBus->dispatch(new TransformSubtitleCommand(
                 streamId: $stream->getId(),
@@ -107,8 +107,7 @@ class GenerateSubtitleCommandHandler
             ));
         } catch (\Exception $e) {
             $stream->markAsGenerateSubtitleFailed();
-        } finally {
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         }
 
         $this->commandBus->dispatch(new UpdateTaskSuccessCommand(

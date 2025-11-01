@@ -41,6 +41,6 @@ class UpdateTaskSuccessCommandHandler
 
         $task->setProcessingTime($command->getProcessingTime());
         $task->markAsCompleted();
-        $this->taskRepository->save($task);
+        $this->taskRepository->saveAndFlush($task);
     }
 }

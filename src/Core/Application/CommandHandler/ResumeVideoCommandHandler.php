@@ -47,10 +47,10 @@ class ResumeVideoCommandHandler
 
         try {
             $this->apply($stream, WorkflowTransitionEnum::RESUMING);
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
 
             $task = Task::create(ResumeVideoCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
             $this->coreBus->dispatch(new ResumeVideoMessage(
                 streamId: $stream->getId(),
@@ -59,7 +59,7 @@ class ResumeVideoCommandHandler
             ));
         } catch (\Exception) {
             $stream->markAsResumingFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, ResumeVideoCommand::class);
             $this->publishService->refreshSearchStreams($stream, ResumeVideoCommand::class);

@@ -48,7 +48,7 @@ class GetVideoCommandHandler
 
         try {
             $task = Task::create(GetVideoCommand::class, $stream);
-            $this->taskRepository->save($task, true);
+            $this->taskRepository->saveAndFlush($task, true);
 
             $this->coreBus->dispatch(new GetVideoMessage(
                 streamId: $stream->getId(),
@@ -57,7 +57,7 @@ class GetVideoCommandHandler
             ));
         } catch (\Exception) {
             $stream->markAsUploadFailed();
-            $this->streamRepository->save($stream);
+            $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, GetVideoCommand::class);
             $this->publishService->refreshSearchStreams($stream, GetVideoCommand::class);

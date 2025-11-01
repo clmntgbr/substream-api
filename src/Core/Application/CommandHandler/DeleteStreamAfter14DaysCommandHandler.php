@@ -45,6 +45,6 @@ class DeleteStreamAfter14DaysCommandHandler
         $this->s3Service->deleteAll($stream->getId());
 
         $stream->markAsDeleted();
-        $this->streamRepository->save($stream);
+        $this->streamRepository->saveAndFlush($stream);
     }
 }

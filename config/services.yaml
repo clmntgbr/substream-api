@@ -58,3 +58,9 @@ services:
     App\Repository\ElasticaNotificationRepository:
         arguments:
             $finder: '@fos_elastica.finder.notification'
+
+    # Elasticsearch index for refresh service
+    App\Service\ElasticsearchRefreshService:
+        arguments:
+            $streamIndex: '@fos_elastica.index.stream'
+            $notificationIndex: '@fos_elastica.index.notification'

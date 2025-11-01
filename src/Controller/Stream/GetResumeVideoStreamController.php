@@ -8,7 +8,6 @@ use App\Entity\Stream;
 use App\Exception\StreamNotDownloadableException;
 use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
-use App\Shared\Domain\Response\Response;
 use App\Util\Slugify;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -27,7 +26,7 @@ class GetResumeVideoStreamController extends AbstractController
     public function __invoke(Stream $stream)
     {
         if (!$stream->isResumeDownloadable()) {
-            throw new StreamNotDownloadableException();
+            throw new StreamNotDownloadableException($stream->getId()->toRfc4122());
         }
 
         try {
@@ -48,7 +47,8 @@ class GetResumeVideoStreamController extends AbstractController
 
             return $response;
         } catch (\Exception $e) {
-            return Response::errorResponse($e->getMessage());
+            // Exception will be caught by BusinessExceptionListener
+            throw $e;
         }
     }
 }

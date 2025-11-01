@@ -27,7 +27,7 @@ class CreateNotificationCommandHandler
         $stream = $this->streamRepository->findByUuid($command->getContextId());
 
         if (null === $stream) {
-            throw new StreamNotFoundException();
+            throw new StreamNotFoundException($command->getContextId()->toRfc4122());
         }
 
         $notification = Notification::create(
@@ -39,7 +39,7 @@ class CreateNotificationCommandHandler
             contextMessage: $stream->getOriginalFileName(),
         );
 
-        $this->notificationRepository->save($notification, true);
+        $this->notificationRepository->saveAndFlush($notification, true);
         $this->publishService->refreshSearchNotifications($stream->getUser(), CreateNotificationCommand::class);
     }
 }
