@@ -20,6 +20,7 @@ use App\Shared\Application\Bus\CoreBusInterface;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Workflow\Exception\TransitionException as WorkflowTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
@@ -72,7 +73,23 @@ class GenerateSubtitleCommandHandler
             }
 
             $this->mockGenerateSubtitle($stream, $task);
-        } catch (\Exception) {
+        } catch (WorkflowTransitionException $e) {
+            $this->logger->error('Workflow transition failed during subtitle generation', [
+                'stream_id' => (string) $command->getStreamId(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $stream->markAsGeneratingSubtitleFailed();
+            $this->streamRepository->saveAndFlush($stream);
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected error during subtitle generation', [
+                'stream_id' => (string) $command->getStreamId(),
+                'error' => $e->getMessage(),
+                'exception_class' => $e::class,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             $stream->markAsGeneratingSubtitleFailed();
             $this->streamRepository->saveAndFlush($stream);
         } finally {
@@ -105,7 +122,21 @@ class GenerateSubtitleCommandHandler
                 streamId: $stream->getId(),
                 subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
             ));
-        } catch (\Exception $e) {
+        } catch (WorkflowTransitionException $e) {
+            $this->logger->error('Workflow transition failed in mock subtitle generation', [
+                'stream_id' => (string) $stream->getId(),
+                'error' => $e->getMessage(),
+            ]);
+
+            $stream->markAsGenerateSubtitleFailed();
+            $this->streamRepository->saveAndFlush($stream);
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected error in mock subtitle generation', [
+                'stream_id' => (string) $stream->getId(),
+                'error' => $e->getMessage(),
+                'exception_class' => $e::class,
+            ]);
+
             $stream->markAsGenerateSubtitleFailed();
             $this->streamRepository->saveAndFlush($stream);
         }

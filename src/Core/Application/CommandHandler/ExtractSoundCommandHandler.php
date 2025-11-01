@@ -15,6 +15,7 @@ use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Workflow\Exception\TransitionException as WorkflowTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
@@ -57,7 +58,23 @@ class ExtractSoundCommandHandler
                 taskId: $task->getId(),
                 fileName: $command->getFileName(),
             ));
-        } catch (\Exception) {
+        } catch (WorkflowTransitionException $e) {
+            $this->logger->error('Workflow transition failed during sound extraction', [
+                'stream_id' => (string) $command->getStreamId(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $stream->markAsExtractingSoundFailed();
+            $this->streamRepository->saveAndFlush($stream);
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected error during sound extraction', [
+                'stream_id' => (string) $command->getStreamId(),
+                'error' => $e->getMessage(),
+                'exception_class' => $e::class,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             $stream->markAsExtractingSoundFailed();
             $this->streamRepository->saveAndFlush($stream);
         } finally {

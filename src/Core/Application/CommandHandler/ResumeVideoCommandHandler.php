@@ -15,6 +15,7 @@ use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Workflow\Exception\TransitionException as WorkflowTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
@@ -57,7 +58,23 @@ class ResumeVideoCommandHandler
                 taskId: $task->getId(),
                 subtitleSrtFileName: $command->getSubtitleSrtFileName(),
             ));
-        } catch (\Exception) {
+        } catch (WorkflowTransitionException $e) {
+            $this->logger->error('Workflow transition failed during video resuming', [
+                'stream_id' => (string) $command->getStreamId(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $stream->markAsResumingFailed();
+            $this->streamRepository->saveAndFlush($stream);
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected error during video resuming', [
+                'stream_id' => (string) $command->getStreamId(),
+                'error' => $e->getMessage(),
+                'exception_class' => $e::class,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             $stream->markAsResumingFailed();
             $this->streamRepository->saveAndFlush($stream);
         } finally {

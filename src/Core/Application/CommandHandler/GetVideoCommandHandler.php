@@ -55,7 +55,14 @@ class GetVideoCommandHandler
                 taskId: $task->getId(),
                 url: $command->getUrl(),
             ));
-        } catch (\Exception) {
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected error during video download', [
+                'stream_id' => (string) $command->getStreamId(),
+                'error' => $e->getMessage(),
+                'exception_class' => $e::class,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             $stream->markAsUploadFailed();
             $this->streamRepository->saveAndFlush($stream);
         } finally {
