@@ -26,7 +26,8 @@ class CleanStreamCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => CleanStreamCommand::class,
             ]);
 
             return;

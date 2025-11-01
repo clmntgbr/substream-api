@@ -38,7 +38,8 @@ class ResizeVideoCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => ResizeVideoCommand::class,
             ]);
 
             return;
@@ -61,7 +62,8 @@ class ResizeVideoCommandHandler
             $stream->markAsResizingVideoFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), ResizeVideoCommand::class);
+            $this->publishService->refreshStream($stream, ResizeVideoCommand::class);
+            $this->publishService->refreshSearchStreams($stream, ResizeVideoCommand::class);
         }
     }
 }

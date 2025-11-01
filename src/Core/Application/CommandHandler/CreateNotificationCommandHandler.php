@@ -40,6 +40,6 @@ class CreateNotificationCommandHandler
         );
 
         $this->notificationRepository->save($notification, true);
-        $this->publishService->dispatchSearchNotifications($stream->getUser(), CreateNotificationCommand::class);
+        $this->publishService->refreshSearchNotifications($stream->getUser(), CreateNotificationCommand::class);
     }
 }

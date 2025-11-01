@@ -38,7 +38,8 @@ class ExtractSoundCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => ExtractSoundCommand::class,
             ]);
 
             return;
@@ -60,7 +61,8 @@ class ExtractSoundCommandHandler
             $stream->markAsExtractingSoundFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), ExtractSoundCommand::class);
+            $this->publishService->refreshStream($stream, ExtractSoundCommand::class);
+            $this->publishService->refreshSearchStreams($stream, ExtractSoundCommand::class);
         }
     }
 }

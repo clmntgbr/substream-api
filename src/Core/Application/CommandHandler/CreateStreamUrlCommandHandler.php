@@ -63,8 +63,6 @@ class CreateStreamUrlCommandHandler
             url: $command->getUrl(),
         ));
 
-        sleep(3);
-
         return $createStreamModel;
     }
 

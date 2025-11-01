@@ -38,7 +38,8 @@ class ResumeVideoCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => ResumeVideoCommand::class,
             ]);
 
             return;
@@ -60,7 +61,8 @@ class ResumeVideoCommandHandler
             $stream->markAsResumingFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), ResumeVideoCommand::class);
+            $this->publishService->refreshStream($stream, ResumeVideoCommand::class);
+            $this->publishService->refreshSearchStreams($stream, ResumeVideoCommand::class);
         }
     }
 }

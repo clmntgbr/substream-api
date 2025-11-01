@@ -38,7 +38,8 @@ class TransformSubtitleCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => TransformSubtitleCommand::class,
             ]);
 
             return;
@@ -61,7 +62,8 @@ class TransformSubtitleCommandHandler
             $stream->markAsTransformingSubtitleFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), TransformSubtitleCommand::class);
+            $this->publishService->refreshStream($stream, TransformSubtitleCommand::class);
+            $this->publishService->refreshSearchStreams($stream, TransformSubtitleCommand::class);
         }
     }
 }

@@ -46,7 +46,8 @@ class GenerateSubtitleCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => GenerateSubtitleCommand::class,
             ]);
 
             return;
@@ -76,7 +77,8 @@ class GenerateSubtitleCommandHandler
             $stream->markAsGeneratingSubtitleFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), GenerateSubtitleCommand::class);
+            $this->publishService->refreshStream($stream, GenerateSubtitleCommand::class);
+            $this->publishService->refreshSearchStreams($stream, GenerateSubtitleCommand::class);
         }
     }
 

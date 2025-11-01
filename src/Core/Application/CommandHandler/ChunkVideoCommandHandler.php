@@ -38,7 +38,8 @@ class ChunkVideoCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => ChunkVideoCommand::class,
             ]);
 
             return;
@@ -61,7 +62,8 @@ class ChunkVideoCommandHandler
             $stream->markAsChunkingVideoFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), ChunkVideoCommand::class);
+            $this->publishService->refreshStream($stream, ChunkVideoCommand::class);
+            $this->publishService->refreshSearchStreams($stream, ChunkVideoCommand::class);
         }
     }
 }

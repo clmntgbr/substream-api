@@ -38,7 +38,8 @@ class EmbedVideoCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => EmbedVideoCommand::class,
             ]);
 
             return;
@@ -60,7 +61,8 @@ class EmbedVideoCommandHandler
             $stream->markAsEmbeddingVideoFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), EmbedVideoCommand::class);
+            $this->publishService->refreshStream($stream, EmbedVideoCommand::class);
+            $this->publishService->refreshSearchStreams($stream, EmbedVideoCommand::class);
         }
     }
 }

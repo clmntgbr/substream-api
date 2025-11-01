@@ -39,7 +39,8 @@ class GetVideoCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => GetVideoCommand::class,
             ]);
 
             return;
@@ -58,7 +59,8 @@ class GetVideoCommandHandler
             $stream->markAsUploadFailed();
             $this->streamRepository->save($stream);
         } finally {
-            $this->publishService->dispatchSearchStreams($stream->getUser(), GetVideoCommand::class);
+            $this->publishService->refreshStream($stream, GetVideoCommand::class);
+            $this->publishService->refreshSearchStreams($stream, GetVideoCommand::class);
         }
     }
 }

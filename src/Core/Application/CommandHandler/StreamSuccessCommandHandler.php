@@ -38,7 +38,8 @@ class StreamSuccessCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => StreamSuccessCommand::class,
             ]);
 
             return;
@@ -54,7 +55,8 @@ class StreamSuccessCommandHandler
             streamId: $stream->getId(),
         ));
 
-        $this->publishService->dispatchSearchStreams($stream->getUser(), StreamSuccessCommand::class);
+        $this->publishService->refreshStream($stream, StreamSuccessCommand::class);
+        $this->publishService->refreshSearchStreams($stream, StreamSuccessCommand::class);
     }
 
     private function complete(Stream $stream): void

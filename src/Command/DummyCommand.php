@@ -27,15 +27,6 @@ class DummyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $user = $this->userRepository->findOneBy(['email' => 'clement.goubier@gmail.com']);
-
-        if (null === $user) {
-            throw new \Exception('User not found');
-        }
-
-        $this->publishService->dispatchSearchStreams($user);
-        $this->publishService->dispatchSearchNotifications($user);
-
         return Command::SUCCESS;
     }
 }

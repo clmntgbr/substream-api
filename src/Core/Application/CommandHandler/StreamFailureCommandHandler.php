@@ -33,12 +33,14 @@ class StreamFailureCommandHandler
 
         if (null === $stream) {
             $this->logger->error('Stream not found', [
-                'stream_id' => $command->getStreamId(),
+                'stream_id' => (string) $command->getStreamId(),
+                'command' => StreamFailureCommand::class,
             ]);
 
             return;
         }
 
-        $this->publishService->dispatchSearchStreams($stream->getUser(), StreamFailureCommand::class);
+        $this->publishService->refreshStream($stream, StreamFailureCommand::class);
+        $this->publishService->refreshSearchStreams($stream, StreamFailureCommand::class);
     }
 }
