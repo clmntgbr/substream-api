@@ -6,7 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\TransformSubtitleCommand;
 use App\Core\Application\Message\TransformSubtitleMessage;
-use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Stream;
 use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
@@ -15,72 +15,73 @@ use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\Exception\TransitionException as WorkflowTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class TransformSubtitleCommandHandler
+class TransformSubtitleCommandHandler extends AbstractStreamWorkflowCommandHandler
 {
-    use WorkflowTrait;
+    private TransformSubtitleCommand $currentCommand;
 
     public function __construct(
-        private StreamRepository $streamRepository,
-        private WorkflowInterface $streamsStateMachine,
-        private LoggerInterface $logger,
-        private CoreBusInterface $coreBus,
-        private TaskRepository $taskRepository,
-        private PublishServiceInterface $publishService,
+        StreamRepository $streamRepository,
+        WorkflowInterface $streamsStateMachine,
+        LoggerInterface $logger,
+        CoreBusInterface $coreBus,
+        TaskRepository $taskRepository,
+        PublishServiceInterface $publishService,
     ) {
+        parent::__construct(
+            $streamRepository,
+            $streamsStateMachine,
+            $logger,
+            $coreBus,
+            $taskRepository,
+            $publishService
+        );
     }
 
     public function __invoke(TransformSubtitleCommand $command): void
     {
-        $stream = $this->streamRepository->findByUuid($command->getStreamId());
+        $this->currentCommand = $command;
 
-        if (null === $stream) {
-            $this->logger->error('Stream not found', [
-                'stream_id' => (string) $command->getStreamId(),
-                'command' => TransformSubtitleCommand::class,
-            ]);
-
-            return;
-        }
-
-        try {
-            $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE);
-            $this->streamRepository->saveAndFlush($stream);
-
-            $task = Task::create(TransformSubtitleCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task);
-
-            $this->coreBus->dispatch(new TransformSubtitleMessage(
+        $this->executeWorkflow(
+            $command->getStreamId(),
+            fn (Stream $stream, Task $task) => new TransformSubtitleMessage(
                 taskId: $task->getId(),
                 streamId: $stream->getId(),
                 option: $stream->getOption(),
                 subtitleSrtFileName: $command->getSubtitleSrtFileName(),
-            ));
-        } catch (WorkflowTransitionException $e) {
-            $this->logger->error('Workflow transition failed during subtitle transformation', [
-                'stream_id' => (string) $command->getStreamId(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            )
+        );
+    }
 
-            $stream->markAsTransformingSubtitleFailed();
-            $this->streamRepository->saveAndFlush($stream);
-        } catch (\Throwable $e) {
-            $this->logger->error('Unexpected error during subtitle transformation', [
-                'stream_id' => (string) $command->getStreamId(),
-                'error' => $e->getMessage(),
-                'exception_class' => $e::class,
-                'trace' => $e->getTraceAsString(),
-            ]);
+    protected function getTransition(): WorkflowTransitionEnum
+    {
+        return WorkflowTransitionEnum::TRANSFORMING_SUBTITLE;
+    }
 
-            $stream->markAsTransformingSubtitleFailed();
-            $this->streamRepository->saveAndFlush($stream);
-        } finally {
-            $this->publishService->refreshStream($stream, TransformSubtitleCommand::class);
-            $this->publishService->refreshSearchStreams($stream, TransformSubtitleCommand::class);
-        }
+    protected function createMessage(Stream $stream, Task $task): object
+    {
+        return new TransformSubtitleMessage(
+            taskId: $task->getId(),
+            streamId: $stream->getId(),
+            option: $stream->getOption(),
+            subtitleSrtFileName: $this->currentCommand->getSubtitleSrtFileName(),
+        );
+    }
+
+    protected function markStreamAsFailed(Stream $stream): void
+    {
+        $stream->markAsTransformingSubtitleFailed();
+    }
+
+    protected function getCommandClass(): string
+    {
+        return TransformSubtitleCommand::class;
+    }
+
+    protected function getWorkflowActionName(): string
+    {
+        return 'subtitle transformation';
     }
 }

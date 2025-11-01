@@ -6,7 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\ResumeVideoCommand;
 use App\Core\Application\Message\ResumeVideoMessage;
-use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Stream;
 use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
@@ -15,71 +15,71 @@ use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\Exception\TransitionException as WorkflowTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class ResumeVideoCommandHandler
+class ResumeVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 {
-    use WorkflowTrait;
+    private ResumeVideoCommand $currentCommand;
 
     public function __construct(
-        private StreamRepository $streamRepository,
-        private WorkflowInterface $streamsStateMachine,
-        private LoggerInterface $logger,
-        private CoreBusInterface $coreBus,
-        private TaskRepository $taskRepository,
-        private PublishServiceInterface $publishService,
+        StreamRepository $streamRepository,
+        WorkflowInterface $streamsStateMachine,
+        LoggerInterface $logger,
+        CoreBusInterface $coreBus,
+        TaskRepository $taskRepository,
+        PublishServiceInterface $publishService,
     ) {
+        parent::__construct(
+            $streamRepository,
+            $streamsStateMachine,
+            $logger,
+            $coreBus,
+            $taskRepository,
+            $publishService
+        );
     }
 
     public function __invoke(ResumeVideoCommand $command): void
     {
-        $stream = $this->streamRepository->findByUuid($command->getStreamId());
+        $this->currentCommand = $command;
 
-        if (null === $stream) {
-            $this->logger->error('Stream not found', [
-                'stream_id' => (string) $command->getStreamId(),
-                'command' => ResumeVideoCommand::class,
-            ]);
-
-            return;
-        }
-
-        try {
-            $this->apply($stream, WorkflowTransitionEnum::RESUMING);
-            $this->streamRepository->saveAndFlush($stream);
-
-            $task = Task::create(ResumeVideoCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task);
-
-            $this->coreBus->dispatch(new ResumeVideoMessage(
+        $this->executeWorkflow(
+            $command->getStreamId(),
+            fn (Stream $stream, Task $task) => new ResumeVideoMessage(
                 streamId: $stream->getId(),
                 taskId: $task->getId(),
                 subtitleSrtFileName: $command->getSubtitleSrtFileName(),
-            ));
-        } catch (WorkflowTransitionException $e) {
-            $this->logger->error('Workflow transition failed during video resuming', [
-                'stream_id' => (string) $command->getStreamId(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            )
+        );
+    }
 
-            $stream->markAsResumingFailed();
-            $this->streamRepository->saveAndFlush($stream);
-        } catch (\Throwable $e) {
-            $this->logger->error('Unexpected error during video resuming', [
-                'stream_id' => (string) $command->getStreamId(),
-                'error' => $e->getMessage(),
-                'exception_class' => $e::class,
-                'trace' => $e->getTraceAsString(),
-            ]);
+    protected function getTransition(): WorkflowTransitionEnum
+    {
+        return WorkflowTransitionEnum::RESUMING;
+    }
 
-            $stream->markAsResumingFailed();
-            $this->streamRepository->saveAndFlush($stream);
-        } finally {
-            $this->publishService->refreshStream($stream, ResumeVideoCommand::class);
-            $this->publishService->refreshSearchStreams($stream, ResumeVideoCommand::class);
-        }
+    protected function createMessage(Stream $stream, Task $task): object
+    {
+        return new ResumeVideoMessage(
+            streamId: $stream->getId(),
+            taskId: $task->getId(),
+            subtitleSrtFileName: $this->currentCommand->getSubtitleSrtFileName(),
+        );
+    }
+
+    protected function markStreamAsFailed(Stream $stream): void
+    {
+        $stream->markAsResumingFailed();
+    }
+
+    protected function getCommandClass(): string
+    {
+        return ResumeVideoCommand::class;
+    }
+
+    protected function getWorkflowActionName(): string
+    {
+        return 'video resuming';
     }
 }

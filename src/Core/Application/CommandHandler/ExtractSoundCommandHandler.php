@@ -6,7 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Message\ExtractSoundMessage;
-use App\Core\Application\Trait\WorkflowTrait;
+use App\Entity\Stream;
 use App\Entity\Task;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
@@ -15,71 +15,71 @@ use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\Exception\TransitionException as WorkflowTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
-class ExtractSoundCommandHandler
+class ExtractSoundCommandHandler extends AbstractStreamWorkflowCommandHandler
 {
-    use WorkflowTrait;
+    private ExtractSoundCommand $currentCommand;
 
     public function __construct(
-        private StreamRepository $streamRepository,
-        private WorkflowInterface $streamsStateMachine,
-        private LoggerInterface $logger,
-        private CoreBusInterface $coreBus,
-        private TaskRepository $taskRepository,
-        private PublishServiceInterface $publishService,
+        StreamRepository $streamRepository,
+        WorkflowInterface $streamsStateMachine,
+        LoggerInterface $logger,
+        CoreBusInterface $coreBus,
+        TaskRepository $taskRepository,
+        PublishServiceInterface $publishService,
     ) {
+        parent::__construct(
+            $streamRepository,
+            $streamsStateMachine,
+            $logger,
+            $coreBus,
+            $taskRepository,
+            $publishService
+        );
     }
 
     public function __invoke(ExtractSoundCommand $command): void
     {
-        $stream = $this->streamRepository->findByUuid($command->getStreamId());
+        $this->currentCommand = $command;
 
-        if (null === $stream) {
-            $this->logger->error('Stream not found', [
-                'stream_id' => (string) $command->getStreamId(),
-                'command' => ExtractSoundCommand::class,
-            ]);
-
-            return;
-        }
-
-        try {
-            $this->apply($stream, WorkflowTransitionEnum::EXTRACTING_SOUND);
-            $this->streamRepository->saveAndFlush($stream);
-
-            $task = Task::create(ExtractSoundCommand::class, $stream);
-            $this->taskRepository->saveAndFlush($task);
-
-            $this->coreBus->dispatch(new ExtractSoundMessage(
+        $this->executeWorkflow(
+            $command->getStreamId(),
+            fn (Stream $stream, Task $task) => new ExtractSoundMessage(
                 streamId: $stream->getId(),
                 taskId: $task->getId(),
                 fileName: $command->getFileName(),
-            ));
-        } catch (WorkflowTransitionException $e) {
-            $this->logger->error('Workflow transition failed during sound extraction', [
-                'stream_id' => (string) $command->getStreamId(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            )
+        );
+    }
 
-            $stream->markAsExtractingSoundFailed();
-            $this->streamRepository->saveAndFlush($stream);
-        } catch (\Throwable $e) {
-            $this->logger->error('Unexpected error during sound extraction', [
-                'stream_id' => (string) $command->getStreamId(),
-                'error' => $e->getMessage(),
-                'exception_class' => $e::class,
-                'trace' => $e->getTraceAsString(),
-            ]);
+    protected function getTransition(): WorkflowTransitionEnum
+    {
+        return WorkflowTransitionEnum::EXTRACTING_SOUND;
+    }
 
-            $stream->markAsExtractingSoundFailed();
-            $this->streamRepository->saveAndFlush($stream);
-        } finally {
-            $this->publishService->refreshStream($stream, ExtractSoundCommand::class);
-            $this->publishService->refreshSearchStreams($stream, ExtractSoundCommand::class);
-        }
+    protected function createMessage(Stream $stream, Task $task): object
+    {
+        return new ExtractSoundMessage(
+            streamId: $stream->getId(),
+            taskId: $task->getId(),
+            fileName: $this->currentCommand->getFileName(),
+        );
+    }
+
+    protected function markStreamAsFailed(Stream $stream): void
+    {
+        $stream->markAsExtractingSoundFailed();
+    }
+
+    protected function getCommandClass(): string
+    {
+        return ExtractSoundCommand::class;
+    }
+
+    protected function getWorkflowActionName(): string
+    {
+        return 'sound extraction';
     }
 }

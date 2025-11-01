@@ -1,0 +1,288 @@
+# Substream API - Cursor Rules & Best Practices
+
+## Architecture & Patterns
+
+### 1. Command Handlers
+
+**DO**:
+- Use `AbstractStreamWorkflowCommandHandler` for workflow handlers (ChunkVideo, ExtractSound, etc.)
+- Implement `getTransition()`, `createMessage()`, `markStreamAsFailed()`, `getCommandClass()`, `getWorkflowActionName()`
+- Use `executeWorkflow()` template method from abstract handler
+- Always use `saveAndFlush()` when dispatching async messages (race condition prevention)
+- Never re-throw exceptions in catch blocks (to avoid blocking the Messenger consumer)
+
+**DON'T**:
+- Don't duplicate stream finding, error handling, or Mercure publication logic
+- Don't use `finally` blocks for Mercure publications (only for cleanup)
+- Don't catch `\Exception` generically - use `WorkflowTransitionException` and `\Throwable`
+
+**Example**:
+```php
+#[AsMessageHandler]
+class ChunkVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
+{
+    private ChunkVideoCommand $currentCommand;
+
+    public function __invoke(ChunkVideoCommand $command): void
+    {
+        $this->currentCommand = $command;
+        
+        $this->executeWorkflow(
+            $command->getStreamId(),
+            fn(Stream $stream, Task $task) => new ChunkVideoMessage(...)
+        );
+    }
+
+    protected function getTransition(): WorkflowTransitionEnum
+    {
+        return WorkflowTransitionEnum::CHUNKING_VIDEO;
+    }
+
+    protected function markStreamAsFailed(Stream $stream): void
+    {
+        $stream->markAsChunkingVideoFailed();
+    }
+}
+```
+
+### 2. Repository Pattern
+
+**DO**:
+- Use `save()` for persist-only operations (no flush)
+- Use `saveAndFlush()` when you need immediate flush (async messages, race conditions)
+- Call `flush()` explicitly at the end of transactions when needed
+- Use typed return values and parameters
+
+**DON'T**:
+- Don't use `save($entity, $persist = true/false)` - param removed, always call `persist()`
+- Don't use `update()` method (deprecated and dangerous)
+- Don't rely on `doctrine_transaction` middleware (not configured)
+
+**Example**:
+```php
+// OAuth/Create handlers - need immediate flush
+$this->userRepository->saveAndFlush($user);
+$this->socialAccountRepository->saveAndFlush($socialAccount);
+
+// Regular handlers - let transaction handle it
+$this->streamRepository->save($stream);
+// ... later
+$this->streamRepository->flush();
+```
+
+### 3. Entity Design
+
+**DO**:
+- Keep entities under 300 lines when possible
+- Separate business logic into Value Objects
+- Use Groups sparingly - consider DTOs for complex serialization
+- Keep `markAs*()` methods simple and focused
+
+**DON'T**:
+- Don't put formatting logic in entities (`getProcessingTimeFormatted()`)
+- Don't add presentation logic (Groups should be minimal)
+- Don't duplicate logic across entities
+
+**Current issues to avoid**:
+- Stream entity is 716 lines (too large)
+- Format logic duplicated in Stream, Task, etc.
+
+### 4. Exception Handling
+
+**DO**:
+- Create specific exception types (`WorkflowTransitionException`, `StreamProcessingException`)
+- Catch exceptions in order of specificity (`WorkflowTransitionException` then `\Throwable`)
+- Log errors with context: `stream_id`, `exception_class`, `trace`
+- Mark stream as failed and save in catch blocks
+- Never re-throw in catch blocks (consumer must continue processing)
+
+**DON'T**:
+- Don't catch `\Exception` generically
+- Don't throw exceptions from handlers (block consumer)
+- Don't use `finally` for state changes
+- Don't mask exceptions with generic logging
+
+**Example**:
+```php
+try {
+    // ... workflow execution
+} catch (WorkflowTransitionException $e) {
+    $this->logger->error('Workflow transition failed', [
+        'stream_id' => (string) $streamId,
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+    ]);
+    $stream->markAsFailed();
+    $this->streamRepository->saveAndFlush($stream);
+} catch (\Throwable $e) {
+    $this->logger->error('Unexpected error', [
+        'stream_id' => (string) $streamId,
+        'exception_class' => $e::class,
+        'trace' => $e->getTraceAsString(),
+    ]);
+    $stream->markAsFailed();
+    $this->streamRepository->saveAndFlush($stream);
+}
+// NO finally block for Mercure publications
+```
+
+### 5. Workflow & State Management
+
+**DO**:
+- Use `WorkflowTransitionEnum` for all transitions
+- Apply transitions before creating tasks
+- Save and flush stream after transition
+- Use abstract handler's `apply()` method
+
+**DON'T**:
+- Don't skip transition application
+- Don't save entities before applying transitions
+- Don't forget to flush after transition
+
+### 6. Async Message Dispatching
+
+**DO**:
+- Always use `saveAndFlush()` before dispatching async messages
+- This prevents race conditions where external service can't find entities
+- Use `CoreBusInterface` for async messages
+
+**DON'T**:
+- Don't use `save()` before async dispatch
+- Don't rely on middleware to flush before dispatch
+
+**Critical pattern**:
+```php
+$stream->apply($transition);
+$this->streamRepository->saveAndFlush($stream); // FLUSH before dispatch
+
+$task = Task::create(...);
+$this->taskRepository->saveAndFlush($task); // FLUSH before dispatch
+
+$this->coreBus->dispatch(new Message(...)); // External service needs entities
+```
+
+### 7. Code Organization
+
+**DO**:
+- Place handlers in `App\Core\Application\CommandHandler`
+- Use interfaces for dependency inversion
+- Keep services thin and focused
+- Use `readonly` properties where immutable
+
+**DON'T**:
+- Don't duplicate code (use abstract base classes)
+- Don't create god classes (700+ lines)
+- Don't mix concerns (entity + DTO + formatting)
+
+### 8. File Naming Conventions
+
+**DO**:
+- Commands: `{Action}Command.php`
+- Handlers: `{Action}CommandHandler.php`
+- Messages: `{Action}Message.php`
+- DTOs: Group by domain (OAuth, Stream, etc.)
+
+### 9. Testing Guidelines
+
+**DO**:
+- Test workflow transitions separately
+- Test error handling paths
+- Test race conditions in async scenarios
+- Mock external services (Mercure, Elasticsearch)
+
+**DON'T**:
+- Don't test implementation details
+- Don't skip error path testing
+
+### 10. Logging
+
+**DO**:
+- Use structured logging with context
+- Include `stream_id`, `task_id`, `exception_class`
+- Add `trace` for debugging
+- Different log levels (error for failures, info for flows)
+
+**DON'T**:
+- Don't log sensitive data
+- Don't log too verbosely in production
+- Don't forget context in logs
+
+## Anti-Patterns to Avoid
+
+1. ❌ Using `finally` for state publications
+2. ❌ Generic `catch (\Exception)`
+3. ❌ Not flushing before async dispatch
+4. ❌ Entity obèse (700+ lignes)
+5. ❌ Duplication across handlers
+6. ❌ Using `update()` repository method
+7. ❌ Relying on `doctrine_transaction` middleware
+8. ❌ Re-throwing in handler catch blocks
+9. ❌ Mixing entity and presentation logic
+10. ❌ Format logic in entities
+
+## Quick Reference
+
+### Handler Creation Checklist
+
+- [ ] Use `AbstractStreamWorkflowCommandHandler` if workflow handler
+- [ ] Implement 5 required methods (`getTransition`, `createMessage`, `markStreamAsFailed`, `getCommandClass`, `getWorkflowActionName`)
+- [ ] Use `executeWorkflow()` template
+- [ ] Don't duplicate stream finding logic
+- [ ] Don't use `finally` blocks
+- [ ] Use `saveAndFlush()` before async messages
+- [ ] Catch `WorkflowTransitionException` then `\Throwable`
+- [ ] Don't re-throw in catch blocks
+- [ ] Log with proper context
+
+### Repository Usage Guide
+
+```php
+// Basic persist (use when flushing elsewhere)
+$this->repository->save($entity);
+
+// Persist + flush (use for async dispatch, OAuth, critical ops)
+$this->repository->saveAndFlush($entity);
+
+// Batch operations
+$this->repository->saveAll($entities); // no flush
+$this->repository->flush(); // explicit flush
+```
+
+### Common Handler Patterns
+
+```php
+// Workflow handler (USE THIS)
+class XxxCommandHandler extends AbstractStreamWorkflowCommandHandler { }
+
+// Non-workflow handler (manual pattern)
+class YyyCommandHandler {
+    public function __invoke(YyyCommand $command): void {
+        $entity = $this->repository->find(...);
+        // ... logic
+        $this->repository->saveAndFlush($entity);
+    }
+}
+```
+
+## Project-Specific Notes
+
+- **OAuth flow**: MUST use `saveAndFlush()` (synchronous, no middleware)
+- **Workflow handlers**: MUST use abstract base class
+- **Messenger**: No retry strategy (max_retries: 0)
+- **Mercure**: Refresh streams in success/error paths, not finally
+- **Elasticsearch**: Refresh handled by `PublishService`
+
+## Performance Considerations
+
+- Use `saveAndFlush()` sparingly (expensive)
+- Batch operations when possible
+- Avoid N+1 queries in handlers
+- Consider caching for frequently accessed data
+
+## Security Notes
+
+- Never log sensitive data (passwords, tokens)
+- Validate all inputs
+- Use typed parameters
+- Sanitize file paths and names
+
