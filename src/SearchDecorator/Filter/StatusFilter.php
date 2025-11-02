@@ -26,7 +26,6 @@ class StatusFilter extends SearchAbstract
             return [];
         }
 
-        // Handle both array input and comma-separated string
         $values = is_array($value) ? $value : explode(',', (string) $value);
 
         $includeQueries = [];
@@ -40,25 +39,21 @@ class StatusFilter extends SearchAbstract
             }
 
             if (str_starts_with($val, '!')) {
-                // Exclude status
                 $status = substr($val, 1);
                 if (!empty($status)) {
                     $excludeQueries[] = new Term(['filterStatus' => $status]);
                 }
             } else {
-                // Include status
                 $includeQueries[] = new Term(['filterStatus' => $val]);
             }
         }
 
-        // If no filters, return empty
         if (empty($includeQueries) && empty($excludeQueries)) {
             return [];
         }
 
         $bool = new BoolQuery();
 
-        // Add include filters (OR between them)
         if (!empty($includeQueries)) {
             $includeBool = new BoolQuery();
             foreach ($includeQueries as $includeQuery) {
@@ -67,7 +62,6 @@ class StatusFilter extends SearchAbstract
             $bool->addMust($includeBool);
         }
 
-        // Add exclude filters (AND between them)
         foreach ($excludeQueries as $excludeQuery) {
             $bool->addMustNot($excludeQuery);
         }

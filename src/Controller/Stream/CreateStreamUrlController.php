@@ -40,7 +40,6 @@ class CreateStreamUrlController extends AbstractController
             ),
         );
 
-        // Return the complete stream object so frontend doesn't need to refresh
         $stream = $this->streamRepository->find($createStreamModel->streamId);
 
         return new JsonResponse([

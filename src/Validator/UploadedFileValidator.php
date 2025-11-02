@@ -51,22 +51,18 @@ class UploadedFileValidator
         int $maxSize,
         string $fileType,
     ): void {
-        // Check if file was uploaded successfully
         if (!$file->isValid()) {
             throw InvalidFileException::uploadFailed($file->getErrorMessage());
         }
 
-        // Validate mime type
         if (!in_array($file->getMimeType(), $allowedMimeTypes, true)) {
             throw InvalidFileException::invalidMimeType($file->getMimeType(), $allowedMimeTypes);
         }
 
-        // Validate file size
         if ($file->getSize() > $maxSize) {
             throw InvalidFileException::fileTooLarge($file->getSize(), $maxSize);
         }
 
-        // Use Symfony validator for additional checks
         $constraints = new File([
             'maxSize' => $maxSize,
             'mimeTypes' => $allowedMimeTypes,

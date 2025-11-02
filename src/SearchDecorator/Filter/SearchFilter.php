@@ -26,7 +26,6 @@ class SearchFilter extends SearchAbstract
             return [];
         }
 
-        // Handle both array input and comma-separated string
         $values = is_array($value) ? $value : explode(',', (string) $value);
 
         $searchString = trim((string) $values[0]);
@@ -37,7 +36,6 @@ class SearchFilter extends SearchAbstract
 
         $bool = new BoolQuery();
 
-        // Fields to search in
         $searchFields = [
             'originalFileName.keyword',
             'fileName.keyword',
@@ -45,9 +43,7 @@ class SearchFilter extends SearchAbstract
             'fileName',
         ];
 
-        // Build wildcard queries
         if (str_contains($searchString, ' ')) {
-            // Multi-word search: each word must be present
             $words = explode(' ', $searchString);
             foreach ($words as $word) {
                 if (empty($word)) {
@@ -61,7 +57,6 @@ class SearchFilter extends SearchAbstract
                 $bool->addMust($wordBool);
             }
         } else {
-            // Single word search
             foreach ($searchFields as $field) {
                 $wildcard = new Wildcard($field, '*'.strtolower($searchString).'*');
                 $bool->addShould($wildcard);

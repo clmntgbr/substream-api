@@ -105,7 +105,6 @@ class DispatchResumeVideoCommand extends Command
         $this->uploadResizeFile($stream);
         $this->uploadEmbedFile($stream);
 
-        // Console commands don't have doctrine_transaction middleware, need explicit flush
         $this->streamRepository->saveAndFlush($stream);
 
         return $stream;

@@ -13,7 +13,6 @@ class CodeChallenge
         $codeVerifier = self::generateVerifier();
         $codeChallengeMethod = self::generateMethod();
 
-        // Generate code challenge using S256 method (RFC 7636)
         $codeChallenge = base64_encode(hash('sha256', $codeVerifier, true));
         $codeChallenge = strtr($codeChallenge, '+/', '-_');
         $codeChallenge = rtrim($codeChallenge, '=');

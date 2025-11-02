@@ -28,7 +28,6 @@ class DateFilter extends SearchAbstract
         $before = $value['before'] ?? null;
         $after = $value['after'] ?? null;
 
-        // No filters provided
         if (null === $before && null === $after) {
             return [];
         }
@@ -60,14 +59,11 @@ class DateFilter extends SearchAbstract
 
     private function parseDate(string $date): ?string
     {
-        // Try to parse as ISO 8601 date (e.g., 2025-10-26T21:34:25+00:00)
-        // Fix: Replace space with + for timezone (URL decoding issue)
         $date = str_replace(' ', '+', $date);
 
         try {
             $dateTime = new \DateTime($date);
 
-            // Return in UTC format for Elasticsearch
             return $dateTime->format('Y-m-d\TH:i:s\Z');
         } catch (\Exception $e) {
             return null;

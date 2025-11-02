@@ -16,7 +16,6 @@ class ValidationErrorNormalizer implements NormalizerInterface
 
     public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
-        // Check if the object has getViolations method (ConstraintViolationListAwareExceptionInterface)
         $violations = null;
         if (method_exists($object, 'getConstraintViolationList')) {
             $violations = $object->getConstraintViolationList();
@@ -24,7 +23,6 @@ class ValidationErrorNormalizer implements NormalizerInterface
 
         $data = $this->decorated->normalize($object, $format, $context);
 
-        // If we have violations from the exception object, use them
         if (null !== $violations && $violations instanceof ConstraintViolationListInterface && count($violations) > 0) {
             $errors = [];
 
@@ -48,7 +46,6 @@ class ValidationErrorNormalizer implements NormalizerInterface
             return $data;
         }
 
-        // Fallback: Check if we have 'violations' field in the normalized response
         if (isset($data['violations']) && is_array($data['violations'])) {
             $errors = [];
 

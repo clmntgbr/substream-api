@@ -25,7 +25,6 @@ class ElasticsearchRefreshService
         try {
             $this->streamIndex->refresh();
         } catch (\Exception $e) {
-            // Don't fail the request if refresh fails, just log it
             $this->logger->warning('Failed to refresh Elasticsearch stream index', [
                 'error' => $e->getMessage(),
             ]);
@@ -40,7 +39,6 @@ class ElasticsearchRefreshService
         try {
             $this->notificationIndex->refresh();
         } catch (\Exception $e) {
-            // Don't fail the request if refresh fails, just log it
             $this->logger->warning('Failed to refresh Elasticsearch notification index', [
                 'error' => $e->getMessage(),
             ]);

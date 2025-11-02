@@ -36,7 +36,6 @@ class CreateStreamVideoController extends AbstractController
         #[CurrentUser] User $user,
         #[MapRequestPayload()] CreateStreamVideoPayload $payload,
     ): JsonResponse {
-        // Validate files before processing
         $this->fileValidator->validateVideo($video);
         $this->fileValidator->validateThumbnail($thumbnail);
 
@@ -50,7 +49,6 @@ class CreateStreamVideoController extends AbstractController
             ),
         );
 
-        // Return the complete stream object so frontend doesn't need to refresh
         $stream = $this->streamRepository->find($createStreamModel->streamId);
 
         return new JsonResponse([

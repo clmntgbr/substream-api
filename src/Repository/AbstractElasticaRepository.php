@@ -69,7 +69,6 @@ class AbstractElasticaRepository extends Repository
                 /** @var array<string, mixed> $qArray */
                 $qArray = $q->toArray();
 
-                // Gérer les wildcards génériques
                 if (isset($qArray['wildcard']) && is_array($qArray['wildcard'])) {
                     foreach ($qArray['wildcard'] as $field => $wildcardData) {
                         if (is_array($wildcardData) && isset($wildcardData['value'])) {

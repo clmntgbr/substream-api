@@ -47,7 +47,6 @@ class GetSubtitleSrtStreamController extends AbstractController
 
             return $response;
         } catch (\Exception $e) {
-            // Exception will be caught by BusinessExceptionListener
             throw $e;
         }
     }

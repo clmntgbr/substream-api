@@ -32,21 +32,18 @@ class BusinessExceptionListener implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        // Handle BusinessException
         if ($exception instanceof BusinessException) {
             $this->handleBusinessException($exception, $event);
 
             return;
         }
 
-        // Handle HttpException (from Symfony)
         if ($exception instanceof HttpException) {
             $this->handleHttpException($exception, $event);
 
             return;
         }
 
-        // Handle other exceptions (500 errors)
         $this->handleGenericException($exception, $event);
     }
 
@@ -101,7 +98,6 @@ class BusinessExceptionListener implements EventSubscriberInterface
             'trace' => $exception->getTraceAsString(),
         ]);
 
-        // In production, don't leak internal error details
         $isProduction = 'prod' === $this->env;
         $errorKey = $isProduction ? 'error.server.internal' : 'error.server.internal_debug';
         $message = $isProduction

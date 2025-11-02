@@ -24,16 +24,13 @@ class ValidationExceptionListener implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        // Check if it's a validation exception (422 status code)
         if (!$exception instanceof HttpException || Response::HTTP_UNPROCESSABLE_ENTITY !== $exception->getStatusCode()) {
             return;
         }
 
-        // Try to get the previous exception which might contain the validation violations
         $previousException = $exception->getPrevious();
         $errors = [];
 
-        // Check if the previous exception has validation violations
         if ($previousException && method_exists($previousException, 'getViolations')) {
             $violations = $previousException->getViolations();
 
@@ -48,7 +45,6 @@ class ValidationExceptionListener implements EventSubscriberInterface
                 $errors[$propertyPath][] = $message;
             }
         } else {
-            // Fallback: Parse the concatenated error message
             $message = $exception->getMessage();
 
             if (false !== strpos($message, "\n")) {
@@ -69,11 +65,10 @@ class ValidationExceptionListener implements EventSubscriberInterface
                     $errors[$fieldName][] = $line;
                 }
             } else {
-                return; // Not a validation error, let other handlers manage it
+                return;
             }
         }
 
-        // Create a structured error response
         $response = new JsonResponse([
             '@context' => '/api/contexts/Error',
             '@id' => '/api/errors/422',
@@ -90,10 +85,9 @@ class ValidationExceptionListener implements EventSubscriberInterface
 
     private function extractFieldName(string $message): string
     {
-        // Common patterns for field names in error messages
         $patterns = [
-            '/^([a-z][a-zA-Z0-9]*)\s*:/i',  // "fieldName: error message"
-            '/^([a-z][a-zA-Z0-9]*)\s+/i',    // "fieldName error message"
+            '/^([a-z][a-zA-Z0-9]*)\s*:/i',
+            '/^([a-z][a-zA-Z0-9]*)\s+/i',
         ];
 
         foreach ($patterns as $pattern) {
@@ -102,7 +96,6 @@ class ValidationExceptionListener implements EventSubscriberInterface
             }
         }
 
-        // Check for specific error messages and map them to fields
         if (false !== stripos($message, 'email')) {
             return 'email';
         }
