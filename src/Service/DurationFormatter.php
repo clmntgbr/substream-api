@@ -6,7 +6,7 @@ namespace App\Service;
 
 class DurationFormatter
 {
-    public function format(?int $milliseconds): ?string
+    public static function format(?int $milliseconds): ?string
     {
         if (null === $milliseconds) {
             return null;
@@ -24,7 +24,7 @@ class DurationFormatter
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 
-    public function formatFromSeconds(?int $seconds): ?string
+    public static function formatFromSeconds(?int $seconds): ?string
     {
         if (null === $seconds) {
             return null;

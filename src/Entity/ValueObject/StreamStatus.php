@@ -103,4 +103,39 @@ readonly class StreamStatus
     {
         return in_array(StreamStatusEnum::RESUMING_COMPLETED->value, $this->statuses) && null !== $resumeFileName;
     }
+
+    public function getFilterStatus(): ?string
+    {
+        return match ($this->status) {
+            StreamStatusEnum::CREATED->value => 'created',
+            StreamStatusEnum::UPLOADING->value => 'uploading',
+            StreamStatusEnum::UPLOADED->value => 'uploaded',
+            StreamStatusEnum::EXTRACTING_SOUND->value => 'extracting_sound',
+            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value => 'extracting_sound_completed',
+            StreamStatusEnum::GENERATING_SUBTITLE->value => 'generating_subtitle',
+            StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value => 'generating_subtitle_completed',
+            StreamStatusEnum::TRANSFORMING_SUBTITLE->value => 'transforming_subtitle',
+            StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED->value => 'transforming_subtitle_completed',
+            StreamStatusEnum::RESIZING_VIDEO->value => 'resizing_video',
+            StreamStatusEnum::RESIZING_VIDEO_COMPLETED->value => 'resizing_video_completed',
+            StreamStatusEnum::EMBEDDING_VIDEO->value => 'embedding_video',
+            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED->value => 'embedding_video_completed',
+            StreamStatusEnum::CHUNKING_VIDEO->value => 'chunking_video',
+            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value => 'chunking_video_completed',
+            StreamStatusEnum::RESUMING->value => 'resuming',
+            StreamStatusEnum::RESUMING_COMPLETED->value => 'resuming_completed',
+            StreamStatusEnum::COMPLETED->value => 'completed',
+            StreamStatusEnum::DELETED->value => 'deleted',
+
+            StreamStatusEnum::FAILED->value => 'failed',
+            StreamStatusEnum::UPLOAD_FAILED->value => 'failed',
+            StreamStatusEnum::EXTRACTING_SOUND_FAILED->value => 'failed',
+            StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value => 'failed',
+            StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value => 'failed',
+            StreamStatusEnum::RESIZING_VIDEO_FAILED->value => 'failed',
+            StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value => 'failed',
+            StreamStatusEnum::CHUNKING_VIDEO_FAILED->value => 'failed',
+            StreamStatusEnum::RESUMING_FAILED->value => 'failed',
+        };
+    }
 }

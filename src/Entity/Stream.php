@@ -19,6 +19,7 @@ use App\Entity\Trait\UuidTrait;
 use App\Entity\ValueObject\StreamStatus;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
+use App\Service\DurationFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -34,6 +35,10 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new Get(
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['stream:read']],
+            security: 'is_granted("ROLE_ADMIN")',
         ),
         new Get(
             uriTemplate: '/streams/{id}/delete',
@@ -454,7 +459,7 @@ class Stream
     #[SerializedName('processingTime')]
     public function getProcessingTimeFormatted(): ?string
     {
-        return $this->getDurationFormatter()->format($this->getProcessingTimeInMilliseconds());
+        return DurationFormatter::format($this->getProcessingTimeInMilliseconds());
     }
 
     public function setOption(Option $option): self
@@ -494,24 +499,19 @@ class Stream
 
     public function getCleanableFiles(): array
     {
-        $audioFiles = [];
-        foreach ($this->getAudioFiles() as $audioFile) {
-            $audioFiles[] = 'audios/'.$audioFile;
-        }
-
-        return [
-            ...$audioFiles,
-            'subtitles/'.$this->getSubtitleAssFileName(),
+        return (new \App\Service\StreamFileCleaner())->getCleanableFiles(
+            $this->getAudioFiles(),
+            $this->getSubtitleAssFileName(),
             $this->getResizeFileName(),
-            $this->getEmbedFileName(),
-        ];
+            $this->getEmbedFileName()
+        );
     }
 
     #[Groups(['stream:read'])]
     #[SerializedName('duration')]
     public function getDuration(): ?string
     {
-        return $this->getDurationFormatter()->formatFromSeconds($this->duration);
+        return DurationFormatter::formatFromSeconds($this->duration);
     }
 
     public function getThumbnailUrl(): ?string
@@ -529,37 +529,7 @@ class Stream
     #[Groups(['stream:search'])]
     public function getFilterStatus(): ?string
     {
-        return match ($this->status) {
-            StreamStatusEnum::CREATED->value => 'created',
-            StreamStatusEnum::UPLOADING->value => 'uploading',
-            StreamStatusEnum::UPLOADED->value => 'uploaded',
-            StreamStatusEnum::EXTRACTING_SOUND->value => 'extracting_sound',
-            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value => 'extracting_sound_completed',
-            StreamStatusEnum::GENERATING_SUBTITLE->value => 'generating_subtitle',
-            StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value => 'generating_subtitle_completed',
-            StreamStatusEnum::TRANSFORMING_SUBTITLE->value => 'transforming_subtitle',
-            StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED->value => 'transforming_subtitle_completed',
-            StreamStatusEnum::RESIZING_VIDEO->value => 'resizing_video',
-            StreamStatusEnum::RESIZING_VIDEO_COMPLETED->value => 'resizing_video_completed',
-            StreamStatusEnum::EMBEDDING_VIDEO->value => 'embedding_video',
-            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED->value => 'embedding_video_completed',
-            StreamStatusEnum::CHUNKING_VIDEO->value => 'chunking_video',
-            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value => 'chunking_video_completed',
-            StreamStatusEnum::RESUMING->value => 'resuming',
-            StreamStatusEnum::RESUMING_COMPLETED->value => 'resuming_completed',
-            StreamStatusEnum::COMPLETED->value => 'completed',
-            StreamStatusEnum::DELETED->value => 'deleted',
-
-            StreamStatusEnum::FAILED->value => 'failed',
-            StreamStatusEnum::UPLOAD_FAILED->value => 'failed',
-            StreamStatusEnum::EXTRACTING_SOUND_FAILED->value => 'failed',
-            StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value => 'failed',
-            StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value => 'failed',
-            StreamStatusEnum::RESIZING_VIDEO_FAILED->value => 'failed',
-            StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value => 'failed',
-            StreamStatusEnum::CHUNKING_VIDEO_FAILED->value => 'failed',
-            StreamStatusEnum::RESUMING_FAILED->value => 'failed',
-        };
+        return $this->getStatusVO()->getFilterStatus();
     }
 
     #[Groups(['stream:search', 'elastica'])]
@@ -571,10 +541,5 @@ class Stream
     private function getStatusVO(): StreamStatus
     {
         return new StreamStatus($this->status, $this->statuses);
-    }
-
-    private function getDurationFormatter(): \App\Service\DurationFormatter
-    {
-        return new \App\Service\DurationFormatter();
     }
 }
