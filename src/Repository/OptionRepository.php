@@ -12,8 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method Option|null findOneBy(array $criteria, ?array $orderBy = null)
  * @method Option[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
- * @method Option      find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method Option      findOneBy(array $criteria, ?array $orderBy = null)
+ * @method Option|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
  * @method Option[]    findAll()
  */
 class OptionRepository extends AbstractRepository

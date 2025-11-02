@@ -15,11 +15,17 @@ class JsonMessageSerializer implements SerializerInterface
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $encodedEnvelope
+     */
     public function decode(array $encodedEnvelope): Envelope
     {
         throw new \RuntimeException('Decode not implemented');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function encode(Envelope $envelope): array
     {
         $message = $envelope->getMessage();

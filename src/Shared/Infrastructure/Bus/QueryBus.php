@@ -14,6 +14,9 @@ class QueryBus implements QueryBusInterface
     {
     }
 
+    /**
+     * @param array<int, \Symfony\Component\Messenger\Stamp\StampInterface> $stamps
+     */
     public function dispatch(object $query, array $stamps = []): mixed
     {
         $envelope = $this->queryBus->dispatch($query);

@@ -16,8 +16,7 @@ use Symfony\Component\Uid\Uuid;
  *
  * @method User|null findOneBy(array $criteria, ?array $orderBy = null)
  * @method User[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
- * @method User      find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method User      findOneBy(array $criteria, ?array $orderBy = null)
+ * @method User|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
  * @method User[]    findAll()
  */
 class UserRepository extends AbstractRepository implements PasswordUpgraderInterface

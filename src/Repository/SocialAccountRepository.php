@@ -12,8 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method SocialAccount|null findOneBy(array $criteria, ?array $orderBy = null)
  * @method SocialAccount[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
- * @method SocialAccount      find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method SocialAccount      findOneBy(array $criteria, ?array $orderBy = null)
+ * @method SocialAccount|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
  * @method SocialAccount[]    findAll()
  */
 class SocialAccountRepository extends AbstractRepository

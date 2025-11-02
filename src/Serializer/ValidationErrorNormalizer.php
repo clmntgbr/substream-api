@@ -14,6 +14,11 @@ class ValidationErrorNormalizer implements NormalizerInterface
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $context
+     *
+     * @return array<string, mixed>|string|int|float|bool|\ArrayObject|null
+     */
     public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         $violations = null;
@@ -68,6 +73,9 @@ class ValidationErrorNormalizer implements NormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $this->decorated->supportsNormalization($data, $format, $context);

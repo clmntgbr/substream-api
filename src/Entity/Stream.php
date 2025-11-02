@@ -150,6 +150,9 @@ class Stream
     #[Groups(['option:read'])]
     private Option $option;
 
+    /**
+     * @var Collection<int, Task>
+     */
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'stream')]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $tasks;

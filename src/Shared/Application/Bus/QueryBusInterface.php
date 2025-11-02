@@ -6,5 +6,8 @@ namespace App\Shared\Application\Bus;
 
 interface QueryBusInterface
 {
+    /**
+     * @param array<int, \Symfony\Component\Messenger\Stamp\StampInterface> $stamps
+     */
     public function dispatch(object $message, array $stamps = []): mixed;
 }

@@ -18,6 +18,9 @@ class Response extends JsonResponse
         ], $status);
     }
 
+    /**
+     * @param array<string, mixed>|null $details
+     */
     public static function errorResponse(string $message = 'Error', int $code = 0, ?array $details = null, int $status = ResponseAlias::HTTP_BAD_REQUEST): JsonResponse
     {
         $response = [

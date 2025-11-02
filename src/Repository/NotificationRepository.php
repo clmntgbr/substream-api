@@ -12,8 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method Notification|null findOneBy(array $criteria, ?array $orderBy = null)
  * @method Notification[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
- * @method Notification      find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method Notification      findOneBy(array $criteria, ?array $orderBy = null)
+ * @method Notification|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
  * @method Notification[]    findAll()
  */
 class NotificationRepository extends AbstractRepository

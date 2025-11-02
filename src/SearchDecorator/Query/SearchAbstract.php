@@ -11,7 +11,7 @@ abstract class SearchAbstract implements SearchInterface
 {
     protected SearchInterface $query;
     /**
-     * @var array<string|int|float|string[]>
+     * @var array<string, mixed>
      */
     protected array $request;
 
@@ -29,17 +29,15 @@ abstract class SearchAbstract implements SearchInterface
         $this->request = $query->getRequest();
     }
 
-    public function getValue(): array|string|int|float|bool|null
+    public function getValue(): mixed
     {
-        return $this->request[$this->getName()];
+        return $this->request[$this->getName()] ?? null;
     }
 
     abstract public static function getName(): string;
 
     /**
-     * Returns the list of all queries.
-     *
-     * @return array{ SearchInterface }|array{}
+     * @return array<string, array{value:mixed, query:array<Param>}>
      */
     public function getQueries(): array
     {
@@ -66,7 +64,7 @@ abstract class SearchAbstract implements SearchInterface
     }
 
     /**
-     * @return array<string|int|float|string[]>
+     * @return array<string, mixed>
      */
     public function getRequest(): array
     {

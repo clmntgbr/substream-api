@@ -28,6 +28,9 @@ class LinkedInOAuthService implements OAuthServiceInterface
     ) {
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getScopes(): array
     {
         return [

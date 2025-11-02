@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\SearchDecorator\Query;
 
+use Elastica\Param;
+
 class Search extends SearchAbstract
 {
     /**
-     * @var array<string, string>
-     */
-    protected array $request;
-
-    /**
-     * @param array<string, string> $request
+     * @param array<string, mixed> $request
      */
     public function __construct(array $request)
     {
@@ -21,7 +18,7 @@ class Search extends SearchAbstract
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array{value:mixed, query:array<Param>}>
      */
     public function getQueries(): array
     {
@@ -29,15 +26,7 @@ class Search extends SearchAbstract
     }
 
     /**
-     * @return array<string, string>
-     */
-    public function getValues(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function getRequest(): array
     {
@@ -49,6 +38,9 @@ class Search extends SearchAbstract
         return 'search';
     }
 
+    /**
+     * @return array<string, array{value:mixed, query:array<Param>}>
+     */
     public function getOptionalQueries(): array
     {
         return [];

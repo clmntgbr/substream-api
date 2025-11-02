@@ -22,6 +22,9 @@ class SearchDecorator
 
     private SearchAbstract $search;
 
+    /**
+     * @param array<string, mixed> $request
+     */
     public function __construct(array $request)
     {
         $this->search = new Query\Search($request);

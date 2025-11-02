@@ -13,8 +13,7 @@ use Symfony\Component\Uid\Uuid;
  *
  * @method Task|null findOneBy(array $criteria, ?array $orderBy = null)
  * @method Task[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
- * @method Task      find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method Task      findOneBy(array $criteria, ?array $orderBy = null)
+ * @method Task|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
  * @method Task[]    findAll()
  */
 class TaskRepository extends AbstractRepository

@@ -9,6 +9,9 @@ use App\Entity\User;
 
 interface OAuthServiceInterface
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function connect(): array;
 
     public function callback(ExchangeTokenPayloadInterface $payload): User;
