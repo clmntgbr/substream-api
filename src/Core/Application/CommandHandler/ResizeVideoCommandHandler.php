@@ -72,7 +72,7 @@ class ResizeVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function markStreamAsFailed(Stream $stream): void
     {
-        $stream->markAsResizingVideoFailed();
+        $stream->markAsFailed(StreamStatusEnum::RESIZING_VIDEO_FAILED);
     }
 
     protected function getCommandClass(): string

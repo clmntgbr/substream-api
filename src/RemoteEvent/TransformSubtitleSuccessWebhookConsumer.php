@@ -8,6 +8,7 @@ use App\Core\Application\Command\ResizeVideoCommand;
 use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\TransformSubtitleSuccess;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -59,7 +60,7 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsTransformingSubtitleFailed();
+            $stream->markAsFailed(StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

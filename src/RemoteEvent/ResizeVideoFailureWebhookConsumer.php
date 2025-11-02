@@ -7,6 +7,7 @@ namespace App\RemoteEvent;
 use App\Core\Application\Command\UpdateTaskFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ResizeVideoFailure;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -52,7 +53,7 @@ final class ResizeVideoFailureWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsResizingVideoFailed();
+            $stream->markAsFailed(StreamStatusEnum::RESIZING_VIDEO_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

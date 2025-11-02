@@ -16,6 +16,7 @@ use App\Controller\Stream\GetResumeVideoStreamController;
 use App\Controller\Stream\GetSubtitleSrtStreamController;
 use App\Controller\Stream\SearchStreamController;
 use App\Entity\Trait\UuidTrait;
+use App\Entity\ValueObject\StreamStatus;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -181,50 +182,21 @@ class Stream
     #[SerializedName('isProcessing')]
     public function isProcessing(): bool
     {
-        return in_array($this->status, [
-            StreamStatusEnum::UPLOADED->value,
-            StreamStatusEnum::CREATED->value,
-            StreamStatusEnum::UPLOADING->value,
-            StreamStatusEnum::EXTRACTING_SOUND->value,
-            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED->value,
-            StreamStatusEnum::GENERATING_SUBTITLE->value,
-            StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value,
-            StreamStatusEnum::TRANSFORMING_SUBTITLE->value,
-            StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED->value,
-            StreamStatusEnum::RESIZING_VIDEO->value,
-            StreamStatusEnum::RESIZING_VIDEO_COMPLETED->value,
-            StreamStatusEnum::EMBEDDING_VIDEO->value,
-            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED->value,
-            StreamStatusEnum::CHUNKING_VIDEO->value,
-            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value,
-            StreamStatusEnum::RESUMING->value,
-            StreamStatusEnum::RESUMING_COMPLETED->value,
-        ]);
+        return $this->getStatusVO()->isProcessing();
     }
 
     #[Groups(['stream:read'])]
     #[SerializedName('isCompleted')]
     public function isCompleted(): bool
     {
-        return $this->status === StreamStatusEnum::COMPLETED->value;
+        return $this->getStatusVO()->isCompleted();
     }
 
     #[Groups(['stream:read'])]
     #[SerializedName('isFailed')]
     public function isFailed(): bool
     {
-        return in_array($this->status, [
-            StreamStatusEnum::FAILED->value,
-            StreamStatusEnum::UPLOAD_FAILED->value,
-            StreamStatusEnum::EXTRACTING_SOUND_FAILED->value,
-            StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value,
-            StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value,
-            StreamStatusEnum::RESIZING_VIDEO_FAILED->value,
-            StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value,
-            StreamStatusEnum::CHUNKING_VIDEO_FAILED->value,
-            StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value,
-            StreamStatusEnum::RESUMING_FAILED->value,
-        ]);
+        return $this->getStatusVO()->isFailed();
     }
 
     #[Groups(['stream:read'])]
@@ -294,82 +266,10 @@ class Stream
         return $this;
     }
 
-    public function markAsUploadFailed(): self
+    public function markAsFailed(StreamStatusEnum $status): self
     {
-        $this->status = StreamStatusEnum::UPLOAD_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::UPLOAD_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsExtractSoundFailed(): self
-    {
-        $this->status = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsGenerateSubtitleFailed(): self
-    {
-        $this->status = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsTransformingSubtitleFailed(): self
-    {
-        $this->status = StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsResizingVideoFailed(): self
-    {
-        $this->status = StreamStatusEnum::RESIZING_VIDEO_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::RESIZING_VIDEO_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsGeneratingSubtitleFailed(): self
-    {
-        $this->status = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::GENERATING_SUBTITLE_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsChunkingVideoFailed(): self
-    {
-        $this->status = StreamStatusEnum::CHUNKING_VIDEO_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::CHUNKING_VIDEO_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsResumingFailed(): self
-    {
-        $this->status = StreamStatusEnum::RESUMING_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::RESUMING_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsEmbeddingVideoFailed(): self
-    {
-        $this->status = StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value;
-
-        return $this;
-    }
-
-    public function markAsExtractingSoundFailed(): self
-    {
-        $this->status = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
-        $this->statuses[] = StreamStatusEnum::EXTRACTING_SOUND_FAILED->value;
+        $this->status = $status->value;
+        $this->statuses[] = $status->value;
 
         return $this;
     }
@@ -554,17 +454,7 @@ class Stream
     #[SerializedName('processingTime')]
     public function getProcessingTimeFormatted(): ?string
     {
-        $processingTime = $this->getProcessingTimeInMilliseconds();
-        $totalSeconds = (int) floor($processingTime / 1000);
-        $hours = (int) floor($totalSeconds / 3600);
-        $minutes = (int) floor(($totalSeconds % 3600) / 60);
-        $seconds = $totalSeconds % 60;
-
-        if (0 === $hours && 0 === $minutes && 0 === $seconds) {
-            return null;
-        }
-
-        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+        return $this->getDurationFormatter()->format($this->getProcessingTimeInMilliseconds());
     }
 
     public function setOption(Option $option): self
@@ -578,55 +468,28 @@ class Stream
     #[SerializedName('progress')]
     public function getProgress(): int
     {
-        $statusEnum = StreamStatusEnum::from($this->status);
-
-        if (str_contains($this->status, 'failed')) {
-            return 100;
-        }
-
-        return match ($statusEnum) {
-            StreamStatusEnum::CREATED => 0,
-            StreamStatusEnum::UPLOADING => 5,
-            StreamStatusEnum::UPLOADED => 10,
-            StreamStatusEnum::EXTRACTING_SOUND => 20,
-            StreamStatusEnum::EXTRACTING_SOUND_COMPLETED => 30,
-            StreamStatusEnum::GENERATING_SUBTITLE => 40,
-            StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED => 50,
-            StreamStatusEnum::TRANSFORMING_SUBTITLE => 60,
-            StreamStatusEnum::TRANSFORMING_SUBTITLE_COMPLETED => 70,
-            StreamStatusEnum::RESIZING_VIDEO => 75,
-            StreamStatusEnum::RESIZING_VIDEO_COMPLETED => 80,
-            StreamStatusEnum::EMBEDDING_VIDEO => 85,
-            StreamStatusEnum::EMBEDDING_VIDEO_COMPLETED => 88,
-            StreamStatusEnum::CHUNKING_VIDEO => 92,
-            StreamStatusEnum::CHUNKING_VIDEO_COMPLETED => 94,
-            StreamStatusEnum::RESUMING => 96,
-            StreamStatusEnum::RESUMING_COMPLETED => 98,
-            StreamStatusEnum::COMPLETED,
-            StreamStatusEnum::DELETED => 100,
-            default => 0,
-        };
+        return $this->getStatusVO()->getProgress();
     }
 
     #[Groups(['stream:read'])]
     #[SerializedName('isDownloadable')]
     public function isDownloadable(): bool
     {
-        return in_array(StreamStatusEnum::COMPLETED->value, $this->statuses);
+        return $this->getStatusVO()->isDownloadable();
     }
 
     #[Groups(['stream:read'])]
     #[SerializedName('isSrtDownloadable')]
     public function isSrtDownloadable(): bool
     {
-        return in_array(StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value, $this->statuses) && null !== $this->getSubtitleSrtFileName();
+        return $this->getStatusVO()->isSrtDownloadable($this->getSubtitleSrtFileName());
     }
 
     #[Groups(['stream:read'])]
     #[SerializedName('isResumeDownloadable')]
     public function isResumeDownloadable(): bool
     {
-        return in_array(StreamStatusEnum::RESUMING_COMPLETED->value, $this->statuses) && null !== $this->getResumeFileName();
+        return $this->getStatusVO()->isResumeDownloadable($this->getResumeFileName());
     }
 
     public function getCleanableFiles(): array
@@ -648,15 +511,7 @@ class Stream
     #[SerializedName('duration')]
     public function getDuration(): ?string
     {
-        if (null === $this->duration) {
-            return null;
-        }
-
-        $hours = floor($this->duration / 3600);
-        $minutes = floor(($this->duration % 3600) / 60);
-        $seconds = $this->duration % 60;
-
-        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+        return $this->getDurationFormatter()->formatFromSeconds($this->duration);
     }
 
     public function getThumbnailUrl(): ?string
@@ -711,5 +566,15 @@ class Stream
     public function getUserUuid(): string
     {
         return (string) $this->user->getId();
+    }
+
+    private function getStatusVO(): StreamStatus
+    {
+        return new StreamStatus($this->status, $this->statuses);
+    }
+
+    private function getDurationFormatter(): \App\Service\DurationFormatter
+    {
+        return new \App\Service\DurationFormatter();
     }
 }

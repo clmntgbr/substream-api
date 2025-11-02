@@ -11,6 +11,7 @@ use App\Core\Application\Message\GenerateSubtitleMessage;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Entity\Stream;
 use App\Entity\Task;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
@@ -80,7 +81,7 @@ class GenerateSubtitleCommandHandler
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $stream->markAsGeneratingSubtitleFailed();
+            $stream->markAsFailed(StreamStatusEnum::GENERATING_SUBTITLE_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         } catch (\Throwable $e) {
             $this->logger->error('Unexpected error during subtitle generation', [
@@ -90,7 +91,7 @@ class GenerateSubtitleCommandHandler
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $stream->markAsGeneratingSubtitleFailed();
+            $stream->markAsFailed(StreamStatusEnum::GENERATING_SUBTITLE_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, GenerateSubtitleCommand::class);
@@ -128,7 +129,7 @@ class GenerateSubtitleCommandHandler
                 'error' => $e->getMessage(),
             ]);
 
-            $stream->markAsGenerateSubtitleFailed();
+            $stream->markAsFailed(StreamStatusEnum::GENERATING_SUBTITLE_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         } catch (\Throwable $e) {
             $this->logger->error('Unexpected error in mock subtitle generation', [
@@ -137,7 +138,7 @@ class GenerateSubtitleCommandHandler
                 'exception_class' => $e::class,
             ]);
 
-            $stream->markAsGenerateSubtitleFailed();
+            $stream->markAsFailed(StreamStatusEnum::GENERATING_SUBTITLE_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

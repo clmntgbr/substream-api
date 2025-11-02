@@ -8,6 +8,7 @@ use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\GetVideoSuccess;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -64,7 +65,7 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsUploadFailed();
+            $stream->markAsFailed(StreamStatusEnum::UPLOAD_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

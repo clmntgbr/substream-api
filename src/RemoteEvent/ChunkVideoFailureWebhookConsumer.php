@@ -7,6 +7,7 @@ namespace App\RemoteEvent;
 use App\Core\Application\Command\UpdateTaskFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ChunkVideoFailure;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
@@ -54,7 +55,7 @@ final class ChunkVideoFailureWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsChunkingVideoFailed();
+            $stream->markAsFailed(StreamStatusEnum::CHUNKING_VIDEO_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

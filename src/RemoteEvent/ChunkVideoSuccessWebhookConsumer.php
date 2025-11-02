@@ -10,6 +10,7 @@ use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ChunkVideoSuccess;
 use App\Entity\Stream;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -58,7 +59,7 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsChunkingVideoFailed();
+            $stream->markAsFailed(StreamStatusEnum::CHUNKING_VIDEO_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

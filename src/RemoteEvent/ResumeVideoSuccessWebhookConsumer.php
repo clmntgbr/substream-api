@@ -8,6 +8,7 @@ use App\Core\Application\Command\StreamSuccessCommand;
 use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ResumeVideoSuccess;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -58,7 +59,7 @@ final class ResumeVideoSuccessWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsResumingFailed();
+            $stream->markAsFailed(StreamStatusEnum::RESUMING_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

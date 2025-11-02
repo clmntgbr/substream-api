@@ -8,6 +8,7 @@ use App\Core\Application\Command\GenerateSubtitleCommand;
 use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ExtractSoundSuccess;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -61,7 +62,7 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsExtractSoundFailed();
+            $stream->markAsFailed(StreamStatusEnum::EXTRACTING_SOUND_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

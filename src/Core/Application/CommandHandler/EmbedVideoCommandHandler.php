@@ -72,7 +72,7 @@ class EmbedVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function markStreamAsFailed(Stream $stream): void
     {
-        $stream->markAsEmbeddingVideoFailed();
+        $stream->markAsFailed(StreamStatusEnum::EMBEDDING_VIDEO_FAILED);
     }
 
     protected function getCommandClass(): string

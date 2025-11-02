@@ -8,6 +8,7 @@ use App\Core\Application\Command\ChunkVideoCommand;
 use App\Core\Application\Message\ChunkVideoMessage;
 use App\Entity\Stream;
 use App\Entity\Task;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
@@ -72,7 +73,7 @@ class ChunkVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function markStreamAsFailed(Stream $stream): void
     {
-        $stream->markAsChunkingVideoFailed();
+        $stream->markAsFailed(StreamStatusEnum::CHUNKING_VIDEO_FAILED);
     }
 
     protected function getCommandClass(): string

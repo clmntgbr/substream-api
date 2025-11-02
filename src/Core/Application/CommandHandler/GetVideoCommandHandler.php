@@ -8,6 +8,7 @@ use App\Core\Application\Command\GetVideoCommand;
 use App\Core\Application\Message\GetVideoMessage;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Entity\Task;
+use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Service\PublishServiceInterface;
@@ -63,7 +64,7 @@ class GetVideoCommandHandler
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $stream->markAsUploadFailed();
+            $stream->markAsFailed(StreamStatusEnum::UPLOAD_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         } finally {
             $this->publishService->refreshStream($stream, GetVideoCommand::class);

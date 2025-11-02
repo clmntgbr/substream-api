@@ -7,6 +7,7 @@ namespace App\RemoteEvent;
 use App\Core\Application\Command\UpdateTaskFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\GetVideoFailure;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -54,7 +55,7 @@ final class GetVideoFailureWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsUploadFailed();
+            $stream->markAsFailed(StreamStatusEnum::UPLOAD_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

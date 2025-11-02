@@ -70,7 +70,7 @@ class ResumeVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function markStreamAsFailed(Stream $stream): void
     {
-        $stream->markAsResumingFailed();
+        $stream->markAsFailed(StreamStatusEnum::RESUMING_FAILED);
     }
 
     protected function getCommandClass(): string

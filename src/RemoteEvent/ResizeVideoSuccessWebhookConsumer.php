@@ -8,6 +8,7 @@ use App\Core\Application\Command\EmbedVideoCommand;
 use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Dto\Webhook\ResizeVideoSuccess;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -60,7 +61,7 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),
             ]);
-            $stream->markAsResizingVideoFailed();
+            $stream->markAsFailed(StreamStatusEnum::RESIZING_VIDEO_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         }
 

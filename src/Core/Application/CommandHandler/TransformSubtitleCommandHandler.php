@@ -72,7 +72,7 @@ class TransformSubtitleCommandHandler extends AbstractStreamWorkflowCommandHandl
 
     protected function markStreamAsFailed(Stream $stream): void
     {
-        $stream->markAsTransformingSubtitleFailed();
+        $stream->markAsFailed(StreamStatusEnum::TRANSFORMING_SUBTITLE_FAILED);
     }
 
     protected function getCommandClass(): string

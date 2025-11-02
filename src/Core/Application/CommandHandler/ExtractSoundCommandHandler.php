@@ -8,6 +8,7 @@ use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Message\ExtractSoundMessage;
 use App\Entity\Stream;
 use App\Entity\Task;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
@@ -70,7 +71,7 @@ class ExtractSoundCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function markStreamAsFailed(Stream $stream): void
     {
-        $stream->markAsExtractingSoundFailed();
+        $stream->markAsFailed(StreamStatusEnum::EXTRACTING_SOUND_FAILED);
     }
 
     protected function getCommandClass(): string
