@@ -25,7 +25,7 @@ class GoogleOauthController extends AbstractController
     }
 
     #[Route('/connect', name: 'connect', methods: ['GET'])]
-    public function connect()
+    public function connect(): JsonResponse
     {
         try {
             $data = $this->googleOAuthService->connect();
@@ -37,7 +37,7 @@ class GoogleOauthController extends AbstractController
     }
 
     #[Route('/exchange-token', name: 'exchange_token', methods: ['POST'])]
-    public function exchangeToken(#[MapRequestPayload()] GoogleExchangeTokenPayload $payload)
+    public function exchangeToken(#[MapRequestPayload()] GoogleExchangeTokenPayload $payload): JsonResponse
     {
         try {
             $user = $this->googleOAuthService->callback($payload);

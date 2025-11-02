@@ -31,7 +31,7 @@ class SearchNotificationController extends AbstractController
         #[CurrentUser] User $user,
         #[MapQueryString()] SearchRequestDto $searchRequest,
         Request $request,
-    ) {
+    ): JsonResponse {
         $parameters = $request->query->all();
         $search = new SearchDecorator($parameters);
 

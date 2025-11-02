@@ -32,6 +32,9 @@ readonly class ResumeVideoMessage implements AsyncMessageInterface
         return $this->subtitleSrtFileName;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

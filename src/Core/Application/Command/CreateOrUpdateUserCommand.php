@@ -10,10 +10,10 @@ use App\Shared\Application\Command\SyncCommandInterface;
 final class CreateOrUpdateUserCommand extends CommandAbstract implements SyncCommandInterface
 {
     public function __construct(
+        public string $email,
         public ?string $firstname = null,
         public ?string $lastname = null,
         public ?string $picture = null,
-        public string $email,
     ) {
     }
 

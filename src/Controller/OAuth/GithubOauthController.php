@@ -25,7 +25,7 @@ class GithubOauthController extends AbstractController
     }
 
     #[Route('/connect', name: 'connect', methods: ['GET'])]
-    public function connect()
+    public function connect(): JsonResponse
     {
         try {
             $data = $this->githubOAuthService->connect();
@@ -37,7 +37,7 @@ class GithubOauthController extends AbstractController
     }
 
     #[Route('/exchange-token', name: 'exchange_token', methods: ['POST'])]
-    public function exchangeToken(#[MapRequestPayload()] GithubExchangeTokenPayload $payload)
+    public function exchangeToken(#[MapRequestPayload()] GithubExchangeTokenPayload $payload): JsonResponse
     {
         try {
             $user = $this->githubOAuthService->callback($payload);

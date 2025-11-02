@@ -38,6 +38,9 @@ readonly class ChunkVideoMessage implements AsyncMessageInterface
         return $this->embedFileName;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

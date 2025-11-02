@@ -8,6 +8,7 @@ use App\Core\Application\Command\ResizeVideoCommand;
 use App\Core\Application\Message\ResizeVideoMessage;
 use App\Entity\Stream;
 use App\Entity\Task;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;

@@ -23,7 +23,7 @@ class BuildArchiveStreamController extends AbstractController
     ) {
     }
 
-    public function __invoke(Stream $stream)
+    public function __invoke(Stream $stream): BinaryFileResponse
     {
         if (!$stream->isDownloadable()) {
             throw new StreamNotDownloadableException($stream->getId()->toRfc4122());

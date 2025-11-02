@@ -48,12 +48,12 @@ class CreateStreamVideoCommandHandler
         }
 
         $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
-            user: $command->getUser(),
             streamId: $command->getStreamId(),
             optionId: $option->getId(),
-            duration: $command->getDuration(),
+            user: $command->getUser(),
             fileName: $uploadFileModel->getFileName(),
             originalFileName: $uploadFileModel->getOriginalFileName(),
+            duration: (int) $command->getDuration(),
             mimeType: $command->getFile()->getMimeType(),
             size: $command->getFile()->getSize(),
         ));

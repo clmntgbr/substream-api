@@ -23,7 +23,7 @@ class GetResumeVideoStreamController extends AbstractController
     ) {
     }
 
-    public function __invoke(Stream $stream)
+    public function __invoke(Stream $stream): BinaryFileResponse
     {
         if (!$stream->isResumeDownloadable()) {
             throw new StreamNotDownloadableException($stream->getId()->toRfc4122());
@@ -39,9 +39,10 @@ class GetResumeVideoStreamController extends AbstractController
                 HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
                     sprintf('%s.txt', Slugify::slug($stream->getOriginalFileName()))
-                ),
-                'text/plain'
+                )
             );
+
+            $response->headers->set('Content-Type', 'text/plain');
 
             $response->deleteFileAfterSend();
 

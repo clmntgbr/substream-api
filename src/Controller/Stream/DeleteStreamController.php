@@ -19,7 +19,7 @@ class DeleteStreamController extends AbstractController
     ) {
     }
 
-    public function __invoke(Stream $stream)
+    public function __invoke(Stream $stream): Stream
     {
         $stream->markAsDeleted();
 

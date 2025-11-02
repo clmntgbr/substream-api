@@ -49,10 +49,10 @@ class GoogleOAuthService implements OAuthServiceInterface
 
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
+            email: $account->getEmail(),
             firstname: $account->getGivenName(),
             lastname: $account->getFamilyName(),
             picture: $account->getPicture(),
-            email: $account->getEmail(),
         ));
 
         if (null === $user->getGoogleAccount()) {

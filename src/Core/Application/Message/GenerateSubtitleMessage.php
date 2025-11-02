@@ -10,6 +10,9 @@ use Symfony\Component\Uid\Uuid;
 
 readonly class GenerateSubtitleMessage implements AsyncMessageInterface
 {
+    /**
+     * @param array<int, string> $audioFiles
+     */
     public function __construct(
         private Uuid $taskId,
         private Uuid $streamId,
@@ -28,11 +31,17 @@ readonly class GenerateSubtitleMessage implements AsyncMessageInterface
         return $this->streamId;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getAudioFiles(): array
     {
         return $this->audioFiles;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

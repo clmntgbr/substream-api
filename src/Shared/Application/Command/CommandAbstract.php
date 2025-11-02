@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\Command;
 
-use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
-
 abstract class CommandAbstract
 {
     /**
-     * @return AmqpStamp[]
+     * @return array<int, \Symfony\Component\Messenger\Stamp\StampInterface>
      */
     public function getStamps(): array
     {

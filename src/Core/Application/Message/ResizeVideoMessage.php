@@ -38,6 +38,9 @@ readonly class ResizeVideoMessage implements AsyncMessageInterface
         return $this->format;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

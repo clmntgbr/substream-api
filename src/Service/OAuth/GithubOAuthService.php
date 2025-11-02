@@ -65,10 +65,10 @@ class GithubOAuthService implements OAuthServiceInterface
 
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
+            email: $email,
             firstname: $account->getName(),
-            picture: $account->getAvatarUrl(),
             lastname: null,
-            email: $email
+            picture: $account->getAvatarUrl(),
         ));
 
         if (null === $user->getGithubAccount()) {

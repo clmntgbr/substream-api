@@ -69,10 +69,10 @@ class LinkedInOAuthService implements OAuthServiceInterface
 
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
-            firstname: $userInfo->getFirstName(),
-            picture: $userInfo->getProfilePicture(),
-            lastname: $userInfo->getLastName(),
             email: $userInfo->getEmail(),
+            firstname: $userInfo->getFirstName(),
+            lastname: $userInfo->getLastName(),
+            picture: $userInfo->getProfilePicture(),
         ));
 
         if (null === $user->getLinkedInAccount()) {

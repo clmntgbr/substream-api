@@ -8,6 +8,7 @@ use App\Core\Application\Command\EmbedVideoCommand;
 use App\Core\Application\Message\EmbedVideoMessage;
 use App\Entity\Stream;
 use App\Entity\Task;
+use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;

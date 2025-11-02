@@ -32,6 +32,9 @@ readonly class ExtractSoundMessage implements AsyncMessageInterface
         return $this->fileName;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

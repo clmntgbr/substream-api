@@ -25,7 +25,7 @@ class LinkedInOauthController extends AbstractController
     }
 
     #[Route('/connect', name: 'connect', methods: ['GET'])]
-    public function connect()
+    public function connect(): JsonResponse
     {
         try {
             $data = $this->linkedInOAuthService->connect();
@@ -37,7 +37,7 @@ class LinkedInOauthController extends AbstractController
     }
 
     #[Route('/exchange-token', name: 'exchange_token', methods: ['POST'])]
-    public function exchangeToken(#[MapRequestPayload()] LinkedInExchangeTokenPayload $payload)
+    public function exchangeToken(#[MapRequestPayload()] LinkedInExchangeTokenPayload $payload): JsonResponse
     {
         try {
             $user = $this->linkedInOAuthService->callback($payload);

@@ -32,6 +32,9 @@ readonly class GetVideoMessage implements AsyncMessageInterface
         return $this->url;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

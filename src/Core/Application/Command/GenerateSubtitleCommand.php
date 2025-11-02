@@ -10,6 +10,9 @@ use Symfony\Component\Uid\Uuid;
 
 final class GenerateSubtitleCommand extends CommandAbstract implements AsyncCommandInterface
 {
+    /**
+     * @param array<int, string> $audioFiles
+     */
     public function __construct(
         private Uuid $streamId,
         private array $audioFiles,
@@ -22,6 +25,9 @@ final class GenerateSubtitleCommand extends CommandAbstract implements AsyncComm
         return $this->streamId;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getAudioFiles(): array
     {
         return $this->audioFiles;

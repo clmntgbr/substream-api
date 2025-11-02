@@ -38,6 +38,9 @@ readonly class EmbedVideoMessage implements AsyncMessageInterface
         return $this->resizeFileName;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

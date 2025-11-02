@@ -31,11 +31,11 @@ class RegisterController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateUserCommand(
+            email: $payload->getEmail(),
+            plainPassword: $payload->getPlainPassword(),
             firstname: $payload->getFirstname(),
             lastname: $payload->getLastname(),
             picture: $this->backendUrl.'/uploads/avatar.jpg',
-            email: $payload->getEmail(),
-            plainPassword: $payload->getPlainPassword(),
         ));
 
         $token = $this->jwtManager->create($user);

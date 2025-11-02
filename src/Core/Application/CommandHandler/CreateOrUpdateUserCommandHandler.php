@@ -26,11 +26,11 @@ class CreateOrUpdateUserCommandHandler
 
         if (null === $user) {
             $user = $this->commandBus->dispatch(new CreateUserCommand(
-                firstname: $command->getFirstname(),
-                picture: $command->getPicture(),
-                lastname: $command->getLastname(),
                 email: $command->getEmail(),
                 plainPassword: bin2hex(random_bytes(16)),
+                firstname: $command->getFirstname(),
+                lastname: $command->getLastname(),
+                picture: $command->getPicture(),
             ));
         }
 

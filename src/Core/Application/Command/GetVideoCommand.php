@@ -27,7 +27,7 @@ final class GetVideoCommand extends CommandAbstract implements AsyncCommandInter
     }
 
     /**
-     * @return AmqpStamp[]
+     * @return array<int, \Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp>
      */
     public function getStamps(): array
     {

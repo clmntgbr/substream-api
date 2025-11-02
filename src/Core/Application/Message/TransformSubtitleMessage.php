@@ -39,6 +39,9 @@ readonly class TransformSubtitleMessage implements AsyncMessageInterface
         return $this->option;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
