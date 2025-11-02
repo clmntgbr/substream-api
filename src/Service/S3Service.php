@@ -45,20 +45,24 @@ class S3Service implements S3ServiceInterface
 
         $tmpFilePath = $tmpDir.'/'.basename($fileName);
 
-        $stream = $this->awsStorage->readStream($uuid.'/'.$fileName);
+        $stream = null;
+        $tmpFile = null;
 
-        $tmpFile = fopen($tmpFilePath, 'w');
-        stream_copy_to_stream($stream, $tmpFile);
+        try {
+            $stream = $this->awsStorage->readStream($uuid.'/'.$fileName);
+            $tmpFile = fopen($tmpFilePath, 'w');
+            stream_copy_to_stream($stream, $tmpFile);
 
-        if (is_resource($stream)) {
-            fclose($stream);
+            return $tmpFilePath;
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+
+            if (is_resource($tmpFile)) {
+                fclose($tmpFile);
+            }
         }
-
-        if (is_resource($tmpFile)) {
-            fclose($tmpFile);
-        }
-
-        return $tmpFilePath;
     }
 
     public function upload(Uuid $uuid, UploadedFile $file): UploadFileModel
@@ -66,21 +70,25 @@ class S3Service implements S3ServiceInterface
         $fileName = $uuid.'.'.$file->guessExtension();
         $path = $uuid.'/'.$fileName;
 
-        $handle = fopen($file->getPathname(), 'r');
+        $handle = null;
 
-        $this->awsStorage->writeStream($path, $handle, [
-            'visibility' => 'public',
-            'mimetype' => $file->getMimeType(),
-        ]);
+        try {
+            $handle = fopen($file->getPathname(), 'r');
 
-        if (is_resource($handle)) {
-            fclose($handle);
+            $this->awsStorage->writeStream($path, $handle, [
+                'visibility' => 'public',
+                'mimetype' => $file->getMimeType(),
+            ]);
+
+            return $this->uploadFileMapper->create(
+                fileName: $fileName,
+                originalFileName: $file->getClientOriginalName(),
+                id: $uuid,
+            );
+        } finally {
+            if (is_resource($handle)) {
+                fclose($handle);
+            }
         }
-
-        return $this->uploadFileMapper->create(
-            fileName: $fileName,
-            originalFileName: $file->getClientOriginalName(),
-            id: $uuid,
-        );
     }
 }
