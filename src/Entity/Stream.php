@@ -207,11 +207,7 @@ class Stream
     #[Groups(['stream:read'])]
     public function getSizeInMegabytes(): ?int
     {
-        if (null === $this->size) {
-            return null;
-        }
-
-        return (int) ($this->size / 1024 / 1024);
+        return DurationFormatter::bytesToMegabytes($this->size);
     }
 
     public function getUrl(): ?string

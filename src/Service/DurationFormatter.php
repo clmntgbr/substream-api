@@ -36,4 +36,13 @@ class DurationFormatter
 
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $secs);
     }
+
+    public static function bytesToMegabytes(?int $bytes): ?int
+    {
+        if (null === $bytes) {
+            return null;
+        }
+
+        return (int) ($bytes / 1024 / 1024);
+    }
 }
