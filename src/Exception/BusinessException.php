@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BusinessException extends \Exception
 {
+    /**
+     * @param array<string, mixed> $translationParams
+     */
     public function __construct(
         private readonly string $englishMessage,
         private readonly string $translationKey,
@@ -28,6 +31,9 @@ class BusinessException extends \Exception
         return $this->translationKey;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getTranslationParams(): array
     {
         return $this->translationParams;

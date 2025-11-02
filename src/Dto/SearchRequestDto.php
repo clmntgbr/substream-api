@@ -17,6 +17,9 @@ class SearchRequestDto
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     public static function fromQuery(array $query): self
     {
         return new self(

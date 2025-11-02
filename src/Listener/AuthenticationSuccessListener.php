@@ -6,7 +6,6 @@ namespace App\Listener;
 
 use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -17,15 +16,11 @@ class AuthenticationSuccessListener
     ) {
     }
 
-    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
+    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event): void
     {
         /** @var User $user */
         $user = $event->getUser();
         $data = $event->getData();
-
-        if (!$user instanceof UserInterface) {
-            return;
-        }
 
         $context = (new ObjectNormalizerContextBuilder())
             ->withGroups(['user:read'])

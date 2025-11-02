@@ -35,6 +35,9 @@ class GoogleAccount
     #[SerializedName('picture')]
     public ?string $picture;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         $account = new self();

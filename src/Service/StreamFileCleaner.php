@@ -8,6 +8,8 @@ class StreamFileCleaner
 {
     /**
      * @param array<string> $audioFiles
+     *
+     * @return array<int, string>
      */
     public function getCleanableFiles(array $audioFiles, ?string $subtitleAssFileName, ?string $resizeFileName, ?string $embedFileName): array
     {

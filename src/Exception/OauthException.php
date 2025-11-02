@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OauthException extends BusinessException
 {
+    /**
+     * @param array<string, mixed> $translationParams
+     */
     public function __construct(
         string $englishMessage = 'OAuth authentication failed',
         string $translationKey = 'error.oauth.failed',

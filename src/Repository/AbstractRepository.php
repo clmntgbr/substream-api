@@ -9,6 +9,8 @@ use Symfony\Component\Uid\Uuid;
 
 /**
  * @template T of object
+ *
+ * @extends ServiceEntityRepository<T>
  */
 abstract class AbstractRepository extends ServiceEntityRepository
 {
@@ -71,6 +73,9 @@ abstract class AbstractRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * @param list<T> $entities
+     */
     public function saveAll(array $entities): void
     {
         foreach ($entities as $entity) {
@@ -78,6 +83,9 @@ abstract class AbstractRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @param iterable<T> $entities
+     */
     public function saveAllChunks(iterable $entities, int $chunkSize = 50): void
     {
         if ($chunkSize <= 0) {

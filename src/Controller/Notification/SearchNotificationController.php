@@ -36,10 +36,10 @@ class SearchNotificationController extends AbstractController
         $search = new SearchDecorator($parameters);
 
         $response = $this->elasticaNotificationRepository->search(
-            $user,
             $search->getSearch(),
             $searchRequest->page,
-            $searchRequest->itemsPerPage
+            $searchRequest->itemsPerPage,
+            $user
         );
 
         $normalizedResponse = $this->normalizer->normalize($response, null, ['groups' => ['notification:read']]);

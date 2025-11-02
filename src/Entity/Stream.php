@@ -104,6 +104,9 @@ class Stream
     #[Groups(['stream:read'])]
     private ?int $duration = null;
 
+    /**
+     * @var array<int, string>
+     */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private array $audioFiles = [];
 
@@ -122,6 +125,9 @@ class Stream
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $resumeFileName = null;
 
+    /**
+     * @var array<int, string>|null
+     */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $chunkFileNames = null;
 
@@ -129,6 +135,9 @@ class Stream
     #[Groups(['stream:read', 'stream:read:status'])]
     private string $status;
 
+    /**
+     * @var array<int, string>
+     */
     #[ORM\Column(type: Types::JSON)]
     private array $statuses = [];
 
@@ -235,6 +244,9 @@ class Stream
         return $this->status;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getStatuses(): array
     {
         return $this->statuses;
@@ -253,6 +265,9 @@ class Stream
         return $this;
     }
 
+    /**
+     * @param array<int, string> $statuses
+     */
     public function setStatuses(array $statuses): self
     {
         $this->statuses = $statuses;
@@ -283,6 +298,9 @@ class Stream
         return $this;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getAudioFiles(): array
     {
         return $this->audioFiles;
@@ -333,6 +351,9 @@ class Stream
         return $this->size;
     }
 
+    /**
+     * @param array<int, string> $audioFiles
+     */
     public function setAudioFiles(array $audioFiles): self
     {
         $this->audioFiles = $audioFiles;
@@ -388,6 +409,9 @@ class Stream
         return $this->embedFileName;
     }
 
+    /**
+     * @param array<int, string> $chunkFileNames
+     */
     public function setChunkFileNames(array $chunkFileNames): self
     {
         $this->chunkFileNames = $chunkFileNames;
@@ -427,11 +451,17 @@ class Stream
         return $this->updatedAt;
     }
 
+    /**
+     * @return Collection<int, Task>
+     */
     public function getTasks(): Collection
     {
         return $this->tasks;
     }
 
+    /**
+     * @param Collection<int, Task> $tasks
+     */
     public function setTasks(Collection $tasks): self
     {
         $this->tasks = $tasks;
@@ -493,6 +523,9 @@ class Stream
         return $this->getStatusVO()->isResumeDownloadable($this->getResumeFileName());
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getCleanableFiles(): array
     {
         return (new \App\Service\StreamFileCleaner())->getCleanableFiles(

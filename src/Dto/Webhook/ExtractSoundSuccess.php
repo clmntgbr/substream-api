@@ -10,6 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 readonly class ExtractSoundSuccess
 {
+    /**
+     * @param array<int, string> $audioFiles
+     */
     public function __construct(
         #[SerializedName('stream_id')]
         #[Assert\NotBlank]
@@ -55,6 +58,9 @@ readonly class ExtractSoundSuccess
         return $this->processingTime;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getAudioFiles(): array
     {
         return $this->audioFiles;

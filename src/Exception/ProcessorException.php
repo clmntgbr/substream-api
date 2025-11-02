@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProcessorException extends BusinessException
 {
+    /**
+     * @param array<string, mixed> $translationParams
+     */
     public function __construct(
         string $englishMessage = 'Processing failed',
         string $translationKey = 'error.processor.failed',

@@ -70,14 +70,10 @@ class StreamSuccessCommandHandler
 
         if (!$stream->getOption()->getIsResume()) {
             $this->apply($stream, WorkflowTransitionEnum::COMPLETED_NO_RESUME);
-            $this->streamRepository->saveAndFlush($stream);
-
-            return;
-        }
-
-        if ($stream->getOption()->getIsResume()) {
+        } else {
             $this->apply($stream, WorkflowTransitionEnum::COMPLETED);
-            $this->streamRepository->saveAndFlush($stream);
         }
+
+        $this->streamRepository->saveAndFlush($stream);
     }
 }

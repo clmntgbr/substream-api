@@ -10,6 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 readonly class ChunkVideoSuccess
 {
+    /**
+     * @param array<int, string> $chunkFileNames
+     */
     public function __construct(
         #[SerializedName('stream_id')]
         #[Assert\NotBlank]
@@ -51,6 +54,9 @@ readonly class ChunkVideoSuccess
         return $this->processingTime;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getChunkFileNames(): array
     {
         return $this->chunkFileNames;

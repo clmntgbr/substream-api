@@ -28,6 +28,9 @@ class CodeChallengeDto
         return $this->codeChallengeMethod;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -37,6 +40,9 @@ class CodeChallengeDto
         );
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toArray(): array
     {
         return [

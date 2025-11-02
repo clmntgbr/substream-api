@@ -16,9 +16,9 @@ class ElasticaNotificationRepository extends AbstractElasticaRepository
         parent::__construct($finder);
     }
 
-    public function getSearchQuery(?User $user = null, SearchInterface $search): Query
+    public function getSearchQuery(SearchInterface $search, ?User $user = null): Query
     {
-        $query = parent::getSearchQuery($user, $search);
+        $query = parent::getSearchQuery($search, $user);
 
         $request = $search->getRequest();
 

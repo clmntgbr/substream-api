@@ -36,10 +36,10 @@ class SearchStreamController extends AbstractController
         $search = new SearchDecorator($parameters);
 
         $response = $this->elasticaStreamRepository->search(
-            $user,
             $search->getSearch(),
             $searchRequest->page,
-            $searchRequest->itemsPerPage
+            $searchRequest->itemsPerPage,
+            $user
         );
 
         $normalizedResponse = $this->normalizer->normalize($response, null, ['groups' => ['stream:read', 'option:read']]);

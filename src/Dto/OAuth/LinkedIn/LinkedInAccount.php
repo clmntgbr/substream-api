@@ -27,6 +27,9 @@ class LinkedInAccount
     #[SerializedName('picture')]
     public ?string $profilePicture;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         $account = new self();

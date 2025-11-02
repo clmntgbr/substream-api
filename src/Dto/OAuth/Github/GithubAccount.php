@@ -23,6 +23,9 @@ class GithubAccount
     #[SerializedName('avatar_url')]
     public ?string $avatarUrl;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         $account = new self();

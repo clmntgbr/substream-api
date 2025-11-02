@@ -43,6 +43,8 @@ class UploadedFileValidator
     }
 
     /**
+     * @param array<string> $allowedMimeTypes
+     *
      * @throws InvalidFileException
      */
     private function validateFile(
@@ -74,7 +76,7 @@ class UploadedFileValidator
 
         if (count($violations) > 0) {
             $firstViolation = $violations[0];
-            throw new InvalidFileException($firstViolation->getMessage(), ['file' => $file->getClientOriginalName()]);
+            throw new InvalidFileException($firstViolation->getMessage(), 'error.file.invalid', ['file' => $file->getClientOriginalName()]);
         }
     }
 }

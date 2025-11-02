@@ -63,6 +63,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private array $roles = [];
 
+    /**
+     * @var Collection<int, SocialAccount>
+     */
     #[ORM\OneToMany(targetEntity: SocialAccount::class, mappedBy: 'user')]
     #[Groups(['user:read'])]
     private Collection $socialAccounts;

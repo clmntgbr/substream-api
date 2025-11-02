@@ -8,6 +8,9 @@ use App\Enum\StreamStatusEnum;
 
 readonly class StreamStatus
 {
+    /**
+     * @param array<int, string> $statuses
+     */
     public function __construct(
         private string $status,
         private array $statuses,
@@ -136,6 +139,7 @@ readonly class StreamStatus
             StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value => 'failed',
             StreamStatusEnum::CHUNKING_VIDEO_FAILED->value => 'failed',
             StreamStatusEnum::RESUMING_FAILED->value => 'failed',
+            default => null,
         };
     }
 }

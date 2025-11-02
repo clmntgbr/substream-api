@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InvalidFileException extends BusinessException
 {
+    /**
+     * @param array<string, mixed> $translationParams
+     */
     public function __construct(
         string $englishMessage = 'Invalid file',
         string $translationKey = 'error.file.invalid',
@@ -16,6 +19,9 @@ class InvalidFileException extends BusinessException
         parent::__construct($englishMessage, $translationKey, $translationParams, Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * @param array<string> $allowedTypes
+     */
     public static function invalidMimeType(string $mimeType, array $allowedTypes): self
     {
         return new self(

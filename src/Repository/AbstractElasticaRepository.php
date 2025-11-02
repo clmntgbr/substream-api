@@ -22,25 +22,25 @@ class AbstractElasticaRepository extends Repository
 
     /**
      * @return array{
-     * "total_hits": int,
-     * "items_per_page": int,
-     * "current_page": int,
-     * "next_page": int|null,
-     * "total_pages": int,
-     * "results": Pagerfanta<object>,
-     * "aggregations":mixed[]|null
+     * total_items: int,
+     * items_per_page: int,
+     * current_page: int,
+     * next_page: int|null,
+     * total_pages: int,
+     * results: Pagerfanta<object>,
+     * aggregations: array<string, mixed>|null
      * }
      */
-    public function search(?User $user = null, SearchInterface $search, int $page = 1, int $limit = 15, ?Query $query = null): array
+    public function search(SearchInterface $search, int $page = 1, int $limit = 15, ?User $user = null): array
     {
-        $query = $this->getSearchQuery($user, $search);
+        $query = $this->getSearchQuery($search, $user);
         $results = $this->finder->findPaginated($query);
         $results->setMaxPerPage($limit);
         $results->setCurrentPage($page);
         $totalHits = $results->count();
 
         $totalPages = intval(ceil($totalHits / $limit));
-        /** @var FantaPaginatorAdapter $adapter */
+        /** @var FantaPaginatorAdapter<object> $adapter */
         $adapter = $results->getAdapter();
         $aggs = $adapter->getAggregations();
 
@@ -55,7 +55,7 @@ class AbstractElasticaRepository extends Repository
         ];
     }
 
-    public function getSearchQuery(?User $user = null, SearchInterface $search): Query
+    public function getSearchQuery(SearchInterface $search, ?User $user = null): Query
     {
         $queries = $search->getQueries();
         $bool = new BoolQuery();
