@@ -76,7 +76,8 @@ class UploadedFileValidator
 
         if (count($violations) > 0) {
             $firstViolation = $violations[0];
-            throw new InvalidFileException($firstViolation->getMessage(), 'error.file.invalid', ['file' => $file->getClientOriginalName()]);
+            $message = $firstViolation->getMessage();
+            throw new InvalidFileException(is_string($message) ? $message : (string) $message, 'error.file.invalid', ['file' => $file->getClientOriginalName()]);
         }
     }
 }

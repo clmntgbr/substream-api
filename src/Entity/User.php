@@ -128,11 +128,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * @return non-empty-string
+     *
      * @see UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        $identifier = (string) $this->email;
+        if ('' === $identifier) {
+            return 'unknown';
+        }
+
+        return $identifier;
     }
 
     /**

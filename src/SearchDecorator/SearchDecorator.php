@@ -31,7 +31,10 @@ class SearchDecorator
 
         foreach ($this->searchQueries as $q) {
             if (isset($request[$q::getName()])) {
-                $this->search = new $q($this->search);
+                $instance = new $q($this->search);
+                if ($instance instanceof SearchAbstract) {
+                    $this->search = $instance;
+                }
             }
         }
     }

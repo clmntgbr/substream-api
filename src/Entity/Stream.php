@@ -435,11 +435,16 @@ class Stream
     }
 
     /**
-     * @return list<string>
+     * @return list<string>|null
      */
     public function getChunkFileNames(): ?array
     {
-        return $this->chunkFileNames;
+        if (null === $this->chunkFileNames) {
+            return null;
+        }
+
+        // Ensure we return a list (sequential array with numeric keys starting at 0)
+        return array_values($this->chunkFileNames);
     }
 
     #[Groups(['stream:read'])]

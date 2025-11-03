@@ -51,7 +51,13 @@ class S3Service implements S3ServiceInterface
         try {
             $stream = $this->awsStorage->readStream($uuid.'/'.$fileName);
             $tmpFile = fopen($tmpFilePath, 'w');
-            stream_copy_to_stream($stream, $tmpFile);
+            if (false === $tmpFile) {
+                return $tmpFilePath;
+            }
+
+            if (is_resource($stream)) {
+                stream_copy_to_stream($stream, $tmpFile);
+            }
 
             return $tmpFilePath;
         } finally {

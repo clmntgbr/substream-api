@@ -22,13 +22,13 @@ class ValidationErrorNormalizer implements NormalizerInterface
     public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         $violations = null;
-        if (method_exists($object, 'getConstraintViolationList')) {
+        if (is_object($object) && method_exists($object, 'getConstraintViolationList')) {
             $violations = $object->getConstraintViolationList();
         }
 
         $data = $this->decorated->normalize($object, $format, $context);
 
-        if (null !== $violations && $violations instanceof ConstraintViolationListInterface && count($violations) > 0) {
+        if (null !== $violations && $violations instanceof ConstraintViolationListInterface && count($violations) > 0 && is_array($data)) {
             $errors = [];
 
             foreach ($violations as $violation) {

@@ -59,7 +59,7 @@ class Slugify
                 $t = \Transliterator::create('Any-Latin; Latin-ASCII; NFD; [:Nonspacing Mark:] Remove; NFC');
                 if (null !== $t) {
                     $result = $t->transliterate($text);
-                    if (null !== $result && '' !== $result) {
+                    if (false !== $result && '' !== $result) {
                         return $result;
                     }
                 }
@@ -94,6 +94,6 @@ class Slugify
         $lower = strtr($lower, $map);
         $filtered = preg_replace('/[^\x00-\x7F]/', '', $lower);
 
-        return $filtered ?? $text;
+        return is_string($filtered) ? $filtered : $text;
     }
 }

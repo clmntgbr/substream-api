@@ -23,14 +23,20 @@ class PublishService implements PublishServiceInterface
 
         $user = $stream->getUser();
 
+        $data = json_encode([
+            'type' => 'streams.refresh',
+            'userId' => $user->getId(),
+            'streamId' => $stream->getId(),
+            'context' => $context,
+        ]);
+
+        if (false === $data) {
+            return;
+        }
+
         $streamUpdate = new Update(
             "/users/{$user->getId()}/streams/{$stream->getId()}",
-            json_encode([
-                'type' => 'streams.refresh',
-                'userId' => $user->getId(),
-                'streamId' => $stream->getId(),
-                'context' => $context,
-            ])
+            $data
         );
 
         $this->hub->publish($streamUpdate);
@@ -40,13 +46,19 @@ class PublishService implements PublishServiceInterface
     {
         $user = $stream->getUser();
 
+        $data = json_encode([
+            'type' => 'streams.refresh',
+            'userId' => $user->getId(),
+            'context' => $context,
+        ]);
+
+        if (false === $data) {
+            return;
+        }
+
         $update = new Update(
             "/users/{$user->getId()}/search/streams",
-            json_encode([
-                'type' => 'streams.refresh',
-                'userId' => $user->getId(),
-                'context' => $context,
-            ])
+            $data
         );
 
         $this->hub->publish($update);
@@ -56,13 +68,19 @@ class PublishService implements PublishServiceInterface
     {
         $this->elasticsearchRefreshService->refreshNotificationIndex();
 
+        $data = json_encode([
+            'type' => 'notifications.refresh',
+            'userId' => $user->getId(),
+            'context' => $context,
+        ]);
+
+        if (false === $data) {
+            return;
+        }
+
         $update = new Update(
             "/users/{$user->getId()}/search/notifications",
-            json_encode([
-                'type' => 'notifications.refresh',
-                'userId' => $user->getId(),
-                'context' => $context,
-            ])
+            $data
         );
 
         $this->hub->publish($update);

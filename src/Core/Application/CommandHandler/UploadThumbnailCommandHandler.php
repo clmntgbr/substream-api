@@ -86,6 +86,10 @@ class UploadThumbnailCommandHandler
             $path = $stream->getId().'/'.$fileName;
 
             $tempStream = fopen('php://temp', 'r+');
+            if (false === $tempStream) {
+                return;
+            }
+
             fwrite($tempStream, $imageContents);
             rewind($tempStream);
 
