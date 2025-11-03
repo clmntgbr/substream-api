@@ -47,12 +47,19 @@ class ResizeVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
         $this->executeWorkflow(
             $command->getStreamId(),
-            fn (Stream $stream, Task $task) => new ResizeVideoMessage(
-                streamId: $stream->getId(),
-                taskId: $task->getId(),
-                fileName: $command->getFileName(),
-                format: $stream->getOption()->getFormat(),
-            )
+            function (Stream $stream, Task $task) use ($command) {
+                $taskId = $task->getId();
+                if (null === $taskId) {
+                    throw new \RuntimeException('Task ID is required');
+                }
+
+                return new ResizeVideoMessage(
+                    streamId: $stream->getId(),
+                    taskId: $taskId,
+                    fileName: $command->getFileName(),
+                    format: $stream->getOption()->getFormat(),
+                );
+            }
         );
     }
 
@@ -63,9 +70,14 @@ class ResizeVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function createMessage(Stream $stream, Task $task): object
     {
+        $taskId = $task->getId();
+        if (null === $taskId) {
+            throw new \RuntimeException('Task ID is required');
+        }
+
         return new ResizeVideoMessage(
             streamId: $stream->getId(),
-            taskId: $task->getId(),
+            taskId: $taskId,
             fileName: $this->currentCommand->getFileName(),
             format: $stream->getOption()->getFormat(),
         );

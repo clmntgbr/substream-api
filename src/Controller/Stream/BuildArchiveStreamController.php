@@ -32,11 +32,14 @@ class BuildArchiveStreamController extends AbstractController
 
             $response = new BinaryFileResponse($zip->getPathname());
 
+            $originalFileName = $stream->getOriginalFileName();
+            $fileName = null !== $originalFileName ? Slugify::slug($originalFileName) : 'file';
+
             $response->headers->set(
                 'Content-Disposition',
                 HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
-                    sprintf('%s.zip', Slugify::slug($stream->getOriginalFileName()))
+                    sprintf('%s.zip', $fileName)
                 )
             );
 

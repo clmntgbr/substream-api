@@ -18,11 +18,20 @@ class StreamFileCleaner
             $audioFilesPaths[] = 'audios/'.$audioFile;
         }
 
-        return [
-            ...$audioFilesPaths,
-            'subtitles/'.$subtitleAssFileName,
-            $resizeFileName,
-            $embedFileName,
-        ];
+        $files = $audioFilesPaths;
+
+        if (null !== $subtitleAssFileName) {
+            $files[] = 'subtitles/'.$subtitleAssFileName;
+        }
+
+        if (null !== $resizeFileName) {
+            $files[] = $resizeFileName;
+        }
+
+        if (null !== $embedFileName) {
+            $files[] = $embedFileName;
+        }
+
+        return $files;
     }
 }

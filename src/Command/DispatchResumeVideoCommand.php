@@ -43,9 +43,14 @@ class DispatchResumeVideoCommand extends Command
         $this->loadFixtures();
         $stream = $this->init();
 
+        $subtitleSrtFileName = $stream->getSubtitleSrtFileName();
+        if (null === $subtitleSrtFileName) {
+            throw new \RuntimeException('Subtitle SRT file name is required');
+        }
+
         $this->commandBus->dispatch(new ResumeVideoCommand(
             streamId: $stream->getId(),
-            subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
+            subtitleSrtFileName: $subtitleSrtFileName,
         ));
 
         return Command::SUCCESS;
@@ -185,7 +190,12 @@ class DispatchResumeVideoCommand extends Command
 
     private function uploadChunkFiles(Stream $stream): void
     {
-        foreach ($stream->getChunkFileNames() as $chunkFileName) {
+        $chunkFileNames = $stream->getChunkFileNames();
+        if (null === $chunkFileNames) {
+            return;
+        }
+
+        foreach ($chunkFileNames as $chunkFileName) {
             $path = $stream->getId().'/'.$chunkFileName;
             $handle = fopen('/app/public/debug/'.$chunkFileName, 'r');
 

@@ -51,9 +51,14 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
             $this->streamRepository->saveAndFlush($stream);
 
+            $subtitleSrtFileName = $stream->getSubtitleSrtFileName();
+            if (null === $subtitleSrtFileName) {
+                throw new \RuntimeException('Subtitle SRT file name is required');
+            }
+
             $this->commandBus->dispatch(new TransformSubtitleCommand(
                 streamId: $stream->getId(),
-                subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
+                subtitleSrtFileName: $subtitleSrtFileName,
             ));
         } catch (\Exception $e) {
             $this->logger->error('Error generating subtitle', [

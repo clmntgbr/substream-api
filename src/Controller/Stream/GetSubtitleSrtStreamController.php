@@ -32,11 +32,17 @@ class GetSubtitleSrtStreamController extends AbstractController
 
             $response = new BinaryFileResponse($srtPath);
 
+            $originalFileName = $stream->getOriginalFileName();
+
+            if (null === $originalFileName) {
+                throw new \RuntimeException('file name is required');
+            }
+
             $response->headers->set(
                 'Content-Disposition',
                 HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
-                    sprintf('%s.srt', Slugify::slug($stream->getOriginalFileName()))
+                    sprintf('%s.srt', Slugify::slug($originalFileName))
                 )
             );
 

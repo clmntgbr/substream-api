@@ -57,8 +57,13 @@ class UploadedFileValidator
             throw InvalidFileException::uploadFailed($file->getErrorMessage());
         }
 
-        if (!in_array($file->getMimeType(), $allowedMimeTypes, true)) {
-            throw InvalidFileException::invalidMimeType($file->getMimeType(), $allowedMimeTypes);
+        $mimeType = $file->getMimeType();
+        if (null === $mimeType) {
+            throw InvalidFileException::invalidMimeType('unknown', $allowedMimeTypes);
+        }
+
+        if (!in_array($mimeType, $allowedMimeTypes, true)) {
+            throw InvalidFileException::invalidMimeType($mimeType, $allowedMimeTypes);
         }
 
         if ($file->getSize() > $maxSize) {
@@ -76,6 +81,10 @@ class UploadedFileValidator
 
         if (count($violations) > 0) {
             $firstViolation = $violations[0];
+            if (null === $firstViolation) {
+                throw new InvalidFileException('Validation failed', 'error.file.invalid', ['file' => $file->getClientOriginalName()]);
+            }
+
             $message = $firstViolation->getMessage();
             throw new InvalidFileException(is_string($message) ? $message : (string) $message, 'error.file.invalid', ['file' => $file->getClientOriginalName()]);
         }

@@ -51,9 +51,14 @@ final class TransformSubtitleSuccessWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::TRANSFORMING_SUBTITLE_COMPLETED);
             $this->streamRepository->saveAndFlush($stream);
 
+            $fileName = $stream->getFileName();
+            if (null === $fileName) {
+                throw new \RuntimeException('File name is required');
+            }
+
             $this->commandBus->dispatch(new ResizeVideoCommand(
                 streamId: $stream->getId(),
-                fileName: $stream->getFileName(),
+                fileName: $fileName,
             ));
         } catch (\Exception $e) {
             $this->logger->error('Error transforming subtitle', [

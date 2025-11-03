@@ -108,12 +108,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     public function getCreatedAt(): \DateTimeInterface
     {
+        if (null === $this->createdAt) {
+            throw new \RuntimeException('CreatedAt is not set');
+        }
+
         return $this->createdAt;
     }
 
     #[Groups(['user:read'])]
     public function getUpdatedAt(): \DateTimeInterface
     {
+        if (null === $this->updatedAt) {
+            throw new \RuntimeException('UpdatedAt is not set');
+        }
+
         return $this->updatedAt;
     }
 

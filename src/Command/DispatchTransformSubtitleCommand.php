@@ -43,9 +43,14 @@ class DispatchTransformSubtitleCommand extends Command
         $this->loadFixtures();
         $stream = $this->init();
 
+        $subtitleSrtFileName = $stream->getSubtitleSrtFileName();
+        if (null === $subtitleSrtFileName) {
+            throw new \RuntimeException('Subtitle SRT file name is required');
+        }
+
         $this->commandBus->dispatch(new TransformSubtitleCommand(
             streamId: $stream->getId(),
-            subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
+            subtitleSrtFileName: $subtitleSrtFileName,
         ));
 
         return Command::SUCCESS;

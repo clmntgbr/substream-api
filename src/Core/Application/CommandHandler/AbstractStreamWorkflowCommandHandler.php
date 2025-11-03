@@ -81,6 +81,11 @@ abstract class AbstractStreamWorkflowCommandHandler
             $task = Task::create($this->getCommandClass(), $stream);
             $this->taskRepository->saveAndFlush($task);
 
+            $taskId = $task->getId();
+            if (null === $taskId) {
+                throw new \RuntimeException('Task ID is required');
+            }
+
             if (null !== $messageBuilder) {
                 $message = $messageBuilder($stream, $task);
             } else {

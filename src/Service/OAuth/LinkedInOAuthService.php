@@ -70,9 +70,14 @@ class LinkedInOAuthService implements OAuthServiceInterface
 
         $userInfo = $this->getResourceOwner($accessToken);
 
+        $email = $userInfo->getEmail();
+        if (null === $email) {
+            throw new \RuntimeException('Email is required');
+        }
+
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
-            email: $userInfo->getEmail(),
+            email: $email,
             firstname: $userInfo->getFirstName(),
             lastname: $userInfo->getLastName(),
             picture: $userInfo->getProfilePicture(),
@@ -82,7 +87,7 @@ class LinkedInOAuthService implements OAuthServiceInterface
             $this->commandBus->dispatch(new CreateSocialAccountCommand(
                 provider: 'linkedin',
                 accountId: $userInfo->getId(),
-                email: $userInfo->getEmail(),
+                email: $email,
                 user: $user,
             ));
         }

@@ -65,6 +65,10 @@ class GithubOAuthService implements OAuthServiceInterface
             $email = $account->getEmail();
         }
 
+        if (null === $email) {
+            throw new \RuntimeException('Email is required');
+        }
+
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(
             email: $email,

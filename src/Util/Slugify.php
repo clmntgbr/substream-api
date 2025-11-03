@@ -36,17 +36,20 @@ class Slugify
 
         $sep = preg_quote(self::$separator, '/');
         $slug = preg_replace('/[^A-Za-z0-9]+/u', self::$separator, $transliterated);
+        $slug = is_string($slug) ? $slug : '';
         $slug = preg_replace("/^{$sep}+|{$sep}+$/u", '', $slug);
+        $slug = is_string($slug) ? $slug : '';
         $slug = preg_replace("/{$sep}{2,}/u", self::$separator, $slug);
+        $slug = is_string($slug) ? $slug : '';
 
-        if (null !== self::$maxLength && self::$maxLength > 0) {
+        if (null !== self::$maxLength && self::$maxLength > 0 && '' !== $slug) {
             if (function_exists('mb_substr')) {
                 $slug = mb_substr($slug, 0, self::$maxLength, 'UTF-8');
-                $slug = preg_replace("/{$sep}+$/u", '', $slug);
             } else {
                 $slug = substr($slug, 0, self::$maxLength);
-                $slug = preg_replace("/{$sep}+$/u", '', $slug);
             }
+            $slug = preg_replace("/{$sep}+$/u", '', $slug);
+            $slug = is_string($slug) ? $slug : '';
         }
 
         return '' === $slug ? 'n-a' : $slug;

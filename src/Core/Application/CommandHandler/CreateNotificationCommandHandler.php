@@ -10,6 +10,7 @@ use App\Exception\StreamNotFoundException;
 use App\Repository\NotificationRepository;
 use App\Repository\StreamRepository;
 use App\Service\PublishServiceInterface;
+use App\Util\Slugify;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -30,13 +31,21 @@ class CreateNotificationCommandHandler
             throw new StreamNotFoundException($command->getContextId()->toRfc4122());
         }
 
+        $originalFileName = $stream->getOriginalFileName();
+
+        if (null === $originalFileName) {
+            throw new \RuntimeException('file name is required');
+        }
+
+        $contextMessage = Slugify::slug($originalFileName);
+
         $notification = Notification::create(
             title: $command->getTitle(),
             message: $command->getMessage(),
             context: $command->getContext(),
             contextId: $command->getContextId(),
             user: $stream->getUser(),
-            contextMessage: $stream->getOriginalFileName(),
+            contextMessage: $contextMessage,
         );
 
         $this->notificationRepository->saveAndFlush($notification);

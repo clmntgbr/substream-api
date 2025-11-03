@@ -51,9 +51,14 @@ final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_COMPLETED);
             $this->streamRepository->saveAndFlush($stream);
 
+            $embedFileName = $stream->getEmbedFileName();
+            if (null === $embedFileName) {
+                throw new \RuntimeException('Embed file name is required');
+            }
+
             $this->commandBus->dispatch(new ChunkVideoCommand(
                 streamId: $stream->getId(),
-                embedFileName: $stream->getEmbedFileName(),
+                embedFileName: $embedFileName,
             ));
         } catch (\Exception $e) {
             $this->logger->error('Error embedding video', [

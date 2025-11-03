@@ -72,9 +72,14 @@ final class ChunkVideoSuccessWebhookConsumer implements ConsumerInterface
     private function dispatch(Stream $stream): void
     {
         if (true === $stream->getOption()->getIsResume()) {
+            $subtitleSrtFileName = $stream->getSubtitleSrtFileName();
+            if (null === $subtitleSrtFileName) {
+                throw new \RuntimeException('Subtitle SRT file name is required');
+            }
+
             $this->commandBus->dispatch(new ResumeVideoCommand(
                 streamId: $stream->getId(),
-                subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
+                subtitleSrtFileName: $subtitleSrtFileName,
             ));
         }
 

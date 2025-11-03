@@ -49,9 +49,14 @@ class GetVideoCommandHandler
             $task = Task::create(GetVideoCommand::class, $stream);
             $this->taskRepository->saveAndFlush($task);
 
+            $taskId = $task->getId();
+            if (null === $taskId) {
+                throw new \RuntimeException('Task ID is required');
+            }
+
             $this->coreBus->dispatch(new GetVideoMessage(
                 streamId: $stream->getId(),
-                taskId: $task->getId(),
+                taskId: $taskId,
                 url: $command->getUrl(),
             ));
         } catch (\Throwable $e) {

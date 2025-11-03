@@ -47,12 +47,19 @@ class ChunkVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
         $this->executeWorkflow(
             $command->getStreamId(),
-            fn (Stream $stream, Task $task) => new ChunkVideoMessage(
-                streamId: $stream->getId(),
-                taskId: $task->getId(),
-                chunkNumber: $stream->getOption()->getChunkNumber(),
-                embedFileName: $command->getEmbedFileName(),
-            )
+            function (Stream $stream, Task $task) use ($command) {
+                $taskId = $task->getId();
+                if (null === $taskId) {
+                    throw new \RuntimeException('Task ID is required');
+                }
+
+                return new ChunkVideoMessage(
+                    streamId: $stream->getId(),
+                    taskId: $taskId,
+                    chunkNumber: $stream->getOption()->getChunkNumber(),
+                    embedFileName: $command->getEmbedFileName(),
+                );
+            }
         );
     }
 
@@ -63,9 +70,14 @@ class ChunkVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function createMessage(Stream $stream, Task $task): object
     {
+        $taskId = $task->getId();
+        if (null === $taskId) {
+            throw new \RuntimeException('Task ID is required');
+        }
+
         return new ChunkVideoMessage(
             streamId: $stream->getId(),
-            taskId: $task->getId(),
+            taskId: $taskId,
             chunkNumber: $stream->getOption()->getChunkNumber(),
             embedFileName: $this->currentCommand->getEmbedFileName(),
         );

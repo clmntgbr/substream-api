@@ -63,8 +63,13 @@ class GenerateSubtitleCommandHandler
             $this->taskRepository->saveAndFlush($task);
 
             if ('prod' === $this->env) {
+                $taskId = $task->getId();
+                if (null === $taskId) {
+                    throw new \RuntimeException('Task ID is required');
+                }
+
                 $this->coreBus->dispatch(new GenerateSubtitleMessage(
-                    taskId: $task->getId(),
+                    taskId: $taskId,
                     streamId: $stream->getId(),
                     audioFiles: $command->getAudioFiles(),
                     language: $command->getLanguage(),
@@ -119,9 +124,14 @@ class GenerateSubtitleCommandHandler
             $this->apply($stream, WorkflowTransitionEnum::GENERATING_SUBTITLE_COMPLETED);
             $this->streamRepository->saveAndFlush($stream);
 
+            $subtitleSrtFileName = $stream->getSubtitleSrtFileName();
+            if (null === $subtitleSrtFileName) {
+                throw new \RuntimeException('Subtitle SRT file name is required');
+            }
+
             $this->commandBus->dispatch(new TransformSubtitleCommand(
                 streamId: $stream->getId(),
-                subtitleSrtFileName: $stream->getSubtitleSrtFileName(),
+                subtitleSrtFileName: $subtitleSrtFileName,
             ));
         } catch (WorkflowTransitionException $e) {
             $this->logger->error('Workflow transition failed in mock subtitle generation', [
@@ -142,8 +152,13 @@ class GenerateSubtitleCommandHandler
             $this->streamRepository->saveAndFlush($stream);
         }
 
+        $taskId = $task->getId();
+        if (null === $taskId) {
+            throw new \RuntimeException('Task ID is required');
+        }
+
         $this->commandBus->dispatch(new UpdateTaskSuccessCommand(
-            taskId: $task->getId(),
+            taskId: $taskId,
             processingTime: 0,
         ));
     }

@@ -54,9 +54,14 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::UPLOADED);
             $this->streamRepository->saveAndFlush($stream);
 
+            $fileName = $stream->getFileName();
+            if (null === $fileName) {
+                throw new \RuntimeException('File name is required');
+            }
+
             $this->commandBus->dispatch(new ExtractSoundCommand(
                 streamId: $stream->getId(),
-                fileName: $stream->getFileName(),
+                fileName: $fileName,
             ));
         } catch (\Exception $e) {
             $this->logger->error('Error getting video', [

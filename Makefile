@@ -141,7 +141,7 @@ php-cs-fixer:
 	$(PHP_CONT) ./vendor/bin/php-cs-fixer fix src --rules=@Symfony --verbose --diff
 
 php-stan:
-	$(PHP_CONT) ./vendor/bin/phpstan analyse src -l $(or $(level), 7) --memory-limit=-1
+	$(PHP_CONT) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1
 
 consume:
 	$(SYMFONY) messenger:consume async -vv

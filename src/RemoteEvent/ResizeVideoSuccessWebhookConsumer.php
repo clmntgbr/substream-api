@@ -51,10 +51,21 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
             $this->apply($stream, WorkflowTransitionEnum::RESIZING_VIDEO_COMPLETED);
             $this->streamRepository->saveAndFlush($stream);
 
+            $subtitleAssFileName = $stream->getSubtitleAssFileName();
+            $resizeFileName = $stream->getResizeFileName();
+
+            if (null === $subtitleAssFileName) {
+                throw new \RuntimeException('Subtitle ASS file name is required');
+            }
+
+            if (null === $resizeFileName) {
+                throw new \RuntimeException('Resize file name is required');
+            }
+
             $this->commandBus->dispatch(new EmbedVideoCommand(
                 streamId: $stream->getId(),
-                subtitleAssFileName: $stream->getSubtitleAssFileName(),
-                resizeFileName: $stream->getResizeFileName(),
+                subtitleAssFileName: $subtitleAssFileName,
+                resizeFileName: $resizeFileName,
             ));
         } catch (\Exception $e) {
             $this->logger->error('Error resizing video', [

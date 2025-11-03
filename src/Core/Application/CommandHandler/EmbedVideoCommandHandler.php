@@ -47,12 +47,19 @@ class EmbedVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
         $this->executeWorkflow(
             $command->getStreamId(),
-            fn (Stream $stream, Task $task) => new EmbedVideoMessage(
-                streamId: $stream->getId(),
-                taskId: $task->getId(),
-                subtitleAssFileName: $command->getSubtitleAssFileName(),
-                resizeFileName: $command->getResizeFileName(),
-            )
+            function (Stream $stream, Task $task) use ($command) {
+                $taskId = $task->getId();
+                if (null === $taskId) {
+                    throw new \RuntimeException('Task ID is required');
+                }
+
+                return new EmbedVideoMessage(
+                    streamId: $stream->getId(),
+                    taskId: $taskId,
+                    subtitleAssFileName: $command->getSubtitleAssFileName(),
+                    resizeFileName: $command->getResizeFileName(),
+                );
+            }
         );
     }
 
@@ -63,9 +70,14 @@ class EmbedVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function createMessage(Stream $stream, Task $task): object
     {
+        $taskId = $task->getId();
+        if (null === $taskId) {
+            throw new \RuntimeException('Task ID is required');
+        }
+
         return new EmbedVideoMessage(
             streamId: $stream->getId(),
-            taskId: $task->getId(),
+            taskId: $taskId,
             subtitleAssFileName: $this->currentCommand->getSubtitleAssFileName(),
             resizeFileName: $this->currentCommand->getResizeFileName(),
         );

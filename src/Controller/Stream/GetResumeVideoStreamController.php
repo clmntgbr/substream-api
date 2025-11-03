@@ -32,11 +32,17 @@ class GetResumeVideoStreamController extends AbstractController
 
             $response = new BinaryFileResponse($resumePath);
 
+            $originalFileName = $stream->getOriginalFileName();
+
+            if (null === $originalFileName) {
+                throw new \RuntimeException('file name is required');
+            }
+
             $response->headers->set(
                 'Content-Disposition',
                 HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
-                    sprintf('%s.txt', Slugify::slug($stream->getOriginalFileName()))
+                    sprintf('%s.txt', Slugify::slug($originalFileName))
                 )
             );
 

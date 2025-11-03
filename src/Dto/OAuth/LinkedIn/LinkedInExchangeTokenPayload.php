@@ -19,11 +19,19 @@ class LinkedInExchangeTokenPayload implements ExchangeTokenPayloadInterface
 
     public function getCode(): string
     {
+        if (null === $this->code) {
+            throw new \RuntimeException('Code is required');
+        }
+
         return $this->code;
     }
 
     public function getState(): string
     {
+        if (null === $this->state) {
+            throw new \RuntimeException('State is required');
+        }
+
         return $this->state;
     }
 }

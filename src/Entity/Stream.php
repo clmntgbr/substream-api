@@ -450,12 +450,20 @@ class Stream
     #[Groups(['stream:read'])]
     public function getCreatedAt(): \DateTimeInterface
     {
+        if (null === $this->createdAt) {
+            throw new \RuntimeException('CreatedAt is not set');
+        }
+
         return $this->createdAt;
     }
 
     #[Groups(['stream:read'])]
     public function getUpdatedAt(): \DateTimeInterface
     {
+        if (null === $this->updatedAt) {
+            throw new \RuntimeException('UpdatedAt is not set');
+        }
+
         return $this->updatedAt;
     }
 

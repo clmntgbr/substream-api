@@ -47,12 +47,19 @@ class TransformSubtitleCommandHandler extends AbstractStreamWorkflowCommandHandl
 
         $this->executeWorkflow(
             $command->getStreamId(),
-            fn (Stream $stream, Task $task) => new TransformSubtitleMessage(
-                taskId: $task->getId(),
-                streamId: $stream->getId(),
-                option: $stream->getOption(),
-                subtitleSrtFileName: $command->getSubtitleSrtFileName(),
-            )
+            function (Stream $stream, Task $task) use ($command) {
+                $taskId = $task->getId();
+                if (null === $taskId) {
+                    throw new \RuntimeException('Task ID is required');
+                }
+
+                return new TransformSubtitleMessage(
+                    taskId: $taskId,
+                    streamId: $stream->getId(),
+                    option: $stream->getOption(),
+                    subtitleSrtFileName: $command->getSubtitleSrtFileName(),
+                );
+            }
         );
     }
 
@@ -63,8 +70,13 @@ class TransformSubtitleCommandHandler extends AbstractStreamWorkflowCommandHandl
 
     protected function createMessage(Stream $stream, Task $task): object
     {
+        $taskId = $task->getId();
+        if (null === $taskId) {
+            throw new \RuntimeException('Task ID is required');
+        }
+
         return new TransformSubtitleMessage(
-            taskId: $task->getId(),
+            taskId: $taskId,
             streamId: $stream->getId(),
             option: $stream->getOption(),
             subtitleSrtFileName: $this->currentCommand->getSubtitleSrtFileName(),
