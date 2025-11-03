@@ -16,7 +16,6 @@ use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
@@ -25,7 +24,6 @@ class CreateStreamUrlCommandHandler
     use WorkflowTrait;
 
     public function __construct(
-        private ValidatorInterface $validator,
         private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
         private StreamRepository $streamRepository,

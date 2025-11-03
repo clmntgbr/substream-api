@@ -8,7 +8,6 @@ use App\Core\Application\Command\TransformSubtitleCommand;
 use App\Entity\Stream;
 use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
-use App\Repository\UserRepository;
 use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -32,7 +31,6 @@ class DispatchTransformSubtitleCommand extends Command
     public function __construct(
         private StreamRepository $streamRepository,
         private CommandBusInterface $commandBus,
-        private UserRepository $userRepository,
         private FilesystemOperator $awsStorage,
         private S3ServiceInterface $s3Service,
         private KernelInterface $kernel,

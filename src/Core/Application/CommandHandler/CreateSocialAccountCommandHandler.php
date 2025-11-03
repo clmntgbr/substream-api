@@ -7,17 +7,13 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateSocialAccountCommand;
 use App\Entity\SocialAccount;
 use App\Repository\SocialAccountRepository;
-use App\Repository\UserRepository;
-use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class CreateSocialAccountCommandHandler
 {
     public function __construct(
-        private UserRepository $userRepository,
         private SocialAccountRepository $socialAccountRepository,
-        private CommandBusInterface $commandBus,
     ) {
     }
 

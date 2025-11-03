@@ -7,7 +7,6 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateNotificationCommand;
 use App\Core\Application\Command\CreateStreamSuccessNotificationCommand;
 use App\Repository\StreamRepository;
-use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -19,7 +18,6 @@ class CreateStreamSuccessNotificationCommandHandler
         private StreamRepository $streamRepository,
         private LoggerInterface $logger,
         private CommandBusInterface $commandBus,
-        private PublishServiceInterface $publishService,
     ) {
     }
 

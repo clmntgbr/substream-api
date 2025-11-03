@@ -11,7 +11,6 @@ use App\Dto\Webhook\ResumeVideoFailure;
 use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
 use App\Repository\StreamRepository;
-use App\Repository\TaskRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
@@ -29,7 +28,6 @@ final class ResumeVideoFailureWebhookConsumer implements ConsumerInterface
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
         private CommandBusInterface $commandBus,
-        private TaskRepository $taskRepository,
     ) {
     }
 

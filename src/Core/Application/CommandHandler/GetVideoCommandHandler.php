@@ -12,7 +12,6 @@ use App\Enum\StreamStatusEnum;
 use App\Repository\StreamRepository;
 use App\Repository\TaskRepository;
 use App\Service\PublishServiceInterface;
-use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -25,7 +24,6 @@ class GetVideoCommandHandler
 
     public function __construct(
         private StreamRepository $streamRepository,
-        private CommandBusInterface $commandBus,
         private WorkflowInterface $streamsStateMachine,
         private CoreBusInterface $coreBus,
         private LoggerInterface $logger,

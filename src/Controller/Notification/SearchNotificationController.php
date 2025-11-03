@@ -8,7 +8,6 @@ use App\Dto\SearchRequestDto;
 use App\Entity\User;
 use App\Repository\ElasticaNotificationRepository;
 use App\SearchDecorator\SearchDecorator;
-use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +20,6 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class SearchNotificationController extends AbstractController
 {
     public function __construct(
-        private CommandBusInterface $commandBus,
         private ElasticaNotificationRepository $elasticaNotificationRepository,
         private readonly NormalizerInterface $normalizer,
     ) {

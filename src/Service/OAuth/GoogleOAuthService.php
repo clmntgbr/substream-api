@@ -12,6 +12,7 @@ use App\Dto\OAuth\Google\GoogleExchangeTokenPayload;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use League\OAuth2\Client\Token\AccessToken;
 
 class GoogleOAuthService implements OAuthServiceInterface
 {
@@ -44,6 +45,7 @@ class GoogleOAuthService implements OAuthServiceInterface
             'code' => $payload->getCode(),
         ]);
 
+        /** @var AccessToken $accessToken */
         $userInfo = $provider->getResourceOwner($accessToken);
         $account = GoogleAccount::fromArray($userInfo->toArray());
 

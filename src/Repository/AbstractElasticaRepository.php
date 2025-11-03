@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\SearchDecorator\Aggregation\AggregationInterface;
 use App\SearchDecorator\SearchInterface;
 use Elastica\Query;
+use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use FOS\ElasticaBundle\Finder\PaginatedFinderInterface;
 use FOS\ElasticaBundle\Paginator\FantaPaginatorAdapter;
@@ -66,6 +67,7 @@ class AbstractElasticaRepository extends Repository
             }
 
             foreach ($searchQuery['query'] as $q) {
+                /** @var AbstractQuery $q */
                 /** @var array<string, mixed> $qArray */
                 $qArray = $q->toArray();
 
@@ -90,6 +92,7 @@ class AbstractElasticaRepository extends Repository
         $optional = $search->getOptionalQueries();
         foreach ($optional as $sq) {
             foreach ($sq['query'] as $q) {
+                /* @var AbstractQuery $q */
                 $bool->addShould($q);
             }
         }

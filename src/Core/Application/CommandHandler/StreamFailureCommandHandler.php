@@ -8,7 +8,6 @@ use App\Core\Application\Command\StreamFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Repository\StreamRepository;
 use App\Service\PublishServiceInterface;
-use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -22,7 +21,6 @@ class StreamFailureCommandHandler
         private StreamRepository $streamRepository,
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,
-        private CommandBusInterface $commandBus,
         private PublishServiceInterface $publishService,
     ) {
     }

@@ -12,6 +12,7 @@ use App\Dto\OAuth\Github\GithubExchangeTokenPayload;
 use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GithubOAuthService implements OAuthServiceInterface
@@ -54,6 +55,7 @@ class GithubOAuthService implements OAuthServiceInterface
             'code_verifier' => $payload->getCodeVerifier(),
         ]);
 
+        /** @var AccessToken $accessToken */
         $userInfo = $provider->getResourceOwner($accessToken);
         $email = $this->fetchPrimaryEmail($accessToken->getToken());
 

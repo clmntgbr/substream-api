@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Entity\Stream;
 use App\Entity\User;
-use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
@@ -14,7 +13,6 @@ class PublishService implements PublishServiceInterface
 {
     public function __construct(
         private HubInterface $hub,
-        private CommandBusInterface $commandBus,
         private ElasticsearchRefreshService $elasticsearchRefreshService,
     ) {
     }

@@ -12,9 +12,6 @@ use App\Event\CreateStreamEvent;
 use App\Exception\OptionNotFoundException;
 use App\Repository\OptionRepository;
 use App\Repository\StreamRepository;
-use App\Service\PublishServiceInterface;
-use App\Shared\Application\Bus\CommandBusInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -24,11 +21,8 @@ class CreateStreamCommandHandler
     public function __construct(
         private StreamRepository $streamRepository,
         private CreateStreamMapperInterface $createStreamMapper,
-        private CommandBusInterface $commandBus,
         private EventDispatcherInterface $eventDispatcher,
         private OptionRepository $optionRepository,
-        private PublishServiceInterface $publishService,
-        private LoggerInterface $logger,
     ) {
     }
 

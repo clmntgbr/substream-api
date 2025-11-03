@@ -15,7 +15,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsRemoteEventConsumer('getvideofailure')]
@@ -24,7 +23,6 @@ final class GetVideoFailureWebhookConsumer implements ConsumerInterface
     use WorkflowTrait;
 
     public function __construct(
-        private DenormalizerInterface $denormalizer,
         private StreamRepository $streamRepository,
         private WorkflowInterface $streamsStateMachine,
         private LoggerInterface $logger,

@@ -7,7 +7,6 @@ namespace App\Controller\Stream;
 use App\Entity\Stream;
 use App\Exception\StreamNotDownloadableException;
 use App\Service\S3ServiceInterface;
-use App\Shared\Application\Bus\CommandBusInterface;
 use App\Util\Slugify;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -18,7 +17,6 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 class GetResumeVideoStreamController extends AbstractController
 {
     public function __construct(
-        private CommandBusInterface $commandBus,
         private S3ServiceInterface $s3Service,
     ) {
     }

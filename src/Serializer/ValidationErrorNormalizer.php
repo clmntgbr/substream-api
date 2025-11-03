@@ -17,7 +17,7 @@ class ValidationErrorNormalizer implements NormalizerInterface
     /**
      * @param array<string, mixed> $context
      *
-     * @return array<string, mixed>|string|int|float|bool|\ArrayObject|null
+     * @return array<string, mixed>|string|int|float|bool|\ArrayObject<int|string, mixed>|null
      */
     public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
