@@ -14,8 +14,8 @@ use Symfony\Component\Uid\Uuid;
 /**
  * @extends AbstractRepository<User>
  *
- * @method User|null findOneBy(array $criteria, ?array $orderBy = null)
- * @method User[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
+ * @method User|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
+ * @method User[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
  * @method User|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
  * @method User[]    findAll()
  */
@@ -36,8 +36,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
         }
 
         $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        $this->saveAndFlush($user);
     }
 
     public function findByUuid(Uuid $id): ?User

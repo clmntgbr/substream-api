@@ -92,8 +92,9 @@ class AbstractElasticaRepository extends Repository
         $optional = $search->getOptionalQueries();
         foreach ($optional as $sq) {
             foreach ($sq['query'] as $q) {
-                /* @var AbstractQuery $q */
-                $bool->addShould($q);
+                if ($q instanceof AbstractQuery) {
+                    $bool->addShould($q);
+                }
             }
         }
         if (!empty($optional)) {

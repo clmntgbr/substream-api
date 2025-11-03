@@ -10,8 +10,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends AbstractRepository<Notification>
  *
- * @method Notification|null findOneBy(array $criteria, ?array $orderBy = null)
- * @method Notification[]    findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null)
+ * @method Notification|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
+ * @method Notification[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
  * @method Notification|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
  * @method Notification[]    findAll()
  */
