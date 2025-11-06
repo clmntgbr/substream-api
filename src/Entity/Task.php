@@ -40,7 +40,7 @@ class Task
     public static function create(string $commandClass, Stream $stream): self
     {
         $task = new self();
-        $task->setId(Uuid::v4());
+        $task->setId(Uuid::v7());
         $task->commandClass = $commandClass;
         $task->status = TaskStatusEnum::RUNNING->value;
         $task->stream = $stream;

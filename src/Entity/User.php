@@ -77,7 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v7();
         $this->socialAccounts = new ArrayCollection();
     }
 

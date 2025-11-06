@@ -127,7 +127,7 @@ class Option
 
     public function __construct()
     {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v7();
         $this->subtitleFont = SubtitleFontEnum::ARIAL->value;
         $this->subtitleSize = 16;
         $this->subtitleColor = '#000000';

@@ -38,7 +38,7 @@ class SocialAccount
 
     public function __construct()
     {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v7();
     }
 
     public static function create(string $provider, string $accountId, string $email, User $user): self

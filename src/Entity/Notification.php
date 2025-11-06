@@ -66,7 +66,7 @@ class Notification
 
     public function __construct()
     {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v7();
         $this->isRead = false;
     }
 

@@ -37,7 +37,7 @@ use Symfony\Component\Uid\Uuid;
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
         ),
         new GetCollection(
-            normalizationContext: ['groups' => ['stream:read']],
+            normalizationContext: ['groups' => ['stream:read', 'stream:admin']],
             security: 'is_granted("ROLE_ADMIN")',
         ),
         new Get(
@@ -139,6 +139,7 @@ class Stream
      * @var array<int, string>
      */
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['stream:admin'])]
     private array $statuses = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
