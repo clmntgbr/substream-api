@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-enum ErrorKeyEnum: string
+enum TranslatableKeyEnum: string
 {
     case AUTH_INVALID_CREDENTIALS = 'error.auth.invalid_credentials';
     case AUTH_ACCOUNT_LOCKED = 'error.auth.account_locked';

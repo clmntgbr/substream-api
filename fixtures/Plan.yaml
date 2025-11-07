@@ -1,0 +1,63 @@
+App\Entity\Plan:
+  plan_free:
+    name: "Free"
+    price: 0.00
+    interval: "monthly"
+    features: ['FEATURE_BASIC_UPLOAD', 'FEATURE_SD_QUALITY']
+    maxVideosPerMonth: 5
+    maxSizeInMegabytes: 500
+    maxDurationMinutes: 15
+    
+  plan_starter:
+    name: "Starter"
+    price: 9.99
+    interval: "monthly"
+    features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
+    maxVideosPerMonth: 25
+    maxSizeInMegabytes: 1000
+    maxDurationMinutes: 60
+    
+  plan_starter_yearly:
+    name: "Starter"
+    price: 99.99
+    interval: "yearly"
+    features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
+    maxVideosPerMonth: 25
+    maxSizeInMegabytes: 1000
+    maxDurationMinutes: 60
+    
+  plan_pro:
+    name: "Pro"
+    price: 29.99
+    interval: "monthly"
+    features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
+    maxVideosPerMonth: 100
+    maxSizeInMegabytes: 10000
+    maxDurationMinutes: 180
+    
+  plan_pro_yearly:
+    name: "Pro"
+    price: 299.99
+    interval: "yearly"
+    features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
+    maxVideosPerMonth: 100
+    maxSizeInMegabytes: 10000
+    maxDurationMinutes: 180
+    
+  plan_business:
+    name: "Business"
+    price: 79.99
+    interval: "monthly"
+    features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
+    maxVideosPerMonth: 500
+    maxSizeInMegabytes: 10000
+    maxDurationMinutes: 360
+    
+  plan_business_yearly:
+    name: "Business"
+    price: 799.99
+    interval: "yearly"
+    features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
+    maxVideosPerMonth: 500
+    maxSizeInMegabytes: 10000
+    maxDurationMinutes: 360

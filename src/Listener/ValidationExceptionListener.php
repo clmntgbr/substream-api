@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,7 +73,7 @@ class ValidationExceptionListener implements EventSubscriberInterface
         $response = new JsonResponse([
             'success' => false,
             'message' => 'Validation failed',
-            'key' => ErrorKeyEnum::VALIDATION_FAILED->value,
+            'key' => TranslatableKeyEnum::VALIDATION_FAILED->value,
             'params' => [
                 'errors' => $errors,
             ],

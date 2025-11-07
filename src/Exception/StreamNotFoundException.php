@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class StreamNotFoundException extends BusinessException
@@ -13,7 +13,7 @@ class StreamNotFoundException extends BusinessException
     {
         parent::__construct(
             'Stream not found',
-            ErrorKeyEnum::STREAM_NOT_FOUND->value,
+            TranslatableKeyEnum::STREAM_NOT_FOUND->value,
             ['streamId' => $streamId],
             Response::HTTP_NOT_FOUND
         );

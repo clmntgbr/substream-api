@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class OauthException extends BusinessException
@@ -14,7 +14,7 @@ class OauthException extends BusinessException
      */
     public function __construct(
         string $englishMessage = 'OAuth authentication failed',
-        string $translationKey = ErrorKeyEnum::OAUTH_FAILED->value,
+        string $translationKey = TranslatableKeyEnum::OAUTH_FAILED->value,
         array $translationParams = [],
     ) {
         parent::__construct($englishMessage, $translationKey, $translationParams, Response::HTTP_UNAUTHORIZED);
@@ -24,7 +24,7 @@ class OauthException extends BusinessException
     {
         return new self(
             "OAuth provider {$provider} failed",
-            ErrorKeyEnum::OAUTH_PROVIDER_FAILED->value,
+            TranslatableKeyEnum::OAUTH_PROVIDER_FAILED->value,
             ['provider' => $provider]
         );
     }
@@ -33,7 +33,7 @@ class OauthException extends BusinessException
     {
         return new self(
             'Invalid OAuth state',
-            ErrorKeyEnum::OAUTH_INVALID_STATE->value
+            TranslatableKeyEnum::OAUTH_INVALID_STATE->value
         );
     }
 
@@ -41,7 +41,7 @@ class OauthException extends BusinessException
     {
         return new self(
             'Failed to retrieve OAuth token',
-            ErrorKeyEnum::OAUTH_TOKEN_FAILED->value
+            TranslatableKeyEnum::OAUTH_TOKEN_FAILED->value
         );
     }
 }

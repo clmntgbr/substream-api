@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationFailureEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTExpiredEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTInvalidEvent;
@@ -34,15 +34,15 @@ final class AuthenticationFailureListener implements EventSubscriberInterface
         $exception = $event->getException();
 
         $message = 'Authentication failed. Please verify your credentials and try again.';
-        $key = ErrorKeyEnum::AUTH_INVALID_CREDENTIALS->value;
+        $key = TranslatableKeyEnum::AUTH_INVALID_CREDENTIALS->value;
         $params = [];
 
         if ($exception instanceof LockedException) {
             $message = 'Your account is locked. Please contact support to regain access.';
-            $key = ErrorKeyEnum::AUTH_ACCOUNT_LOCKED->value;
+            $key = TranslatableKeyEnum::AUTH_ACCOUNT_LOCKED->value;
         } elseif ($exception instanceof DisabledException) {
             $message = 'Your account is disabled. Please confirm your email or contact support.';
-            $key = ErrorKeyEnum::AUTH_ACCOUNT_DISABLED->value;
+            $key = TranslatableKeyEnum::AUTH_ACCOUNT_DISABLED->value;
         } elseif ($exception instanceof AuthenticationException) {
             $params = [
                 'error' => $exception->getMessageKey(),
@@ -56,7 +56,7 @@ final class AuthenticationFailureListener implements EventSubscriberInterface
     {
         $event->setResponse($this->createResponse(
             'Your authentication token is invalid. Please log in again.',
-            ErrorKeyEnum::AUTH_TOKEN_INVALID->value
+            TranslatableKeyEnum::AUTH_TOKEN_INVALID->value
         ));
     }
 
@@ -64,7 +64,7 @@ final class AuthenticationFailureListener implements EventSubscriberInterface
     {
         $event->setResponse($this->createResponse(
             'No authentication token was provided. Please sign in to continue.',
-            ErrorKeyEnum::AUTH_TOKEN_MISSING->value
+            TranslatableKeyEnum::AUTH_TOKEN_MISSING->value
         ));
     }
 
@@ -72,7 +72,7 @@ final class AuthenticationFailureListener implements EventSubscriberInterface
     {
         $event->setResponse($this->createResponse(
             'Your authentication token has expired. Please refresh your session.',
-            ErrorKeyEnum::AUTH_TOKEN_EXPIRED->value
+            TranslatableKeyEnum::AUTH_TOKEN_EXPIRED->value
         ));
     }
 

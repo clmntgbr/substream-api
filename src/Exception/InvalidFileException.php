@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class InvalidFileException extends BusinessException
@@ -14,7 +14,7 @@ class InvalidFileException extends BusinessException
      */
     public function __construct(
         string $englishMessage = 'Invalid file',
-        string $translationKey = ErrorKeyEnum::FILE_INVALID->value,
+        string $translationKey = TranslatableKeyEnum::FILE_INVALID->value,
         array $translationParams = [],
     ) {
         parent::__construct($englishMessage, $translationKey, $translationParams, Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -27,7 +27,7 @@ class InvalidFileException extends BusinessException
     {
         return new self(
             sprintf('Invalid file type: %s. Allowed types: %s', $mimeType, implode(', ', $allowedTypes)),
-            ErrorKeyEnum::FILE_INVALID_MIME_TYPE->value,
+            TranslatableKeyEnum::FILE_INVALID_MIME_TYPE->value,
             [
                 'mimeType' => $mimeType,
                 'allowedTypes' => implode(', ', $allowedTypes),
@@ -39,7 +39,7 @@ class InvalidFileException extends BusinessException
     {
         return new self(
             sprintf('File too large: %d bytes. Maximum allowed: %d bytes', $size, $maxSize),
-            ErrorKeyEnum::FILE_TOO_LARGE->value,
+            TranslatableKeyEnum::FILE_TOO_LARGE->value,
             [
                 'size' => $size,
                 'maxSize' => $maxSize,
@@ -51,7 +51,7 @@ class InvalidFileException extends BusinessException
     {
         return new self(
             'File upload failed'.($reason ? ": {$reason}" : ''),
-            ErrorKeyEnum::FILE_UPLOAD_FAILED->value,
+            TranslatableKeyEnum::FILE_UPLOAD_FAILED->value,
             ['reason' => $reason]
         );
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class WorkflowTransitionException extends BusinessException
@@ -13,7 +13,7 @@ class WorkflowTransitionException extends BusinessException
     {
         parent::__construct(
             englishMessage: "Cannot transition to {$transition} from {$currentState}",
-            translationKey: ErrorKeyEnum::WORKFLOW_INVALID_TRANSITION->value,
+            translationKey: TranslatableKeyEnum::WORKFLOW_INVALID_TRANSITION->value,
             translationParams: ['transition' => $transition, 'state' => $currentState],
             httpStatusCode: Response::HTTP_CONFLICT,
             previous: $previous

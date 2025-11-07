@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use App\Exception\InvalidFileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints\File;
@@ -74,8 +74,8 @@ class UploadedFileValidator
         $constraints = new File([
             'maxSize' => $maxSize,
             'mimeTypes' => $allowedMimeTypes,
-            'mimeTypesMessage' => ErrorKeyEnum::validationInvalidFormat($fileType),
-            'maxSizeMessage' => ErrorKeyEnum::validationTooLarge($fileType),
+            'mimeTypesMessage' => TranslatableKeyEnum::validationInvalidFormat($fileType),
+            'maxSizeMessage' => TranslatableKeyEnum::validationTooLarge($fileType),
         ]);
 
         $violations = $this->validator->validate($file, $constraints);
@@ -83,11 +83,11 @@ class UploadedFileValidator
         if (count($violations) > 0) {
             $firstViolation = $violations[0];
             if (null === $firstViolation) {
-                throw new InvalidFileException('Validation failed', ErrorKeyEnum::FILE_INVALID->value, ['file' => $file->getClientOriginalName()]);
+                throw new InvalidFileException('Validation failed', TranslatableKeyEnum::FILE_INVALID->value, ['file' => $file->getClientOriginalName()]);
             }
 
             $message = $firstViolation->getMessage();
-            throw new InvalidFileException(is_string($message) ? $message : (string) $message, ErrorKeyEnum::FILE_INVALID->value, ['file' => $file->getClientOriginalName()]);
+            throw new InvalidFileException(is_string($message) ? $message : (string) $message, TranslatableKeyEnum::FILE_INVALID->value, ['file' => $file->getClientOriginalName()]);
         }
     }
 }

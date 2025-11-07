@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProcessorException extends BusinessException
@@ -14,7 +14,7 @@ class ProcessorException extends BusinessException
      */
     public function __construct(
         string $englishMessage = 'Processing failed',
-        string $translationKey = ErrorKeyEnum::PROCESSOR_FAILED->value,
+        string $translationKey = TranslatableKeyEnum::PROCESSOR_FAILED->value,
         array $translationParams = [],
     ) {
         parent::__construct($englishMessage, $translationKey, $translationParams, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -24,7 +24,7 @@ class ProcessorException extends BusinessException
     {
         return new self(
             "Processing step \"{$step}\" failed".($reason ? ": {$reason}" : ''),
-            ErrorKeyEnum::PROCESSOR_STEP_FAILED->value,
+            TranslatableKeyEnum::PROCESSOR_STEP_FAILED->value,
             [
                 'step' => $step,
                 'reason' => $reason,

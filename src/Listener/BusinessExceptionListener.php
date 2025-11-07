@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
-use App\Enum\ErrorKeyEnum;
+use App\Enum\TranslatableKeyEnum;
 use App\Exception\BusinessException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -78,7 +78,7 @@ class BusinessExceptionListener implements EventSubscriberInterface
         $response = new JsonResponse([
             'success' => false,
             'message' => $exception->getMessage(),
-            'key' => ErrorKeyEnum::httpStatus($exception->getStatusCode()),
+            'key' => TranslatableKeyEnum::httpStatus($exception->getStatusCode()),
             'params' => [],
         ], $exception->getStatusCode());
 
@@ -96,7 +96,7 @@ class BusinessExceptionListener implements EventSubscriberInterface
         ]);
 
         $isProduction = 'prod' === $this->env;
-        $errorKey = $isProduction ? ErrorKeyEnum::SERVER_INTERNAL->value : ErrorKeyEnum::SERVER_INTERNAL_DEBUG->value;
+        $errorKey = $isProduction ? TranslatableKeyEnum::SERVER_INTERNAL->value : TranslatableKeyEnum::SERVER_INTERNAL_DEBUG->value;
         $message = $isProduction
             ? 'An internal server error occurred'
             : sprintf('Internal error: %s in %s:%d', $exception->getMessage(), $exception->getFile(), $exception->getLine());
