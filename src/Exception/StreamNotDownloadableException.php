@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
+use App\Enum\ErrorKeyEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class StreamNotDownloadableException extends BusinessException
@@ -12,7 +13,7 @@ class StreamNotDownloadableException extends BusinessException
     {
         parent::__construct(
             'Stream is not downloadable',
-            'error.stream.not_downloadable',
+            ErrorKeyEnum::STREAM_NOT_DOWNLOADABLE->value,
             ['streamId' => $streamId],
             Response::HTTP_FORBIDDEN
         );

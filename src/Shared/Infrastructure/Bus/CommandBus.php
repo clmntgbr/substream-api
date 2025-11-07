@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Bus;
 
+use App\Exception\BusinessException;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Command\AsyncCommandInterface;
 use App\Shared\Application\Command\SyncCommandInterface;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -33,7 +35,28 @@ class CommandBus implements CommandBusInterface
 
     private function dispatchSync(object $command): mixed
     {
-        $envelope = $this->commandBus->dispatch($command);
+        try {
+            $envelope = $this->commandBus->dispatch($command);
+        } catch (HandlerFailedException $exception) {
+            $previousException = $exception->getPrevious();
+
+            while (null !== $previousException) {
+                if ($previousException instanceof BusinessException) {
+                    throw $previousException;
+                }
+
+                $previousException = $previousException->getPrevious();
+            }
+
+            $innerException = $exception->getPrevious();
+
+            if (null !== $innerException) {
+                throw $innerException;
+            }
+
+            throw $exception;
+        }
+
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp) {

@@ -11,7 +11,9 @@ use App\Core\Application\Command\UploadThumbnailCommand;
 use App\Core\Application\Trait\WorkflowTrait;
 use App\Core\Domain\Aggregate\CreateStreamModel;
 use App\Enum\WorkflowTransitionEnum;
+use App\Exception\InvalidThumbnailFormatException;
 use App\Exception\StreamNotFoundException;
+use App\Exception\ThumbnailFileCreationException;
 use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -69,7 +71,7 @@ class CreateStreamUrlCommandHandler
     private function convertBase64ToFile(string $base64Data): UploadedFile
     {
         if (!preg_match('/^data:image\/(jpeg|jpg|png|gif|webp);base64,(.+)$/', $base64Data, $matches)) {
-            throw new \InvalidArgumentException('Invalid base64 image format');
+            throw new InvalidThumbnailFormatException();
         }
 
         $mimeType = 'image/'.$matches[1];
@@ -77,16 +79,16 @@ class CreateStreamUrlCommandHandler
 
         $imageData = base64_decode($base64Content);
         if (false === $imageData) {
-            throw new \InvalidArgumentException('Invalid base64 data');
+            throw new InvalidThumbnailFormatException();
         }
 
         $tempFile = tempnam(sys_get_temp_dir(), 'thumbnail_');
         if (false === $tempFile) {
-            throw new \RuntimeException('Could not create temporary file');
+            throw new ThumbnailFileCreationException();
         }
 
         if (false === file_put_contents($tempFile, $imageData)) {
-            throw new \RuntimeException('Could not write to temporary file');
+            throw new ThumbnailFileCreationException();
         }
 
         $extension = match ($mimeType) {

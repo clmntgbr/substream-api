@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
+use App\Enum\ErrorKeyEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class StreamProcessingException extends BusinessException
@@ -12,7 +13,7 @@ class StreamProcessingException extends BusinessException
     {
         parent::__construct(
             englishMessage: "Stream processing failed: {$reason}",
-            translationKey: 'error.stream.processing_failed',
+            translationKey: ErrorKeyEnum::STREAM_PROCESSING_FAILED->value,
             translationParams: ['stream_id' => $streamId, 'reason' => $reason],
             httpStatusCode: Response::HTTP_UNPROCESSABLE_ENTITY,
             previous: $previous

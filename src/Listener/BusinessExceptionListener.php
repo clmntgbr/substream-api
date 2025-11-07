@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
+use App\Enum\ErrorKeyEnum;
 use App\Exception\BusinessException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -59,11 +60,9 @@ class BusinessExceptionListener implements EventSubscriberInterface
 
         $response = new JsonResponse([
             'success' => false,
-            'error' => [
-                'message' => $exception->getEnglishMessage(),
-                'key' => $exception->getTranslationKey(),
-                'params' => $exception->getTranslationParams(),
-            ],
+            'message' => $exception->getEnglishMessage(),
+            'key' => $exception->getTranslationKey(),
+            'params' => $exception->getTranslationParams(),
         ], $exception->getHttpStatusCode());
 
         $event->setResponse($response);
@@ -78,11 +77,9 @@ class BusinessExceptionListener implements EventSubscriberInterface
 
         $response = new JsonResponse([
             'success' => false,
-            'error' => [
-                'message' => $exception->getMessage(),
-                'key' => 'error.http.'.$exception->getStatusCode(),
-                'params' => [],
-            ],
+            'message' => $exception->getMessage(),
+            'key' => ErrorKeyEnum::httpStatus($exception->getStatusCode()),
+            'params' => [],
         ], $exception->getStatusCode());
 
         $event->setResponse($response);
@@ -99,7 +96,7 @@ class BusinessExceptionListener implements EventSubscriberInterface
         ]);
 
         $isProduction = 'prod' === $this->env;
-        $errorKey = $isProduction ? 'error.server.internal' : 'error.server.internal_debug';
+        $errorKey = $isProduction ? ErrorKeyEnum::SERVER_INTERNAL->value : ErrorKeyEnum::SERVER_INTERNAL_DEBUG->value;
         $message = $isProduction
             ? 'An internal server error occurred'
             : sprintf('Internal error: %s in %s:%d', $exception->getMessage(), $exception->getFile(), $exception->getLine());
@@ -115,11 +112,9 @@ class BusinessExceptionListener implements EventSubscriberInterface
 
         $response = new JsonResponse([
             'success' => false,
-            'error' => [
-                'message' => $message,
-                'key' => $errorKey,
-                'params' => $params,
-            ],
+            'message' => $message,
+            'key' => $errorKey,
+            'params' => $params,
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
 
         $event->setResponse($response);

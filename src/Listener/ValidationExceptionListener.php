@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
+use App\Enum\ErrorKeyEnum;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,14 +71,12 @@ class ValidationExceptionListener implements EventSubscriberInterface
         }
 
         $response = new JsonResponse([
-            '@context' => '/api/contexts/Error',
-            '@id' => '/api/errors/422',
-            '@type' => 'ConstraintViolationList',
-            'title' => 'An error occurred',
-            'detail' => 'Validation failed',
-            'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-            'type' => '/errors/422',
-            'errors' => $errors,
+            'success' => false,
+            'message' => 'Validation failed',
+            'key' => ErrorKeyEnum::VALIDATION_FAILED->value,
+            'params' => [
+                'errors' => $errors,
+            ],
         ], Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $event->setResponse($response);
