@@ -8,6 +8,7 @@ App\Entity\Plan:
     maxVideosPerMonth: 5
     maxSizeInMegabytes: 500
     maxDurationMinutes: 15
+    expirationDays: "50 years"
     
   plan_starter_monthly:
     setIdFromString: "<uuid()>"
@@ -18,6 +19,7 @@ App\Entity\Plan:
     maxVideosPerMonth: 25
     maxSizeInMegabytes: 1000
     maxDurationMinutes: 60
+    expirationDays: "1 month"
     
   plan_starter_yearly:
     setIdFromString: "<uuid()>"
@@ -28,7 +30,8 @@ App\Entity\Plan:
     maxVideosPerMonth: 25
     maxSizeInMegabytes: 1000
     maxDurationMinutes: 60
-    
+    expirationDays: "1 year"
+
   plan_pro_monthly:
     setIdFromString: "<uuid()>"
     name: "Pro"
@@ -38,7 +41,8 @@ App\Entity\Plan:
     maxVideosPerMonth: 100
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 180
-    
+    expirationDays: "1 month"
+
   plan_pro_yearly:
     setIdFromString: "<uuid()>"
     name: "Pro"
@@ -48,6 +52,7 @@ App\Entity\Plan:
     maxVideosPerMonth: 100
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 180
+    expirationDays: "1 year"
     
   plan_business_monthly:
     setIdFromString: "<uuid()>"
@@ -58,6 +63,7 @@ App\Entity\Plan:
     maxVideosPerMonth: 500
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 360
+    expirationDays: "1 month"
     
   plan_business_yearly:
     setIdFromString: "<uuid()>"
@@ -68,3 +74,4 @@ App\Entity\Plan:
     maxVideosPerMonth: 500
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 360
+    expirationDays: "1 year"

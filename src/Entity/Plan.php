@@ -57,6 +57,9 @@ class Plan
     #[Groups(['plan:read'])]
     private bool $isActive;
 
+    #[ORM\Column(type: Types::STRING)]
+    private string $expirationDays;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
@@ -162,6 +165,18 @@ class Plan
     public function setMaxDurationMinutes(int $maxDurationMinutes): self
     {
         $this->maxDurationMinutes = $maxDurationMinutes;
+
+        return $this;
+    }
+
+    public function getExpirationDays(): string
+    {
+        return $this->expirationDays;
+    }
+
+    public function setExpirationDays(string $expirationDays): self
+    {
+        $this->expirationDays = $expirationDays;
 
         return $this;
     }

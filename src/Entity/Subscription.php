@@ -31,34 +31,33 @@ class Subscription
     private Plan $plan;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['subscription:read'])]
     private \DateTimeInterface $startDate;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['subscription:read'])]
-    private ?\DateTimeInterface $endDate = null;
+    private \DateTimeInterface $endDate;
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['subscription:read'])]
     private string $status;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
-    #[Groups(['subscription:read'])]
     private bool $autoRenew = true;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(['subscription:read'])]
     private ?\DateTimeInterface $canceledAt = null;
 
     public function __construct()
     {
         $this->id = Uuid::v7();
+        $this->startDate = new \DateTime();
     }
 
     public static function create(
         User $user,
         Plan $plan,
         \DateTimeInterface $startDate,
+        \DateTimeInterface $endDate,
         string $status,
         bool $autoRenew = true,
     ): self {
@@ -66,6 +65,7 @@ class Subscription
         $subscription->user = $user;
         $subscription->plan = $plan;
         $subscription->startDate = $startDate;
+        $subscription->endDate = $endDate;
         $subscription->status = $status;
         $subscription->autoRenew = $autoRenew;
 
@@ -92,6 +92,7 @@ class Subscription
     public function setPlan(Plan $plan): self
     {
         $this->plan = $plan;
+        $this->endDate = (new \DateTime())->modify($plan->getExpirationDays());
 
         return $this;
     }
