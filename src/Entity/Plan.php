@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\PlanRepository;
@@ -16,9 +15,6 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: PlanRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(
-            normalizationContext: ['groups' => ['plan:read']],
-        ),
         new GetCollection(
             normalizationContext: ['groups' => ['plan:read']],
         ),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\OAuth;
 
 use App\Dto\OAuth\Github\GithubExchangeTokenPayload;
+use App\Entity\User;
 use App\Service\OAuth\GithubOAuthService;
 use App\Shared\Domain\Response\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -45,7 +46,7 @@ class GithubOauthController extends AbstractController
 
             return new JsonResponse(
                 data: [
-                    'user' => $this->normalizer->normalize($user, null, ['groups' => ['user:read', 'plan:read']]),
+                    'user' => $this->normalizer->normalize($user, null, ['groups' => User::GROUP_USER_READ]),
                     'token' => $token,
                 ],
                 status: JsonResponse::HTTP_OK

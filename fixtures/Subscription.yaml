@@ -1,0 +1,8 @@
+App\Entity\Subscription:
+  subscription_free_monthly_{1..100}:
+    setIdFromString: "<uuid()>"
+    user: "@user_<current()>"
+    plan: "@plan_free_monthly"
+    startDate: "<dateTimeBetween('-1 year', 'now')>"
+    status: "active"
+    autoRenew: true

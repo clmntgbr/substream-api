@@ -43,7 +43,7 @@ class RegisterController extends AbstractController
         return new JsonResponse([
             'success' => true,
             'data' => [
-                'user' => $this->normalizer->normalize($user, null, ['groups' => ['user:read', 'plan:read']]),
+                'user' => $this->normalizer->normalize($user, null, ['groups' => User::GROUP_USER_READ]),
                 'token' => $token,
             ],
         ]);

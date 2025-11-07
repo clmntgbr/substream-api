@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Controller\User\RegisterController;
 use App\Entity\Trait\UuidTrait;
+use App\Exception\SubscriptionNotFoundException;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,6 +19,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -39,6 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use UuidTrait;
     use TimestampableEntity;
+    public const GROUP_USER_READ = ['user:read', 'plan:read', 'subscription:read'];
 
     #[ORM\Column(length: 180)]
     #[Groups(['user:read'])]
@@ -287,8 +290,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getActiveSubscription(): ?Subscription
+    #[Groups(['subscription:read'])]
+    #[SerializedName('subscription')]
+    public function getActiveSubscription(): Subscription
     {
-        return $this->subscriptions->filter(fn (Subscription $subscription) => $subscription->isActive())->first() ?? null;
+        $subscription = $this->subscriptions->filter(fn (Subscription $subscription) => $subscription->isActive())->first();
+
+        if (false === $subscription) {
+            throw new SubscriptionNotFoundException((string) $this->id);
+        }
+
+        return $subscription;
+    }
+
+    #[Groups(['plan:read'])]
+    public function getPlan(): Plan
+    {
+        return $this->getActiveSubscription()->getPlan();
     }
 }

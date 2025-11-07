@@ -9,10 +9,14 @@ use App\Repository\SubscriptionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: []
+)]
 class Subscription
 {
     use UuidTrait;
@@ -27,23 +31,45 @@ class Subscription
     private Plan $plan;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['subscription:read'])]
     private \DateTimeInterface $startDate;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['subscription:read'])]
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column(type: Types::STRING)]
+    #[Groups(['subscription:read'])]
     private string $status;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    #[Groups(['subscription:read'])]
     private bool $autoRenew = true;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['subscription:read'])]
     private ?\DateTimeInterface $canceledAt = null;
 
     public function __construct()
     {
         $this->id = Uuid::v7();
+    }
+
+    public static function create(
+        User $user,
+        Plan $plan,
+        \DateTimeInterface $startDate,
+        string $status,
+        bool $autoRenew = true,
+    ): self {
+        $subscription = new self();
+        $subscription->user = $user;
+        $subscription->plan = $plan;
+        $subscription->startDate = $startDate;
+        $subscription->status = $status;
+        $subscription->autoRenew = $autoRenew;
+
+        return $subscription;
     }
 
     public function getUser(): User
@@ -106,6 +132,8 @@ class Subscription
         return $this;
     }
 
+    #[Groups(['subscription:read'])]
+    #[SerializedName('isAutoRenew')]
     public function isAutoRenew(): bool
     {
         return $this->autoRenew;
@@ -118,11 +146,15 @@ class Subscription
         return $this;
     }
 
+    #[Groups(['subscription:read'])]
+    #[SerializedName('isActive')]
     public function isActive(): bool
     {
         return $this->status === SubscriptionStatusEnum::ACTIVE->value;
     }
 
+    #[Groups(['subscription:read'])]
+    #[SerializedName('isExpired')]
     public function isExpired(): bool
     {
         if (null === $this->endDate) {
@@ -132,6 +164,8 @@ class Subscription
         return $this->endDate < new \DateTime() && $this->status === SubscriptionStatusEnum::EXPIRED->value;
     }
 
+    #[Groups(['subscription:read'])]
+    #[SerializedName('isCanceled')]
     public function isCanceled(): bool
     {
         return $this->status === SubscriptionStatusEnum::CANCELED->value;

@@ -15,6 +15,8 @@ enum TranslatableKeyEnum: string
 
     case OPTION_NOT_FOUND = 'error.option.not_found';
 
+    case SUBSCRIPTION_NOT_FOUND = 'error.subscription.not_found';
+
     case THUMBNAIL_INVALID_FORMAT = 'error.thumbnail.invalid_format';
     case THUMBNAIL_FILE_CREATION_FAILED = 'error.thumbnail.file_creation_failed';
 

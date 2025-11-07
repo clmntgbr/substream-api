@@ -6,7 +6,6 @@ App\Entity\User:
     firstname: 'dummy'
     lastname: 'dummy'
     picture: '<envar("BACKEND_URL")>/uploads/avatar.jpg'
-    plan: "@plan_free_monthly"
     
   user_2:
     email: "dummmmy@gmail.com"
@@ -14,13 +13,11 @@ App\Entity\User:
     roles: ["ROLE_USER"]
     firstname: 'dummy'
     lastname: 'dummy'
-    plan: "@plan_free_monthly"
 
-  user_{2..100}:
+  user_{3..100}:
     email: "<email()>"
     plainPassword: "password123"
     roles: ["ROLE_USER"]
     firstname: '<firstName()>'
     lastname: '<lastName()>'
-    plan: "@plan_free_monthly"
   
