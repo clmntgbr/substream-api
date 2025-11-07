@@ -9,6 +9,7 @@ services:
             string $backendUrl: '%env(BACKEND_URL)%'
             string $env: '%env(APP_ENV)%'
             string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
+            string $planFreeMonthlyId: '%env(PLAN_FREE_MONTHLY_ID)%'
 
     App\:
         resource: '../src/'

@@ -23,7 +23,7 @@ class AuthenticationSuccessListener
         $data = $event->getData();
 
         $context = (new ObjectNormalizerContextBuilder())
-            ->withGroups(['user:read'])
+            ->withGroups(['user:read', 'plan:read'])
             ->toArray();
 
         $data['user'] = json_decode($this->serializer->serialize($user, 'json', $context));

@@ -26,7 +26,7 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new Get(
-            normalizationContext: ['groups' => ['user:read']],
+            normalizationContext: ['groups' => ['user:read', 'plan:read']],
             uriTemplate: '/me',
         ),
         new Post(
@@ -75,10 +75,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
+    #[ORM\OneToMany(targetEntity: Subscription::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $subscriptions;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
         $this->socialAccounts = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
     }
 
     public static function create(
@@ -103,26 +107,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    #[Groups(['user:read'])]
-    public function getCreatedAt(): \DateTimeInterface
-    {
-        if (null === $this->createdAt) {
-            throw new \RuntimeException('CreatedAt is not set');
-        }
-
-        return $this->createdAt;
-    }
-
-    #[Groups(['user:read'])]
-    public function getUpdatedAt(): \DateTimeInterface
-    {
-        if (null === $this->updatedAt) {
-            throw new \RuntimeException('UpdatedAt is not set');
-        }
-
-        return $this->updatedAt;
     }
 
     public function getEmail(): ?string
@@ -286,5 +270,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->picture = $picture;
 
         return $this;
+    }
+
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscription $subscription): static
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions->add($subscription);
+            $subscription->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function getActiveSubscription(): ?Subscription
+    {
+        return $this->subscriptions->filter(fn (Subscription $subscription) => $subscription->isActive())->first() ?? null;
     }
 }

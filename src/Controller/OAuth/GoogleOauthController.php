@@ -45,7 +45,7 @@ class GoogleOauthController extends AbstractController
 
             return new JsonResponse(
                 data: [
-                    'user' => $this->normalizer->normalize($user, null, ['groups' => ['user:read']]),
+                    'user' => $this->normalizer->normalize($user, null, ['groups' => ['user:read', 'plan:read']]),
                     'token' => $token,
                 ],
                 status: JsonResponse::HTTP_OK

@@ -1,5 +1,6 @@
 App\Entity\Plan:
-  plan_free:
+  plan_free_monthly:
+    setIdFromString: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd"
     name: "Free"
     price: 0.00
     interval: "monthly"
@@ -8,7 +9,8 @@ App\Entity\Plan:
     maxSizeInMegabytes: 500
     maxDurationMinutes: 15
     
-  plan_starter:
+  plan_starter_monthly:
+    setIdFromString: "<uuid()>"
     name: "Starter"
     price: 9.99
     interval: "monthly"
@@ -18,6 +20,7 @@ App\Entity\Plan:
     maxDurationMinutes: 60
     
   plan_starter_yearly:
+    setIdFromString: "<uuid()>"
     name: "Starter"
     price: 99.99
     interval: "yearly"
@@ -26,7 +29,8 @@ App\Entity\Plan:
     maxSizeInMegabytes: 1000
     maxDurationMinutes: 60
     
-  plan_pro:
+  plan_pro_monthly:
+    setIdFromString: "<uuid()>"
     name: "Pro"
     price: 29.99
     interval: "monthly"
@@ -36,6 +40,7 @@ App\Entity\Plan:
     maxDurationMinutes: 180
     
   plan_pro_yearly:
+    setIdFromString: "<uuid()>"
     name: "Pro"
     price: 299.99
     interval: "yearly"
@@ -44,7 +49,8 @@ App\Entity\Plan:
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 180
     
-  plan_business:
+  plan_business_monthly:
+    setIdFromString: "<uuid()>"
     name: "Business"
     price: 79.99
     interval: "monthly"
@@ -54,6 +60,7 @@ App\Entity\Plan:
     maxDurationMinutes: 360
     
   plan_business_yearly:
+    setIdFromString: "<uuid()>"
     name: "Business"
     price: 799.99
     interval: "yearly"

@@ -6,6 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateUserCommand;
 use App\Entity\User;
+use App\Repository\PlanRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -14,6 +15,8 @@ class CreateUserCommandHandler
 {
     public function __construct(
         private UserRepository $userRepository,
+        private PlanRepository $planRepository,
+        private string $planFreeMonthlyId,
     ) {
     }
 
@@ -26,6 +29,7 @@ class CreateUserCommandHandler
             email: $command->getEmail(),
             plainPassword: $command->getPlainPassword(),
         );
+
         $this->userRepository->saveAndFlush($user);
 
         return $user;
