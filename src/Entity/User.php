@@ -28,7 +28,7 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new Get(
-            normalizationContext: ['groups' => ['user:read', 'plan:read']],
+            normalizationContext: ['groups' => ['user:read', 'plan:read', 'subscription:read']],
             uriTemplate: '/me',
         ),
         new Post(
