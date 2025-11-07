@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
+use App\Core\Application\Command\CreateSubscriptionCommand;
 use App\Core\Application\Command\CreateUserCommand;
 use App\Entity\User;
 use App\Repository\PlanRepository;
 use App\Repository\UserRepository;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class CreateUserCommandHandler
 {
     public function __construct(
+        private CommandBusInterface $commandBus,
         private UserRepository $userRepository,
         private PlanRepository $planRepository,
         private string $planFreeMonthlyId,
@@ -30,6 +33,12 @@ class CreateUserCommandHandler
             plainPassword: $command->getPlainPassword(),
         );
 
+        $subscription = $this->commandBus->dispatch(new CreateSubscriptionCommand(
+            user: $user,
+            planId: $this->planFreeMonthlyId,
+        ));
+
+        $user->addSubscription($subscription);
         $this->userRepository->saveAndFlush($user);
 
         return $user;

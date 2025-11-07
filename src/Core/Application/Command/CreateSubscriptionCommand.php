@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Core\Application\Command;
 
+use App\Entity\User;
 use App\Shared\Application\Command\CommandAbstract;
 use App\Shared\Application\Command\SyncCommandInterface;
-use Symfony\Component\Uid\Uuid;
 
 final class CreateSubscriptionCommand extends CommandAbstract implements SyncCommandInterface
 {
     public function __construct(
-        private Uuid $userId,
-        private Uuid $planId,
+        private User $user,
+        private string $planId,
     ) {
     }
 
-    public function getUserId(): Uuid
+    public function getUser(): User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function getPlanId(): Uuid
+    public function getPlanId(): string
     {
         return $this->planId;
     }

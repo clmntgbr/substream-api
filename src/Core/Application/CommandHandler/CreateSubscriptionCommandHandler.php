@@ -10,15 +10,13 @@ use App\Enum\SubscriptionStatusEnum;
 use App\Exception\PlanNotFoundException;
 use App\Repository\PlanRepository;
 use App\Repository\SubscriptionRepository;
-use App\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Uid\Uuid;
 
 #[AsMessageHandler]
 class CreateSubscriptionCommandHandler
 {
     public function __construct(
-        private UserRepository $userRepository,
         private PlanRepository $planRepository,
         private SubscriptionRepository $subscriptionRepository,
     ) {
@@ -26,20 +24,14 @@ class CreateSubscriptionCommandHandler
 
     public function __invoke(CreateSubscriptionCommand $command): Subscription
     {
-        $user = $this->userRepository->findByUuid($command->getUserId());
-
-        if (null === $user) {
-            throw new UserNotFoundException((string) $command->getUserId());
-        }
-
-        $plan = $this->planRepository->findByUuid($command->getPlanId());
+        $plan = $this->planRepository->findByUuid(Uuid::fromString($command->getPlanId()));
 
         if (null === $plan) {
             throw new PlanNotFoundException((string) $command->getPlanId());
         }
 
         $subscription = Subscription::create(
-            user: $user,
+            user: $command->getUser(),
             plan: $plan,
             startDate: new \DateTime(),
             status: SubscriptionStatusEnum::ACTIVE->value,

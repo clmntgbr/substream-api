@@ -22,7 +22,7 @@ class Subscription
     use UuidTrait;
     use TimestampableEntity;
 
-    #[ORM\ManyToOne(inversedBy: 'subscriptions')]
+    #[ORM\ManyToOne(inversedBy: 'subscriptions', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
