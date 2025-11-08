@@ -24,7 +24,9 @@ App\Entity\Plan:
     maxSizeInMegabytes: 1000
     maxDurationMinutes: 60
     expirationDays: "1 month"
-    
+    stripeProductId: '<{stripe.plan.product_starter_monthly}>'
+    stripePriceId: '<{stripe.plan.price_starter_monthly}>'
+
   plan_starter_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_starter_yearly"
@@ -37,7 +39,9 @@ App\Entity\Plan:
     maxSizeInMegabytes: 1000
     maxDurationMinutes: 60
     expirationDays: "1 year"
-    
+    stripeProductId: '<{stripe.plan.product_starter_yearly}>'
+    stripePriceId: '<{stripe.plan.price_starter_yearly}>'
+
   plan_pro_monthly:
     setIdFromString: "<uuid()>"
     reference: "plan_pro_monthly"
@@ -50,7 +54,9 @@ App\Entity\Plan:
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 180
     expirationDays: "1 month"
-    
+    stripeProductId: '<{stripe.plan.product_pro_monthly}>'
+    stripePriceId: '<{stripe.plan.price_pro_monthly}>'
+
   plan_pro_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_pro_yearly"
@@ -63,7 +69,9 @@ App\Entity\Plan:
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 180
     expirationDays: "1 year"
-    
+    stripeProductId: '<{stripe.plan.product_pro_yearly}>'
+    stripePriceId: '<{stripe.plan.price_pro_yearly}>'
+
   plan_business_monthly:
     setIdFromString: "<uuid()>"
     reference: "plan_business_monthly"
@@ -76,7 +84,9 @@ App\Entity\Plan:
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 360
     expirationDays: "1 month"
-    
+    stripeProductId: '<{stripe.plan.product_business_monthly}>'
+    stripePriceId: '<{stripe.plan.price_business_monthly}>'
+
   plan_business_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_business_yearly"
@@ -89,3 +99,5 @@ App\Entity\Plan:
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 360
     expirationDays: "1 year"
+    stripeProductId: '<{stripe.plan.product_business_yearly}>'
+    stripePriceId: '<{stripe.plan.price_business_yearly}>'

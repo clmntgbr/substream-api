@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use App\Controller\Subscription\SubscribeController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\SubscriptionStatusEnum;
 use App\Repository\SubscriptionRepository;
@@ -15,7 +17,13 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
 #[ApiResource(
-    operations: []
+    operations: [
+        new Get(),
+        new Get(
+            uriTemplate: '/subscribe/{planId}',
+            controller: SubscribeController::class,
+        ),
+    ]
 )]
 class Subscription
 {

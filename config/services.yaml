@@ -1,4 +1,18 @@
 parameters:
+    stripe.plan.product_starter_monthly: '%env(PRODUCT_STARTER_MONTHLY)%'
+    stripe.plan.product_starter_yearly: '%env(PRODUCT_STARTER_YEARLY)%'
+    stripe.plan.price_starter_monthly: '%env(PRICE_STARTER_MONTHLY)%'
+    stripe.plan.price_starter_yearly: '%env(PRICE_STARTER_YEARLY)%'
+
+    stripe.plan.product_pro_monthly: '%env(PRODUCT_PRO_MONTHLY)%'
+    stripe.plan.product_pro_yearly: '%env(PRODUCT_PRO_YEARLY)%'
+    stripe.plan.price_pro_monthly: '%env(PRICE_PRO_MONTHLY)%'
+    stripe.plan.price_pro_yearly: '%env(PRICE_PRO_YEARLY)%'
+
+    stripe.plan.product_business_monthly: '%env(PRODUCT_BUSINESS_MONTHLY)%'
+    stripe.plan.product_business_yearly: '%env(PRODUCT_BUSINESS_YEARLY)%'
+    stripe.plan.price_business_monthly: '%env(PRICE_BUSINESS_MONTHLY)%'
+    stripe.plan.price_business_yearly: '%env(PRICE_BUSINESS_YEARLY)%'
 
 services:
     _defaults:
@@ -8,7 +22,10 @@ services:
             string $apiUrl: '%env(API_URL)%'
             string $backendUrl: '%env(BACKEND_URL)%'
             string $env: '%env(APP_ENV)%'
+            string $frontendUrl: '%env(FRONTEND_URL)%'
             string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
+            string $stripeApiPublicKey: '%env(STRIPE_API_PUBLIC_KEY)%'
+            string $stripeApiSecretKey: '%env(STRIPE_API_SECRET_KEY)%'
 
     App\:
         resource: '../src/'

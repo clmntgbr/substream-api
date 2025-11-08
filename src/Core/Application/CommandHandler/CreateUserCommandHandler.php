@@ -7,7 +7,6 @@ namespace App\Core\Application\CommandHandler;
 use App\Core\Application\Command\CreateSubscriptionCommand;
 use App\Core\Application\Command\CreateUserCommand;
 use App\Entity\User;
-use App\Repository\PlanRepository;
 use App\Repository\UserRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -18,8 +17,6 @@ class CreateUserCommandHandler
     public function __construct(
         private CommandBusInterface $commandBus,
         private UserRepository $userRepository,
-        private PlanRepository $planRepository,
-        private string $planFreeMonthlyId,
     ) {
     }
 
