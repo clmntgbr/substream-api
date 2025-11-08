@@ -18,11 +18,7 @@ use Symfony\Component\Webhook\Exception\RejectWebhookException;
 final class CheckoutRequestParser extends AbstractRequestParser
 {
     public const WEBHOOK_NAME = 'checkout';
-    public const EVENT_TYPES = [
-        'checkout.session.completed',
-        'checkout.session.async_payment_failed',
-        'checkout.session.async_payment_succeeded',
-    ];
+    public const EVENT_TYPE_CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed';
 
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -48,14 +44,14 @@ final class CheckoutRequestParser extends AbstractRequestParser
             $secret
         );
 
-        if (false === in_array($event->type, self::EVENT_TYPES)) {
+        if (self::EVENT_TYPE_CHECKOUT_SESSION_COMPLETED !== $event->type) {
             throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Invalid event type.');
         }
 
         return new RemoteEvent(
             $event->id,
             $event->type,
-            ['payload' => $event->data],
+            ['payload' => $event],
         );
     }
 }
