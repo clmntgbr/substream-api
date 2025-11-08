@@ -35,7 +35,7 @@ class CreateUserCommandHandler
 
         $subscription = $this->commandBus->dispatch(new CreateSubscriptionCommand(
             user: $user,
-            planId: $this->planFreeMonthlyId,
+            planReference: 'plan_free',
         ));
 
         $user->addSubscription($subscription);

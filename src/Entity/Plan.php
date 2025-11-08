@@ -14,6 +14,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: PlanRepository::class)]
 #[ApiResource(
+    order: ['price' => 'ASC'],
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['plan:read']],
@@ -29,6 +30,10 @@ class Plan
     #[Groups(['plan:read'])]
     private string $name;
 
+    #[ORM\Column(type: Types::STRING)]
+    #[Groups(['plan:read'])]
+    private string $reference;
+
     #[ORM\Column(type: Types::FLOAT)]
     #[Groups(['plan:read'])]
     private float $price;
@@ -36,6 +41,10 @@ class Plan
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['plan:read'])]
     private string $interval;
+
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['plan:read'])]
+    private string $description;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Groups(['plan:read'])]
@@ -59,6 +68,12 @@ class Plan
 
     #[ORM\Column(type: Types::STRING)]
     private string $expirationDays;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $stripeProductId = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $stripePriceId = null;
 
     public function __construct()
     {
@@ -177,6 +192,54 @@ class Plan
     public function setExpirationDays(string $expirationDays): self
     {
         $this->expirationDays = $expirationDays;
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getStripeProductId(): ?string
+    {
+        return $this->stripeProductId;
+    }
+
+    public function setStripeProductId(string $stripeProductId): self
+    {
+        $this->stripeProductId = $stripeProductId;
+
+        return $this;
+    }
+
+    public function getStripePriceId(): ?string
+    {
+        return $this->stripePriceId;
+    }
+
+    public function setStripePriceId(string $stripePriceId): self
+    {
+        $this->stripePriceId = $stripePriceId;
+
+        return $this;
+    }
+
+    public function getReference(): string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->reference = $reference;
 
         return $this;
     }

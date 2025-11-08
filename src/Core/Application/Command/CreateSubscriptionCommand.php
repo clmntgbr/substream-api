@@ -12,7 +12,7 @@ final class CreateSubscriptionCommand extends CommandAbstract implements SyncCom
 {
     public function __construct(
         private User $user,
-        private string $planId,
+        private string $planReference,
     ) {
     }
 
@@ -21,8 +21,8 @@ final class CreateSubscriptionCommand extends CommandAbstract implements SyncCom
         return $this->user;
     }
 
-    public function getPlanId(): string
+    public function getPlanReference(): string
     {
-        return $this->planId;
+        return $this->planReference;
     }
 }
