@@ -168,3 +168,6 @@ debug:
 
 dummy:
 	$(SYMFONY) dummy:command
+
+ngrok: 
+	ngrok http --url=choice-pretty-leech.ngrok-free.app --host-header=localhost https://localhost:443

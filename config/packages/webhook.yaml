@@ -49,3 +49,6 @@ framework:
       resumevideofailure:
         service: App\Webhook\ResumeVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
+      checkout:
+        service: App\Webhook\CheckoutRequestParser
+        secret: '%env(STRIPE_WEBHOOK_CHECKOUT_KEY)%'

@@ -1,16 +1,8 @@
 parameters:
-    stripe.plan.product_starter_monthly: '%env(PRODUCT_STARTER_MONTHLY)%'
-    stripe.plan.product_starter_yearly: '%env(PRODUCT_STARTER_YEARLY)%'
     stripe.plan.price_starter_monthly: '%env(PRICE_STARTER_MONTHLY)%'
     stripe.plan.price_starter_yearly: '%env(PRICE_STARTER_YEARLY)%'
-
-    stripe.plan.product_pro_monthly: '%env(PRODUCT_PRO_MONTHLY)%'
-    stripe.plan.product_pro_yearly: '%env(PRODUCT_PRO_YEARLY)%'
     stripe.plan.price_pro_monthly: '%env(PRICE_PRO_MONTHLY)%'
     stripe.plan.price_pro_yearly: '%env(PRICE_PRO_YEARLY)%'
-
-    stripe.plan.product_business_monthly: '%env(PRODUCT_BUSINESS_MONTHLY)%'
-    stripe.plan.product_business_yearly: '%env(PRODUCT_BUSINESS_YEARLY)%'
     stripe.plan.price_business_monthly: '%env(PRICE_BUSINESS_MONTHLY)%'
     stripe.plan.price_business_yearly: '%env(PRICE_BUSINESS_YEARLY)%'
 

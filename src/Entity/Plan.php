@@ -70,9 +70,6 @@ class Plan
     private string $expirationDays;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    private ?string $stripeProductId = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $stripePriceId = null;
 
     public function __construct()
@@ -204,18 +201,6 @@ class Plan
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getStripeProductId(): ?string
-    {
-        return $this->stripeProductId;
-    }
-
-    public function setStripeProductId(string $stripeProductId): self
-    {
-        $this->stripeProductId = $stripeProductId;
 
         return $this;
     }
