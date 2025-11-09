@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Controller\Subscription\GetSubscriptionController;
 use App\Controller\Subscription\SubscribeController;
 use App\Entity\Trait\UuidTrait;
@@ -20,7 +21,11 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
 #[ApiResource(
+    order: ['createdAt' => 'DESC'],
     operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['subscription:read', 'plan:read']],
+        ),
         new Get(),
         new Get(
             uriTemplate: '/subscribe/{planId}',
@@ -43,6 +48,7 @@ class Subscription
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['subscription:read'])]
     private Plan $plan;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -67,7 +73,6 @@ class Subscription
     private ?\DateTimeInterface $canceledAt = null;
 
     #[ORM\OneToMany(targetEntity: StripePayment::class, mappedBy: 'subscription')]
-    #[Groups(['subscription:read'])]
     private Collection $stripePayments;
 
     public function __construct()
@@ -227,5 +232,17 @@ class Subscription
         $this->stripePayments->removeElement($stripePayment);
 
         return $this;
+    }
+
+    #[Groups(['subscription:read'])]
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    #[Groups(['subscription:read'])]
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
     }
 }
