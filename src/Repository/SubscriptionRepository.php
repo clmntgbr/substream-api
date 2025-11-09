@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Subscription;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends AbstractRepository<Subscription>
@@ -18,5 +19,10 @@ class SubscriptionRepository extends AbstractRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Subscription::class);
+    }
+
+    public function findByUuid(Uuid $id): ?Subscription
+    {
+        return $this->findOneBy(['id' => $id]);
     }
 }

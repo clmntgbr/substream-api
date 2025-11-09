@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Controller\Plan\GetPlanController;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\PlanRepository;
 use Doctrine\DBAL\Types\Types;
@@ -17,6 +19,11 @@ use Symfony\Component\Uid\Uuid;
     order: ['price' => 'ASC'],
     operations: [
         new GetCollection(
+            normalizationContext: ['groups' => ['plan:read']],
+        ),
+        new Get(
+            uriTemplate: '/plan',
+            controller: GetPlanController::class,
             normalizationContext: ['groups' => ['plan:read']],
         ),
     ]

@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use App\Controller\Subscription\GetSubscriptionController;
 use App\Controller\Subscription\SubscribeController;
 use App\Entity\Trait\UuidTrait;
 use App\Enum\SubscriptionStatusEnum;
 use App\Repository\SubscriptionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -22,6 +25,10 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/subscribe/{planId}',
             controller: SubscribeController::class,
+        ),
+        new Get(
+            uriTemplate: '/subscription',
+            controller: GetSubscriptionController::class,
         ),
     ]
 )]
@@ -45,6 +52,10 @@ class Subscription
     #[Groups(['subscription:read'])]
     private \DateTimeInterface $endDate;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['subscription:read'])]
+    private ?string $subscriptionId = null;
+
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['subscription:read'])]
     private string $status;
@@ -55,10 +66,15 @@ class Subscription
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $canceledAt = null;
 
+    #[ORM\OneToMany(targetEntity: StripePayment::class, mappedBy: 'subscription')]
+    #[Groups(['subscription:read'])]
+    private Collection $stripePayments;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
         $this->startDate = new \DateTime();
+        $this->stripePayments = new ArrayCollection();
     }
 
     public static function create(
@@ -68,6 +84,7 @@ class Subscription
         \DateTimeInterface $endDate,
         string $status,
         bool $autoRenew = true,
+        ?string $subscriptionId = null,
     ): self {
         $subscription = new self();
         $subscription->user = $user;
@@ -76,6 +93,7 @@ class Subscription
         $subscription->endDate = $endDate;
         $subscription->status = $status;
         $subscription->autoRenew = $autoRenew;
+        $subscription->subscriptionId = $subscriptionId;
 
         return $subscription;
     }
@@ -178,5 +196,36 @@ class Subscription
     public function isCanceled(): bool
     {
         return $this->status === SubscriptionStatusEnum::CANCELED->value;
+    }
+
+    public function getSubscriptionId(): string
+    {
+        return $this->subscriptionId;
+    }
+
+    public function setSubscriptionId(string $subscriptionId): self
+    {
+        $this->subscriptionId = $subscriptionId;
+
+        return $this;
+    }
+
+    public function getStripePayments(): Collection
+    {
+        return $this->stripePayments;
+    }
+
+    public function addStripePayment(StripePayment $stripePayment): self
+    {
+        $this->stripePayments->add($stripePayment);
+
+        return $this;
+    }
+
+    public function removeStripePayment(StripePayment $stripePayment): self
+    {
+        $this->stripePayments->removeElement($stripePayment);
+
+        return $this;
     }
 }

@@ -30,7 +30,7 @@ final class CheckoutWebhookConsumer implements ConsumerInterface
             userEmail: $payload->data->object->customer_email,
             planId: $payload->data->object->metadata->plan_id,
             stripeCustomerId: $payload->data->object->customer,
-            stripeSubscriptionId: $payload->data->object->subscription,
+            subscriptionId: $payload->data->object->subscription,
             stripeInvoiceId: $payload->data->object->invoice,
             paymentStatus: $payload->data->object->payment_status,
             amount: $payload->data->object->amount_total,

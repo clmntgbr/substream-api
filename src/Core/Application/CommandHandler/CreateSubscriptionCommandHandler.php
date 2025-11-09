@@ -36,6 +36,7 @@ class CreateSubscriptionCommandHandler
             endDate: (new \DateTime())->modify($plan->getExpirationDays()),
             status: SubscriptionStatusEnum::ACTIVE->value,
             autoRenew: true,
+            subscriptionId: $command->getSubscriptionId(),
         );
 
         $this->subscriptionRepository->saveAndFlush($subscription);

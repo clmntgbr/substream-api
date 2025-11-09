@@ -85,4 +85,24 @@ class PublishService implements PublishServiceInterface
 
         $this->hub->publish($update);
     }
+
+    public function refreshPlan(User $user, ?string $context = null): void
+    {
+        $data = json_encode([
+            'type' => 'plan.refresh',
+            'userId' => $user->getId(),
+            'context' => $context,
+        ]);
+
+        if (false === $data) {
+            return;
+        }
+
+        $update = new Update(
+            "/users/{$user->getId()}/plan",
+            $data
+        );
+
+        $this->hub->publish($update);
+    }
 }

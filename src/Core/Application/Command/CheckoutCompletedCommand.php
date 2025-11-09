@@ -6,6 +6,7 @@ namespace App\Core\Application\Command;
 
 use App\Shared\Application\Command\AsyncCommandInterface;
 use App\Shared\Application\Command\CommandAbstract;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 final class CheckoutCompletedCommand extends CommandAbstract implements AsyncCommandInterface
 {
@@ -15,7 +16,7 @@ final class CheckoutCompletedCommand extends CommandAbstract implements AsyncCom
         private string $userEmail,
         private string $planId,
         private string $stripeCustomerId,
-        private string $stripeSubscriptionId,
+        private string $subscriptionId,
         private string $stripeInvoiceId,
         private string $paymentStatus,
         private string $amount,
@@ -48,9 +49,9 @@ final class CheckoutCompletedCommand extends CommandAbstract implements AsyncCom
         return $this->stripeCustomerId;
     }
 
-    public function getStripeSubscriptionId(): string
+    public function getSubscriptionId(): string
     {
-        return $this->stripeSubscriptionId;
+        return $this->subscriptionId;
     }
 
     public function getStripeInvoiceId(): string
@@ -71,5 +72,12 @@ final class CheckoutCompletedCommand extends CommandAbstract implements AsyncCom
     public function getCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function getStamps(): array
+    {
+        return [
+            new DelayStamp(10000),
+        ];
     }
 }

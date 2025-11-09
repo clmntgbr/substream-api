@@ -19,7 +19,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -70,7 +69,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, SocialAccount>
      */
     #[ORM\OneToMany(targetEntity: SocialAccount::class, mappedBy: 'user')]
-    #[Groups(['user:read'])]
     private Collection $socialAccounts;
 
     #[ORM\Column]
@@ -290,8 +288,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[Groups(['subscription:read'])]
-    #[SerializedName('subscription')]
     public function getActiveSubscription(): Subscription
     {
         $subscription = $this->subscriptions->filter(fn (Subscription $subscription) => $subscription->isActive())->first();
@@ -303,7 +299,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $subscription;
     }
 
-    #[Groups(['plan:read'])]
     public function getPlan(): Plan
     {
         return $this->getActiveSubscription()->getPlan();

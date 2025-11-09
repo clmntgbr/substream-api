@@ -14,4 +14,6 @@ interface PublishServiceInterface
     public function refreshSearchStreams(Stream $stream, ?string $context = null): void;
 
     public function refreshSearchNotifications(User $user, ?string $context = null): void;
+
+    public function refreshPlan(User $user, ?string $context = null): void;
 }
