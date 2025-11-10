@@ -30,11 +30,12 @@ App\Entity\Plan:
     setIdFromString: "<uuid()>"
     reference: "plan_starter_yearly"
     name: "Starter"
-    description: "Ideal for individuals and content creators getting started with professional video tools - save 17% with annual billing"
+    description: "Ideal for individuals and content creators getting started with professional video tools"
     price: 99.99
     interval: "yearly"
     features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
     maxVideosPerMonth: 25
+    discountPercentage: 17
     maxSizeInMegabytes: 1000
     maxDurationMinutes: 60
     expirationDays: "1 year"
@@ -53,12 +54,12 @@ App\Entity\Plan:
     maxDurationMinutes: 180
     expirationDays: "1 month"
     stripePriceId: '<{stripe.plan.price_pro_monthly}>'
-
+    
   plan_pro_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_pro_yearly"
     name: "Pro"
-    description: "Designed for professionals and small teams with higher video processing needs - save 17% with annual billing"
+    description: "Designed for professionals and small teams with higher video processing needs"
     price: 299.99
     interval: "yearly"
     features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
@@ -66,6 +67,7 @@ App\Entity\Plan:
     maxSizeInMegabytes: 10000
     maxDurationMinutes: 180
     expirationDays: "1 year"
+    discountPercentage: 17
     stripePriceId: '<{stripe.plan.price_pro_yearly}>'
 
   plan_business_monthly:
@@ -86,12 +88,13 @@ App\Entity\Plan:
     setIdFromString: "<uuid()>"
     reference: "plan_business_yearly"
     name: "Business"
-    description: "Built for growing businesses and agencies requiring extensive video processing capabilities - save 17% with annual billing"
+    description: "Built for growing businesses and agencies requiring extensive video processing capabilities"
     price: 799.99
     interval: "yearly"
     features: ['FEATURE_SUMMARY_GENERATION', 'FEATURE_SRT_DOWNLOAD']
     maxVideosPerMonth: 500
     maxSizeInMegabytes: 10000
+    discountPercentage: 17
     maxDurationMinutes: 360
     expirationDays: "1 year"
     stripePriceId: '<{stripe.plan.price_business_yearly}>'

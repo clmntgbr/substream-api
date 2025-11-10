@@ -24,7 +24,7 @@ use Symfony\Component\Uid\Uuid;
     order: ['createdAt' => 'DESC'],
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['subscription:read', 'plan:read']],
+            normalizationContext: ['groups' => ['subscription:read', 'plan:read', 'stripePayment:read']],
         ),
         new Get(),
         new Get(
@@ -59,7 +59,6 @@ class Subscription
     private \DateTimeInterface $endDate;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
     private ?string $subscriptionId = null;
 
     #[ORM\Column(type: Types::STRING)]
@@ -73,6 +72,7 @@ class Subscription
     private ?\DateTimeInterface $canceledAt = null;
 
     #[ORM\OneToMany(targetEntity: StripePayment::class, mappedBy: 'subscription')]
+    #[Groups(['subscription:read'])]
     private Collection $stripePayments;
 
     public function __construct()

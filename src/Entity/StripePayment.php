@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Entity\Trait\UuidTrait;
 use App\Repository\StripePaymentRepository;
 use Doctrine\DBAL\Types\Types;
@@ -12,39 +13,45 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StripePaymentRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    order: ['createdAt' => 'DESC'],
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['stripePayment:read']],
+        ),
+    ],
+)]
 class StripePayment
 {
     use UuidTrait;
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
+    #[Groups(['stripePayment:read'])]
     private ?string $checkoutSessionId = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
+    #[Groups(['stripePayment:read'])]
     private ?string $customerId = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
+    #[Groups(['stripePayment:read'])]
     private ?string $invoiceId = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
+    #[Groups(['stripePayment:read'])]
     private ?string $paymentStatus = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
+    #[Groups(['stripePayment:read'])]
     private ?string $currency = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
+    #[Groups(['stripePayment:read'])]
     private ?string $amount = null;
 
     #[ORM\ManyToOne(targetEntity: Subscription::class)]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['subscription:read'])]
     private Subscription $subscription;
 
     public function __construct()

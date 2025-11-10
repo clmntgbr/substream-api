@@ -45,6 +45,10 @@ class Plan
     #[Groups(['plan:read'])]
     private float $price;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['plan:read'])]
+    private ?int $discountPercentage = null;
+
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['plan:read'])]
     private string $interval;
@@ -232,6 +236,18 @@ class Plan
     public function setReference(string $reference): self
     {
         $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getDiscountPercentage(): ?int
+    {
+        return $this->discountPercentage;
+    }
+
+    public function setDiscountPercentage(int $discountPercentage): self
+    {
+        $this->discountPercentage = $discountPercentage;
 
         return $this;
     }
