@@ -2,52 +2,52 @@ framework:
   webhook:
     routing:
       getvideosuccess:
-        service: App\Webhook\GetVideoSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\GetVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       getvideofailure:
-        service: App\Webhook\GetVideoFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\GetVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       extractsoundsuccess:
-        service: App\Webhook\ExtractSoundSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\ExtractSoundSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       extractsoundfailure:
-        service: App\Webhook\ExtractSoundFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\ExtractSoundFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       generatesubtitlesuccess:
-        service: App\Webhook\GenerateSubtitleSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\GenerateSubtitleSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       generatesubtitlefailure:
-        service: App\Webhook\GenerateSubtitleFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\GenerateSubtitleFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       transformsubtitlesuccess:
-        service: App\Webhook\TransformSubtitleSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\TransformSubtitleSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       transformsubtitlefailure:
-        service: App\Webhook\TransformSubtitleFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\TransformSubtitleFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       resizevideosuccess:
-        service: App\Webhook\ResizeVideoSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\ResizeVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       resizevideofailure:
-        service: App\Webhook\ResizeVideoFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\ResizeVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       embedvideofailure:
-        service: App\Webhook\EmbedVideoFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\EmbedVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       embedvideosuccess:
-        service: App\Webhook\EmbedVideoSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\EmbedVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       chunkvideosuccess:
-        service: App\Webhook\ChunkVideoSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\ChunkVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       chunkvideofailure:
-        service: App\Webhook\ChunkVideoFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\ChunkVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       resumevideosuccess:
-        service: App\Webhook\ResumeVideoSuccessRequestParser
+        service: App\Core\Presentation\Webhook\Core\ResumeVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       resumevideofailure:
-        service: App\Webhook\ResumeVideoFailureRequestParser
+        service: App\Core\Presentation\Webhook\Core\ResumeVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       checkout:
         service: App\Webhook\CheckoutRequestParser

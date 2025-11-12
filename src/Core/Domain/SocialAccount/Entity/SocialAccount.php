@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Core\Domain\SocialAccount\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Core\Domain\SocialAccount\Repository\SocialAccountRepository;
 use App\Core\Domain\Trait\UuidTrait;
 use App\Core\Domain\User\Entity\User;
-use App\Core\Domain\SocialAccount\Repository\SocialAccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Serializer;
 
-use App\Shared\Application\Message\AsyncMessageInterface;
+use App\Shared\Application\Message\AsynchronousMessageInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
@@ -30,8 +30,8 @@ class JsonMessageSerializer implements SerializerInterface
     {
         $message = $envelope->getMessage();
 
-        if (!$message instanceof AsyncMessageInterface) {
-            throw new \RuntimeException('The message must implement AsyncMessageInterface.');
+        if (!$message instanceof AsynchronousMessageInterface) {
+            throw new \RuntimeException('The message must implement AsynchronousMessageInterface.');
         }
 
         $data = [

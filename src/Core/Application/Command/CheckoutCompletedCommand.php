@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Core\Application\Command;
 
-use App\Shared\Application\Command\AsyncCommandInterface;
-use App\Shared\Application\Command\CommandAbstract;
+use App\Shared\Application\Command\AsynchronousInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
-final class CheckoutCompletedCommand extends CommandAbstract implements AsyncCommandInterface
+final class CheckoutCompletedCommand implements AsynchronousInterface
 {
     public function __construct(
         private string $checkoutSessionId,

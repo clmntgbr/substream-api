@@ -7,12 +7,13 @@ namespace App\Core\Domain\User\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
-use App\Controller\User\RegisterController;
+use App\Core\Domain\Plan\Entity\Plan;
 use App\Core\Domain\SocialAccount\Entity\SocialAccount;
 use App\Core\Domain\Subscription\Entity\Subscription;
 use App\Core\Domain\Trait\UuidTrait;
-use App\Exception\SubscriptionNotFoundException;
 use App\Core\Domain\User\Repository\UserRepository;
+use App\Core\Presentation\Controller\User\RegisterController;
+use App\Exception\SubscriptionNotFoundException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -313,6 +314,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStripeCustomerId(string $stripeCustomerId): static
     {
         $this->stripeCustomerId = $stripeCustomerId;
+
         return $this;
+    }
+
+    public function getPlan(): Plan
+    {
+        return $this->getActiveSubscription()->getPlan();
     }
 }

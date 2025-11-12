@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Core\Domain\Option\Repository;
 
 use App\Core\Domain\Option\Entity\Option;
-use Doctrine\Persistence\ManagerRegistry;
 use App\Shared\Domain\Repository\AbstractRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends AbstractRepository<Option>

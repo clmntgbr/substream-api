@@ -6,11 +6,11 @@ namespace App\Core\Domain\Option\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
+use App\Core\Domain\Option\Repository\OptionRepository;
 use App\Core\Domain\Trait\UuidTrait;
 use App\Enum\LanguageEnum;
 use App\Enum\SubtitleFontEnum;
 use App\Enum\VideoFormatEnum;
-use App\Core\Domain\Option\Repository\OptionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;

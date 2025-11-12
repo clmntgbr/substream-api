@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Core\Domain\Task\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Core\Domain\Trait\UuidTrait;
 use App\Core\Domain\Stream\Entity\Stream;
-use App\Enum\TaskStatusEnum;
 use App\Core\Domain\Task\Repository\TaskRepository;
+use App\Core\Domain\Trait\UuidTrait;
+use App\Enum\TaskStatusEnum;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;

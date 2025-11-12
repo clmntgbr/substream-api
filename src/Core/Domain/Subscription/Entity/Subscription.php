@@ -5,15 +5,15 @@ namespace App\Core\Domain\Subscription\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use App\Controller\Subscription\GetManageSubscriptionUrlController;
-use App\Controller\Subscription\GetSubscriptionController;
-use App\Controller\Subscription\SubscribeController;
 use App\Core\Domain\Payment\Entity\Payment;
-use App\Core\Domain\Trait\UuidTrait;
-use App\Enum\SubscriptionStatusEnum;
-use App\Core\Domain\Subscription\Repository\SubscriptionRepository;
 use App\Core\Domain\Plan\Entity\Plan;
+use App\Core\Domain\Subscription\Repository\SubscriptionRepository;
+use App\Core\Domain\Trait\UuidTrait;
 use App\Core\Domain\User\Entity\User;
+use App\Core\Presentation\Controller\Subscription\CreateSubscriptionController;
+use App\Core\Presentation\Controller\Subscription\GetBillingPortalUrlController;
+use App\Core\Presentation\Controller\Subscription\GetSubscriptionController;
+use App\Enum\SubscriptionStatusEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -33,11 +33,11 @@ use Symfony\Component\Uid\Uuid;
         new Get(),
         new Get(
             uriTemplate: '/subscribe/{planId}',
-            controller: SubscribeController::class,
+            controller: CreateSubscriptionController::class,
         ),
         new Get(
             uriTemplate: '/subscription/manage',
-            controller: GetManageSubscriptionUrlController::class,
+            controller: GetBillingPortalUrlController::class,
         ),
         new Get(
             uriTemplate: '/subscription',
