@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Stream;
 
-use App\Entity\Stream;
-use App\Repository\StreamRepository;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 

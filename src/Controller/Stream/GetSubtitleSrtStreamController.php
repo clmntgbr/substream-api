@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Stream;
 
-use App\Entity\Stream;
+use App\Core\Domain\Stream\Entity\Stream;
 use App\Exception\StreamNotDownloadableException;
 use App\Service\S3ServiceInterface;
 use App\Util\Slugify;

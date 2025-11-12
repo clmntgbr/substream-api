@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Application\Command;
 
-use App\Entity\User;
+use App\Core\Domain\User\Entity\User;
 use App\Shared\Application\Command\SyncCommandInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Uuid;

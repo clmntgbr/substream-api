@@ -6,7 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\UpdateTaskSuccessCommand;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Repository\TaskRepository;
+use App\Core\Domain\Task\Repository\TaskRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;

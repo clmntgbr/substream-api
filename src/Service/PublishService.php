@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Stream;
-use App\Entity\User;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\User\Entity\User;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 

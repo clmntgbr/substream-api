@@ -6,7 +6,7 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\StreamFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Repository\StreamRepository;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Service\PublishServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

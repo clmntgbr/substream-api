@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Stream;
+use App\Core\Domain\Stream\Entity\Stream;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 

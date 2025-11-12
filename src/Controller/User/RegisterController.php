@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\User;
 
 use App\Core\Application\Command\CreateUserCommand;
+use App\Core\Domain\User\Entity\User;
 use App\Dto\RegisterPayload;
-use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

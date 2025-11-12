@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateSubscriptionCommand;
-use App\Entity\Subscription;
+use App\Core\Domain\Plan\Repository\PlanRepository;
+use App\Core\Domain\Subscription\Entity\Subscription;
+use App\Core\Domain\Subscription\Repository\SubscriptionRepository;
 use App\Enum\SubscriptionStatusEnum;
 use App\Exception\PlanNotFoundException;
-use App\Repository\PlanRepository;
-use App\Repository\SubscriptionRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -37,6 +37,7 @@ class CreateSubscriptionCommandHandler
             status: SubscriptionStatusEnum::ACTIVE->value,
             autoRenew: true,
             subscriptionId: $command->getSubscriptionId(),
+            checkoutSessionId: $command->getCheckoutSessionId(),
         );
 
         $this->subscriptionRepository->saveAndFlush($subscription);

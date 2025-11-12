@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validator\Constraint;
 
-use App\Repository\UserRepository;
+use App\Core\Domain\User\Repository\UserRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;

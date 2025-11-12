@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-use App\Entity\Plan;
-use App\Entity\User;
+use App\Core\Domain\Plan\Entity\Plan;
+use App\Core\Domain\User\Entity\User;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
 
@@ -19,7 +19,26 @@ class StripeService implements StripeServiceInterface
     ) {
     }
 
-    public function checkoutSession(Plan $plan, User $user): string
+    public function createSubscription(User $user): void
+    {
+    }
+
+    public function cancelSubscription(User $user): void
+    {
+    }
+
+    public function getManageSubscriptionUrl(User $user): string
+    {
+        $stripe = new StripeClient($this->stripeApiSecretKey);
+        $billingPortalSession = $stripe->billingPortal->sessions->create([
+            'customer' => $user->getStripeCustomerId(),
+            'return_url' => $this->frontendUrl.self::CHECKOUT_SUCCESS_URL,
+        ]);
+
+        return $billingPortalSession->url;
+    }
+
+    public function createCheckoutSession(Plan $plan, User $user): string
     {
         $stripe = new StripeClient($this->stripeApiSecretKey);
 

@@ -6,8 +6,8 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateOrUpdateUserCommand;
 use App\Core\Application\Command\CreateUserCommand;
-use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Core\Domain\User\Entity\User;
+use App\Core\Domain\User\Repository\UserRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

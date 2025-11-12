@@ -6,10 +6,10 @@ namespace App\Service\OAuth;
 
 use App\Core\Application\Command\CreateOrUpdateUserCommand;
 use App\Core\Application\Command\CreateSocialAccountCommand;
+use App\Core\Domain\User\Entity\User;
 use App\Dto\OAuth\ExchangeTokenPayloadInterface;
 use App\Dto\OAuth\Github\GithubAccount;
 use App\Dto\OAuth\Github\GithubExchangeTokenPayload;
-use App\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Token\AccessToken;

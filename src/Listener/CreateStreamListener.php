@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Listener;
 
 use App\Core\Application\Command\DeleteStreamAfter14DaysCommand;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Event\CreateStreamEvent;
-use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\OAuth;
 
+use App\Core\Domain\User\Entity\User;
 use App\Dto\OAuth\Google\GoogleExchangeTokenPayload;
-use App\Entity\User;
 use App\Service\OAuth\GoogleOAuthService;
 use App\Shared\Domain\Response\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;

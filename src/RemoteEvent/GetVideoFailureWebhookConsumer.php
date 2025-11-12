@@ -6,10 +6,10 @@ namespace App\RemoteEvent;
 
 use App\Core\Application\Command\UpdateTaskFailureCommand;
 use App\Core\Application\Trait\WorkflowTrait;
+use App\Core\Domain\Stream\Enum\StreamStatusEnum;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Dto\Webhook\GetVideoFailure;
-use App\Enum\StreamStatusEnum;
 use App\Enum\WorkflowTransitionEnum;
-use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;

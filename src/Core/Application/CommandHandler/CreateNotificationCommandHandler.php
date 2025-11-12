@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateNotificationCommand;
-use App\Entity\Notification;
+use App\Core\Domain\Notification\Entity\Notification;
+use App\Core\Domain\Notification\Repository\NotificationRepository;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Exception\StreamNotFoundException;
-use App\Repository\NotificationRepository;
-use App\Repository\StreamRepository;
 use App\Service\PublishServiceInterface;
 use App\Util\Slugify;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

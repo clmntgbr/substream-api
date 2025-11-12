@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CleanStreamCommand;
-use App\Repository\StreamRepository;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Service\S3ServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

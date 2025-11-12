@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CheckoutCompletedCommand;
-use App\Core\Application\Command\CreateStripePaymentCommand;
+use App\Core\Application\Command\CreatePaymentCommand;
 use App\Core\Application\Command\CreateSubscriptionCommand;
+use App\Core\Domain\Plan\Repository\PlanRepository;
+use App\Core\Domain\Subscription\Repository\SubscriptionRepository;
+use App\Core\Domain\User\Repository\UserRepository;
 use App\Enum\SubscriptionStatusEnum;
-use App\Repository\PlanRepository;
-use App\Repository\SubscriptionRepository;
-use App\Repository\UserRepository;
 use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
@@ -62,14 +62,17 @@ class CheckoutCompletedCommandHandler
         $newSubscription = $this->commandBus->dispatch(new CreateSubscriptionCommand(
             user: $user,
             planReference: $plan->getReference(),
+            checkoutSessionId: $command->getCheckoutSessionId(),
             subscriptionId: $command->getSubscriptionId(),
         ));
+
+        $user->setStripeCustomerId($command->getStripeCustomerId());
+        $this->userRepository->saveAndFlush($user);
 
         $this->subscriptionRepository->saveAndFlush($subscription);
         $this->subscriptionRepository->saveAndFlush($newSubscription);
 
-        $this->commandBus->dispatch(new CreateStripePaymentCommand(
-            checkoutSessionId: $command->getCheckoutSessionId(),
+        $this->commandBus->dispatch(new CreatePaymentCommand(
             customerId: $command->getStripeCustomerId(),
             subscriptionId: $command->getSubscriptionId(),
             invoiceId: $command->getStripeInvoiceId(),

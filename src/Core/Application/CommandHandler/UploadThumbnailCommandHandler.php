@@ -6,8 +6,8 @@ namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\UploadThumbnailCommand;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Entity\Stream;
-use App\Repository\StreamRepository;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

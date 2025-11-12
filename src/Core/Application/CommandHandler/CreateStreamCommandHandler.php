@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateStreamCommand;
-use App\Core\Application\Mapper\CreateStreamMapperInterface;
-use App\Core\Domain\Aggregate\CreateStreamModel;
-use App\Entity\Stream;
+use App\Core\Domain\Option\Repository\OptionRepository;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Event\CreateStreamEvent;
 use App\Exception\OptionNotFoundException;
-use App\Repository\OptionRepository;
-use App\Repository\StreamRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -20,13 +18,12 @@ class CreateStreamCommandHandler
 {
     public function __construct(
         private StreamRepository $streamRepository,
-        private CreateStreamMapperInterface $createStreamMapper,
         private EventDispatcherInterface $eventDispatcher,
         private OptionRepository $optionRepository,
     ) {
     }
 
-    public function __invoke(CreateStreamCommand $command): CreateStreamModel
+    public function __invoke(CreateStreamCommand $command): Stream
     {
         $option = $this->optionRepository->findByUuid($command->getOptionId());
 
@@ -50,6 +47,6 @@ class CreateStreamCommandHandler
 
         $this->eventDispatcher->dispatch(new CreateStreamEvent($command->getStreamId()));
 
-        return $this->createStreamMapper->fromEntity($stream);
+        return $stream;
     }
 }

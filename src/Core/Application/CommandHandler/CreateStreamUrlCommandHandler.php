@@ -9,12 +9,12 @@ use App\Core\Application\Command\CreateStreamUrlCommand;
 use App\Core\Application\Command\GetVideoCommand;
 use App\Core\Application\Command\UploadThumbnailCommand;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Core\Domain\Aggregate\CreateStreamModel;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Enum\WorkflowTransitionEnum;
 use App\Exception\InvalidThumbnailFormatException;
 use App\Exception\StreamNotFoundException;
 use App\Exception\ThumbnailFileCreationException;
-use App\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -32,9 +32,9 @@ class CreateStreamUrlCommandHandler
     ) {
     }
 
-    public function __invoke(CreateStreamUrlCommand $command): CreateStreamModel
+    public function __invoke(CreateStreamUrlCommand $command): Stream
     {
-        $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
+        $stream = $this->commandBus->dispatch(new CreateStreamCommand(
             streamId: $command->getStreamId(),
             optionId: $command->getOptionId(),
             user: $command->getUser(),
@@ -65,7 +65,7 @@ class CreateStreamUrlCommandHandler
             url: $command->getUrl(),
         ));
 
-        return $createStreamModel;
+        return $stream;
     }
 
     private function convertBase64ToFile(string $base64Data): UploadedFile

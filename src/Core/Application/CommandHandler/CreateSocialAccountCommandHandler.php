@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Core\Application\CommandHandler;
 
 use App\Core\Application\Command\CreateSocialAccountCommand;
-use App\Entity\SocialAccount;
-use App\Repository\SocialAccountRepository;
+use App\Core\Domain\SocialAccount\Entity\SocialAccount;
+use App\Core\Domain\SocialAccount\Repository\SocialAccountRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

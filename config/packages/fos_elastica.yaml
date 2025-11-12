@@ -25,7 +25,7 @@ fos_elastica:
                 userUuid: { type: keyword }
             persistence:
                 driver: orm
-                model: App\Entity\Stream
+                model: App\Core\Domain\Stream\Entity\Stream
                 provider: ~
                 finder: ~
                 repository: App\Repository\ElasticaStreamRepository
@@ -45,7 +45,7 @@ fos_elastica:
                 userUuid: { type: keyword }
             persistence:
                 driver: orm
-                model: App\Entity\Notification
+                model: App\Core\Domain\Notification\Entity\Notification
                 repository: App\Repository\ElasticaNotificationRepository
                 provider: ~
                 finder: ~

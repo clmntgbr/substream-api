@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Plan;
 
-use App\Entity\User;
+use App\Core\Domain\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;

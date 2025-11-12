@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Core\Application\Command\ResumeVideoCommand;
-use App\Entity\Stream;
-use App\Enum\StreamStatusEnum;
-use App\Repository\StreamRepository;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\Stream\Enum\StreamStatusEnum;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Doctrine\Common\Collections\ArrayCollection;

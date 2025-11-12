@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Application\CommandHandler;
 
-use App\Entity\Stream;
-use App\Entity\Task;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\Stream\Repository\StreamRepository;
+use App\Core\Domain\Task\Entity\Task;
+use App\Core\Domain\Task\Repository\TaskRepository;
 use App\Enum\WorkflowTransitionEnum;
-use App\Repository\StreamRepository;
-use App\Repository\TaskRepository;
 use App\Service\PublishServiceInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;

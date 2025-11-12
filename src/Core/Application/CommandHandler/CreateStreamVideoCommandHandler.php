@@ -9,12 +9,12 @@ use App\Core\Application\Command\CreateStreamVideoCommand;
 use App\Core\Application\Command\ExtractSoundCommand;
 use App\Core\Application\Command\UploadThumbnailCommand;
 use App\Core\Application\Trait\WorkflowTrait;
-use App\Core\Domain\Aggregate\CreateStreamModel;
+use App\Core\Domain\Option\Repository\OptionRepository;
+use App\Core\Domain\Stream\Entity\Stream;
+use App\Core\Domain\Stream\Repository\StreamRepository;
 use App\Enum\WorkflowTransitionEnum;
 use App\Exception\OptionNotFoundException;
 use App\Exception\StreamNotFoundException;
-use App\Repository\OptionRepository;
-use App\Repository\StreamRepository;
 use App\Service\S3ServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -34,7 +34,7 @@ class CreateStreamVideoCommandHandler
     ) {
     }
 
-    public function __invoke(CreateStreamVideoCommand $command): CreateStreamModel
+    public function __invoke(CreateStreamVideoCommand $command): Stream
     {
         $uploadFileModel = $this->s3Service->upload(
             uuid: $command->getStreamId(),
@@ -47,7 +47,7 @@ class CreateStreamVideoCommandHandler
             throw new OptionNotFoundException($command->getOptionId()->toRfc4122());
         }
 
-        $createStreamModel = $this->commandBus->dispatch(new CreateStreamCommand(
+        $stream = $this->commandBus->dispatch(new CreateStreamCommand(
             streamId: $command->getStreamId(),
             optionId: $option->getId(),
             user: $command->getUser(),
@@ -78,6 +78,6 @@ class CreateStreamVideoCommandHandler
             fileName: $uploadFileModel->getFileName(),
         ));
 
-        return $createStreamModel;
+        return $stream;
     }
 }

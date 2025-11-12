@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Repository\UserRepository;
+use App\Core\Domain\User\Repository\UserRepository;
 use App\Service\PublishServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

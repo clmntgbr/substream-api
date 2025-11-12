@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Subscription;
 
-use App\Entity\User;
-use App\Repository\PlanRepository;
+use App\Core\Application\Command\CreateOrUpdateCheckoutSessionCommand;
+use App\Core\Domain\Plan\Repository\PlanRepository;
+use App\Core\Domain\User\Entity\User;
 use App\Service\StripeServiceInterface;
+use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +22,7 @@ class SubscribeController extends AbstractController
     public function __construct(
         private readonly StripeServiceInterface $stripeService,
         private readonly PlanRepository $planRepository,
+        private readonly CommandBusInterface $commandBus,
     ) {
     }
 
@@ -27,14 +30,18 @@ class SubscribeController extends AbstractController
     {
         $plan = $this->planRepository->findByUuid(Uuid::fromString($planId));
 
-        if (!$plan) {
+        if (null === $plan) {
             return new JsonResponse([
                 'success' => false,
                 'message' => 'Plan not found',
             ], Response::HTTP_NOT_FOUND);
         }
 
-        $checkoutUrl = $this->stripeService->checkoutSession($plan, $user);
+        $checkoutUrl = $this->commandBus->dispatch(new CreateOrUpdateCheckoutSessionCommand(
+            user: $user,
+            plan: $plan,
+            subscription: $user->getActiveSubscription(),
+        ));
 
         return new JsonResponse([
             'success' => true,

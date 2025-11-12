@@ -1,4 +1,4 @@
-# App\Entity\Stream:
+# App\Core\Domain\Stream\Entity\Stream:
 #   stream_1:
 #     setIdFromString: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd"
 #     fileName: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.mp4"
