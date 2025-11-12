@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\ResumeVideoCommand;
-use App\Core\Application\Command\StreamSuccessCommand;
-use App\Core\Application\Command\UpdateTaskSuccessCommand;
-use App\Core\Application\Trait\WorkflowTrait;
-use App\Core\Domain\Stream\Entity\Stream;
-use App\Core\Domain\Stream\Enum\StreamStatusEnum;
-use App\Core\Domain\Stream\Repository\StreamRepository;
+use App\CoreDD\Application\Command\ResumeVideoCommand;
+use App\CoreDD\Application\Command\StreamSuccessCommand;
+use App\CoreDD\Application\Command\UpdateTaskSuccessCommand;
+use App\CoreDD\Application\Trait\WorkflowTrait;
+use App\CoreDD\Domain\Stream\Entity\Stream;
+use App\CoreDD\Domain\Stream\Enum\StreamStatusEnum;
+use App\CoreDD\Domain\Stream\Repository\StreamRepository;
 use App\Dto\Webhook\ChunkVideoSuccess;
 use App\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;

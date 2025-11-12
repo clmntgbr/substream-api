@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\UpdateTaskFailureCommand;
-use App\Core\Application\Trait\WorkflowTrait;
-use App\Core\Domain\Stream\Enum\StreamStatusEnum;
-use App\Core\Domain\Stream\Repository\StreamRepository;
+use App\CoreDD\Application\Command\UpdateTaskFailureCommand;
+use App\CoreDD\Application\Trait\WorkflowTrait;
+use App\CoreDD\Domain\Stream\Enum\StreamStatusEnum;
+use App\CoreDD\Domain\Stream\Repository\StreamRepository;
 use App\Dto\Webhook\ExtractSoundFailure;
 use App\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;

@@ -2,52 +2,52 @@ framework:
   webhook:
     routing:
       getvideosuccess:
-        service: App\Core\Presentation\Webhook\Core\GetVideoSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\GetVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       getvideofailure:
-        service: App\Core\Presentation\Webhook\Core\GetVideoFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\GetVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       extractsoundsuccess:
-        service: App\Core\Presentation\Webhook\Core\ExtractSoundSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ExtractSoundSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       extractsoundfailure:
-        service: App\Core\Presentation\Webhook\Core\ExtractSoundFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ExtractSoundFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       generatesubtitlesuccess:
-        service: App\Core\Presentation\Webhook\Core\GenerateSubtitleSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\GenerateSubtitleSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       generatesubtitlefailure:
-        service: App\Core\Presentation\Webhook\Core\GenerateSubtitleFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\GenerateSubtitleFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       transformsubtitlesuccess:
-        service: App\Core\Presentation\Webhook\Core\TransformSubtitleSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\TransformSubtitleSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       transformsubtitlefailure:
-        service: App\Core\Presentation\Webhook\Core\TransformSubtitleFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\TransformSubtitleFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       resizevideosuccess:
-        service: App\Core\Presentation\Webhook\Core\ResizeVideoSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ResizeVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       resizevideofailure:
-        service: App\Core\Presentation\Webhook\Core\ResizeVideoFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ResizeVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       embedvideofailure:
-        service: App\Core\Presentation\Webhook\Core\EmbedVideoFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\EmbedVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       embedvideosuccess:
-        service: App\Core\Presentation\Webhook\Core\EmbedVideoSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\EmbedVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       chunkvideosuccess:
-        service: App\Core\Presentation\Webhook\Core\ChunkVideoSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ChunkVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       chunkvideofailure:
-        service: App\Core\Presentation\Webhook\Core\ChunkVideoFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ChunkVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       resumevideosuccess:
-        service: App\Core\Presentation\Webhook\Core\ResumeVideoSuccessRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ResumeVideoSuccessRequestParser
         secret: '%env(CORE_TOKEN)%'
       resumevideofailure:
-        service: App\Core\Presentation\Webhook\Core\ResumeVideoFailureRequestParser
+        service: App\CoreDD\Presentation\Webhook\Core\ResumeVideoFailureRequestParser
         secret: '%env(CORE_TOKEN)%'
       checkout:
         service: App\Webhook\CheckoutRequestParser

@@ -1,7 +1,7 @@
 controllers:
     resource:
         path: ../src/Core/Presentation/Controller/
-        namespace: App\Core\Presentation\Controller
+        namespace: App\CoreDD\Presentation\Controller
     type: attribute
 
 token:

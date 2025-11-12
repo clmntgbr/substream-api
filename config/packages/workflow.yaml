@@ -6,7 +6,7 @@ framework:
                 type: 'method'
                 property: 'status'
             supports:
-                - App\Core\Domain\Stream\Entity\Stream
+                - App\CoreDD\Domain\Stream\Entity\Stream
             initial_marking: created
             places:
                 - created

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Core\Domain\User\Entity\User;
+use App\CoreDD\Domain\User\Entity\User;
 use App\SearchDecorator\SearchInterface;
 use Elastica\Query;
 use FOS\ElasticaBundle\Finder\PaginatedFinderInterface;

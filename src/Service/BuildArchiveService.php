@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Core\Domain\Stream\Entity\Stream;
+use App\CoreDD\Domain\Stream\Entity\Stream;
+use App\CoreDD\Infrastructure\Storage\S3\S3StorageServiceInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class BuildArchiveService implements BuildArchiveServiceInterface
 {
     public function __construct(
-        private S3ServiceInterface $s3Service,
+        private S3StorageServiceInterface $s3StorageService,
         private string $uploadDirectory,
     ) {
     }
@@ -32,7 +33,7 @@ class BuildArchiveService implements BuildArchiveServiceInterface
         }
 
         foreach ($stream->getChunkFileNames() ?? [] as $file) {
-            $filePath = $this->s3Service->download($stream->getId(), $file);
+            $filePath = $this->s3StorageService->download($stream->getId(), $file);
             $archive->addFile($filePath, $file);
             $tmpFiles[] = $filePath;
         }

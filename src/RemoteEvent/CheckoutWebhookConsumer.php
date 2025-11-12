@@ -2,7 +2,7 @@
 
 namespace App\RemoteEvent;
 
-use App\Core\Application\Command\CheckoutCompletedCommand;
+use App\CoreDD\Application\Command\CheckoutCompletedCommand;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Stripe\Event;
