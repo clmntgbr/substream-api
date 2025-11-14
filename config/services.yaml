@@ -35,6 +35,15 @@ services:
                   method: onAuthenticationSuccessResponse,
               }
     
+    app.event.jwt_created_listener:
+        class: App\Infrastructure\OAuth\Listener\JWTCreatedListener
+        tags:
+            - {
+                  name: kernel.event_listener,
+                  event: lexik_jwt_authentication.on_jwt_created,
+                  method: onJWTCreated,
+              }
+    
     Aws\S3\S3Client:
         arguments:
             -   version: 'latest'
