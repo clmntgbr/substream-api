@@ -33,7 +33,7 @@ use Symfony\Component\Uid\Uuid;
             uriTemplate: '/me',
         ),
         new Post(
-            uriTemplate: '/register',
+            uriTemplate: '/auth/register',
             controller: RegisterController::class,
         ),
     ]
@@ -46,7 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Groups(['user:read'])]
-    private string $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['user:read'])]
@@ -118,7 +118,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getEmail(): string
     {
-        return (string) $this->email;
+        if (null === $this->email) {
+            throw new \Exception('Email not found');
+        }
+
+        return $this->email;
     }
 
     public function getName(): string

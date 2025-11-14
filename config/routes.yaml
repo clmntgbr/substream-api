@@ -5,6 +5,6 @@ controllers:
     type: attribute
 
 token:
-    path: /api/token
+    path: /api/auth/login
     methods: [ "POST" ]
     
