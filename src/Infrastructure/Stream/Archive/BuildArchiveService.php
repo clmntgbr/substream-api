@@ -9,6 +9,8 @@ use App\Infrastructure\Storage\S3\S3StorageServiceInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
+use function Safe\unlink;
+
 class BuildArchiveService implements BuildArchiveServiceInterface
 {
     public function __construct(

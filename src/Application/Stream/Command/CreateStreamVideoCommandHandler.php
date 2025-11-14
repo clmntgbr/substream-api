@@ -10,8 +10,6 @@ use App\Domain\Option\Repository\OptionRepository;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
-use App\Exception\OptionNotFoundException;
-use App\Exception\StreamNotFoundException;
 use App\Infrastructure\Storage\S3\S3StorageServiceInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -41,7 +39,7 @@ class CreateStreamVideoCommandHandler
         $option = $this->optionRepository->findByUuid($command->getOptionId());
 
         if (null === $option) {
-            throw new OptionNotFoundException($command->getOptionId()->toRfc4122());
+            throw new \Exception($command->getOptionId()->toRfc4122());
         }
 
         $stream = $this->commandBus->dispatch(new CreateStreamCommand(
@@ -58,7 +56,7 @@ class CreateStreamVideoCommandHandler
         $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
-            throw new StreamNotFoundException($command->getStreamId()->toRfc4122());
+            throw new \Exception($command->getStreamId()->toRfc4122());
         }
 
         $this->commandBus->dispatch(new UploadThumbnailCommand(

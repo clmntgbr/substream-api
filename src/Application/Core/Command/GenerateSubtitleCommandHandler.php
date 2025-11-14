@@ -21,6 +21,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+use function Safe\fclose;
+use function Safe\fopen;
+
 #[AsMessageHandler]
 class GenerateSubtitleCommandHandler
 {

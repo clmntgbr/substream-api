@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Safe\DateTime;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
@@ -91,7 +92,7 @@ class Subscription
     public function __construct()
     {
         $this->id = Uuid::v7();
-        $this->startDate = new \DateTime();
+        $this->startDate = new DateTime();
         $this->payments = new ArrayCollection();
     }
 
@@ -144,7 +145,7 @@ class Subscription
     public function setPlan(Plan $plan): self
     {
         $this->plan = $plan;
-        $this->endDate = (new \DateTime())->modify($plan->getExpirationDays());
+        $this->endDate = (new DateTime())->modify($plan->getExpirationDays());
 
         return $this;
     }
@@ -214,7 +215,7 @@ class Subscription
             return false;
         }
 
-        return $this->endDate < new \DateTime() && $this->status === SubscriptionStatusEnum::EXPIRED->value;
+        return $this->endDate < new DateTime() && $this->status === SubscriptionStatusEnum::EXPIRED->value;
     }
 
     #[Groups(['subscription:read'])]

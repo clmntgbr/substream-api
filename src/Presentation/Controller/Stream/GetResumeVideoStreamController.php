@@ -6,7 +6,7 @@ namespace App\Presentation\Controller\Stream;
 
 use App\Domain\Stream\Entity\Stream;
 use App\Infrastructure\Storage\S3\S3StorageService;
-use App\Util\Slugify;
+use App\Shared\Utils\Slugify;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;

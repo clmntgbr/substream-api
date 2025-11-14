@@ -21,7 +21,7 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         $stripe = new StripeClient($this->stripeApiSecretKey);
 
         $session = $stripe->checkout->sessions->create([
-            'client_reference_id' => $user->getId(),
+            'client_reference_id' => (string) $user->getId(),
             'customer_email' => $user->getEmail(),
             'success_url' => $this->frontendUrl.'/subscribe/success',
             'cancel_url' => $this->frontendUrl.'/pricing',
@@ -32,16 +32,20 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
             'currency' => 'eur',
             'mode' => 'subscription',
             'metadata' => [
-                'plan_id' => $plan->getId(),
+                'plan_id' => (string) $plan->getId(),
                 'plan_name' => $plan->getName(),
                 'plan_price' => $plan->getPrice(),
                 'currency' => 'eur',
                 'plan_interval' => $plan->getInterval(),
-                'user_id' => $user->getId(),
+                'user_id' => (string) $user->getId(),
                 'user_email' => $user->getEmail(),
                 'user_name' => $user->getName(),
             ],
         ]);
+
+        if (null === $session->url) {
+            throw new \RuntimeException('Checkout session URL is required');
+        }
 
         return $session->url;
     }

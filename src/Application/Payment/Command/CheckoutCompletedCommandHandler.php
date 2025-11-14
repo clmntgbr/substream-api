@@ -12,6 +12,7 @@ use App\Domain\User\Repository\UserRepository;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
+use Safe\DateTime;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -55,7 +56,7 @@ class CheckoutCompletedCommandHandler
 
         $subscription = $user->getActiveSubscription();
         $subscription->setStatus(SubscriptionStatusEnum::EXPIRED->value);
-        $subscription->setEndDate(new \DateTime('now'));
+        $subscription->setEndDate(new DateTime('now'));
 
         $newSubscription = $this->commandBus->dispatch(new CreateSubscriptionCommand(
             user: $user,

@@ -11,6 +11,12 @@ use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+use function Safe\fclose;
+use function Safe\file_get_contents;
+use function Safe\fopen;
+use function Safe\fwrite;
+use function Safe\rewind;
+
 #[AsMessageHandler]
 class UploadThumbnailCommandHandler
 {
@@ -67,10 +73,7 @@ class UploadThumbnailCommandHandler
     private function uploadThumbnailFromUrl(string $url, Stream $stream): void
     {
         try {
-            $imageContents = @file_get_contents($url);
-            if (false === $imageContents) {
-                return;
-            }
+            $imageContents = file_get_contents($url);
 
             $imageInfo = @getimagesizefromstring($imageContents);
             $mime = $imageInfo['mime'] ?? null;

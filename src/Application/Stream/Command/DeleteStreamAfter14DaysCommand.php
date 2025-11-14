@@ -20,6 +20,9 @@ final class DeleteStreamAfter14DaysCommand implements SynchronousInterface
         return $this->streamId;
     }
 
+    /**
+     * @return array<DelayStamp>
+     */
     public function getStamps(): array
     {
         return [

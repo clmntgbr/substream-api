@@ -40,7 +40,6 @@ class LinkedInOauthController extends AbstractController
     #[Route('/exchange-token', name: 'exchange_token', methods: ['POST'])]
     public function exchangeToken(#[MapRequestPayload()] LinkedInExchangeTokenPayload $payload): JsonResponse
     {
-        dd($payload);
         try {
             $user = $this->linkedInOAuthService->callback($payload);
             $token = $this->jwtManager->create($user);

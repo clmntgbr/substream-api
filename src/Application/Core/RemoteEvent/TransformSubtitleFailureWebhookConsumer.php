@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Core\RemoteEvent;
 
-use App\Application\Command\UpdateTaskFailureCommand;
+use App\Application\Task\Command\UpdateTaskFailureCommand;
 use App\Application\Trait\WorkflowTrait;
 use App\Domain\Core\Dto\TransformSubtitleFailure;
 use App\Domain\Stream\Enum\StreamStatusEnum;

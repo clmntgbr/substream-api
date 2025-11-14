@@ -9,7 +9,6 @@ use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Task\Entity\Task;
 use App\Domain\Task\Repository\TaskRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
-use App\Exception\WorkflowTransitionException;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
@@ -93,7 +92,7 @@ abstract class AbstractStreamWorkflowCommandHandler
             }
 
             $this->coreBus->dispatch($message);
-        } catch (WorkflowTransitionException $e) {
+        } catch (\Exception $e) {
             $this->logger->error(sprintf('Workflow transition failed during %s', $this->getWorkflowActionName()), [
                 'stream_id' => (string) $streamId,
                 'error' => $e->getMessage(),

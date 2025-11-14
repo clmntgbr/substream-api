@@ -20,9 +20,13 @@ class StripeSubscriptionGateway implements StripeSubscriptionGatewayInterface
         $stripe = new StripeClient($this->stripeApiSecretKey);
 
         $billingPortalSession = $stripe->billingPortal->sessions->create([
-            'customer' => $user->getStripeCustomerId(),
+            'customer' => (string) $user->getStripeCustomerId(),
             'return_url' => $this->frontendUrl.'/billing',
         ]);
+
+        if (null === $billingPortalSession->url) {
+            throw new \RuntimeException('Billing portal session URL is required');
+        }
 
         return $billingPortalSession->url;
     }

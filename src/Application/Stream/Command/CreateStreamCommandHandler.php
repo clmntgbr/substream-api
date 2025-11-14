@@ -7,9 +7,7 @@ namespace App\Application\Stream\Command;
 use App\Domain\Option\Repository\OptionRepository;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
-use App\Exception\OptionNotFoundException;
 use App\Shared\Application\Bus\CommandBusInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -17,7 +15,6 @@ class CreateStreamCommandHandler
 {
     public function __construct(
         private StreamRepository $streamRepository,
-        private EventDispatcherInterface $eventDispatcher,
         private OptionRepository $optionRepository,
         private CommandBusInterface $commandBus,
     ) {
@@ -28,7 +25,7 @@ class CreateStreamCommandHandler
         $option = $this->optionRepository->findByUuid($command->getOptionId());
 
         if (null === $option) {
-            throw new OptionNotFoundException($command->getOptionId()->toRfc4122());
+            throw new \Exception($command->getOptionId()->toRfc4122());
         }
 
         $stream = Stream::create(

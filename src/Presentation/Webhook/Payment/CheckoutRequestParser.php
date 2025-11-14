@@ -2,7 +2,6 @@
 
 namespace App\Presentation\Webhook\Payment;
 
-use Psr\Log\LoggerInterface;
 use Stripe\Webhook;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
@@ -20,9 +19,8 @@ final class CheckoutRequestParser extends AbstractRequestParser
     public const WEBHOOK_NAME = 'checkout';
     public const EVENT_TYPE_CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed';
 
-    public function __construct(
-        private readonly LoggerInterface $logger,
-    ) {
+    public function __construct()
+    {
     }
 
     protected function getRequestMatcher(): RequestMatcherInterface
@@ -36,11 +34,11 @@ final class CheckoutRequestParser extends AbstractRequestParser
     /**
      * @throws JsonException
      */
-    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): ?RemoteEvent
+    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): RemoteEvent
     {
         $event = Webhook::constructEvent(
             $request->getContent(),
-            $request->headers->all()['stripe-signature'][0],
+            $request->headers->all()['stripe-signature'][0] ?? '',
             $secret
         );
 

@@ -9,6 +9,11 @@ use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Uuid;
 
+use function Safe\fclose;
+use function Safe\fopen;
+use function Safe\mkdir;
+use function Safe\stream_copy_to_stream;
+
 class S3StorageService implements S3StorageServiceInterface
 {
     public function __construct(

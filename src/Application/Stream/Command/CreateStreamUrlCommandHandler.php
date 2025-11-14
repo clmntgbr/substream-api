@@ -9,13 +9,15 @@ use App\Application\Trait\WorkflowTrait;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
-use App\Exception\InvalidThumbnailFormatException;
-use App\Exception\StreamNotFoundException;
-use App\Exception\ThumbnailFileCreationException;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
+
+use function Safe\base64_decode;
+use function Safe\file_put_contents;
+use function Safe\preg_match;
+use function Safe\tempnam;
 
 #[AsMessageHandler]
 class CreateStreamUrlCommandHandler
@@ -43,7 +45,7 @@ class CreateStreamUrlCommandHandler
         $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
-            throw new StreamNotFoundException($command->getStreamId()->toRfc4122());
+            throw new \Exception($command->getStreamId()->toRfc4122());
         }
 
         $thumbnailFile = $this->convertBase64ToFile($command->getThumbnailFile());
@@ -68,25 +70,15 @@ class CreateStreamUrlCommandHandler
     private function convertBase64ToFile(string $base64Data): UploadedFile
     {
         if (!preg_match('/^data:image\/(jpeg|jpg|png|gif|webp);base64,(.+)$/', $base64Data, $matches)) {
-            throw new InvalidThumbnailFormatException();
+            throw new \Exception('Invalid thumbnail format');
         }
 
         $mimeType = 'image/'.$matches[1];
         $base64Content = $matches[2];
 
         $imageData = base64_decode($base64Content);
-        if (false === $imageData) {
-            throw new InvalidThumbnailFormatException();
-        }
-
         $tempFile = tempnam(sys_get_temp_dir(), 'thumbnail_');
-        if (false === $tempFile) {
-            throw new ThumbnailFileCreationException();
-        }
-
-        if (false === file_put_contents($tempFile, $imageData)) {
-            throw new ThumbnailFileCreationException();
-        }
+        file_put_contents($tempFile, $imageData);
 
         $extension = match ($mimeType) {
             'image/jpeg' => 'jpg',

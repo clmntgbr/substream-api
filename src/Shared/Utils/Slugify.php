@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Utils;
 
+use function Safe\iconv;
 use function Safe\preg_replace;
 
 class Slugify
@@ -73,10 +74,9 @@ class Slugify
         }
 
         if (function_exists('iconv')) {
-            $converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
-            if (false !== $converted && '' !== $converted) {
-                return $converted;
-            }
+            $converted = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+
+            return $converted;
         }
 
         $map = [

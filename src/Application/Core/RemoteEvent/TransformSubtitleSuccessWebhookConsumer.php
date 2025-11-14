@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Core\RemoteEvent;
 
-use App\Application\Command\ResizeVideoCommand;
-use App\Application\Command\UpdateTaskSuccessCommand;
+use App\Application\Core\Command\ResizeVideoCommand;
+use App\Application\Task\Command\UpdateTaskSuccessCommand;
 use App\Application\Trait\WorkflowTrait;
 use App\Domain\Core\Dto\TransformSubtitleSuccess;
 use App\Domain\Stream\Enum\StreamStatusEnum;

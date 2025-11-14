@@ -12,7 +12,6 @@ use App\Domain\SocialAccount\Entity\SocialAccount;
 use App\Domain\Subscription\Entity\Subscription;
 use App\Domain\Trait\UuidTrait;
 use App\Domain\User\Repository\UserRepository;
-use App\Exception\SubscriptionNotFoundException;
 use App\Presentation\Controller\User\RegisterController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -47,7 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Groups(['user:read'])]
-    private ?string $email = null;
+    private string $email;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['user:read'])]
@@ -117,12 +116,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
-        return $this->email;
+        return (string) $this->email;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->firstname.' '.$this->lastname;
     }
@@ -300,7 +299,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $subscription = $this->subscriptions->filter(fn (Subscription $subscription) => $subscription->isActive())->first();
 
         if (false === $subscription) {
-            throw new SubscriptionNotFoundException((string) $this->id);
+            throw new \Exception('Subscription not found');
         }
 
         return $subscription;

@@ -4,10 +4,10 @@ namespace App\Domain\Payment\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use App\Domain\Payment\Enum\PaymentProviderEnum;
 use App\Domain\Payment\Repository\PaymentRepository;
 use App\Domain\Subscription\Entity\Subscription;
 use App\Domain\Trait\UuidTrait;
-use App\Enum\PaymentProviderEnum;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -30,27 +30,27 @@ class Payment
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['payment:read'])]
-    private ?string $provider = null;
+    private string $provider;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['payment:read'])]
-    private ?string $customerId = null;
+    private string $customerId;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['payment:read'])]
-    private ?string $invoiceId = null;
+    private string $invoiceId;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['payment:read'])]
-    private ?string $paymentStatus = null;
+    private string $paymentStatus;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['payment:read'])]
-    private ?string $currency = null;
+    private string $currency;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     #[Groups(['payment:read'])]
-    private ?string $amount = null;
+    private string $amount;
 
     #[ORM\ManyToOne(targetEntity: Subscription::class)]
     #[ORM\JoinColumn(nullable: false)]

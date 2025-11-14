@@ -7,9 +7,8 @@ namespace App\Application\Notification\Command;
 use App\Domain\Notification\Entity\Notification;
 use App\Domain\Notification\Repository\NotificationRepository;
 use App\Domain\Stream\Repository\StreamRepository;
-use App\Exception\StreamNotFoundException;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
-use App\Util\Slugify;
+use App\Shared\Utils\Slugify;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -27,7 +26,7 @@ class CreateNotificationCommandHandler
         $stream = $this->streamRepository->findByUuid($command->getContextId());
 
         if (null === $stream) {
-            throw new StreamNotFoundException($command->getContextId()->toRfc4122());
+            throw new \Exception($command->getContextId()->toRfc4122());
         }
 
         $originalFileName = $stream->getOriginalFileName();

@@ -9,6 +9,8 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
 
+use function Safe\json_decode;
+
 class AuthenticationSuccessListener
 {
     public function __construct(

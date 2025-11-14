@@ -71,6 +71,9 @@ class Plan
 
     #[ORM\Column(type: Types::JSON)]
     #[Groups(['plan:read'])]
+    /**
+     * @var array<string>
+     */
     private array $features;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
@@ -81,7 +84,7 @@ class Plan
     private string $expirationDays;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    private ?string $stripePriceId = null;
+    private string $stripePriceId;
 
     public function __construct()
     {
@@ -216,7 +219,7 @@ class Plan
         return $this;
     }
 
-    public function getStripePriceId(): ?string
+    public function getStripePriceId(): string
     {
         return $this->stripePriceId;
     }

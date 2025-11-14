@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Core\RemoteEvent;
 
-use App\Application\Command\StreamSuccessCommand;
-use App\Application\Command\UpdateTaskSuccessCommand;
+use App\Application\Stream\Command\StreamSuccessCommand;
+use App\Application\Task\Command\UpdateTaskSuccessCommand;
 use App\Application\Trait\WorkflowTrait;
 use App\Domain\Core\Dto\ResumeVideoSuccess;
 use App\Domain\Stream\Enum\StreamStatusEnum;

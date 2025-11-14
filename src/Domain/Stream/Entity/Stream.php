@@ -21,7 +21,8 @@ use App\Presentation\Controller\Stream\CreateStreamVideoController;
 use App\Presentation\Controller\Stream\DeleteStreamController;
 use App\Presentation\Controller\Stream\GetResumeVideoStreamController;
 use App\Presentation\Controller\Stream\GetSubtitleSrtStreamController;
-use App\Service\DurationFormatter;
+use App\Shared\Utils\DurationFormatter;
+use App\Shared\Utils\StreamFileCleaner;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -540,7 +541,7 @@ class Stream
      */
     public function getCleanableFiles(): array
     {
-        return (new \App\Service\StreamFileCleaner())->getCleanableFiles(
+        return (new StreamFileCleaner())->getCleanableFiles(
             $this->getAudioFiles(),
             $this->getSubtitleAssFileName(),
             $this->getResizeFileName(),

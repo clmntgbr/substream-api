@@ -8,6 +8,7 @@ use App\Domain\Plan\Repository\PlanRepository;
 use App\Domain\Subscription\Entity\Subscription;
 use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
+use Safe\DateTime;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -30,8 +31,8 @@ class CreateSubscriptionCommandHandler
         $subscription = Subscription::create(
             user: $command->getUser(),
             plan: $plan,
-            startDate: new \DateTime(),
-            endDate: (new \DateTime())->modify($plan->getExpirationDays()),
+            startDate: new DateTime(),
+            endDate: (new DateTime())->modify($plan->getExpirationDays()),
             status: SubscriptionStatusEnum::ACTIVE->value,
             autoRenew: true,
             subscriptionId: $command->getSubscriptionId(),

@@ -6,9 +6,9 @@ namespace App\Domain\Task\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Domain\Stream\Entity\Stream;
+use App\Domain\Task\Enum\TaskStatusEnum;
 use App\Domain\Task\Repository\TaskRepository;
 use App\Domain\Trait\UuidTrait;
-use App\Enum\TaskStatusEnum;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;

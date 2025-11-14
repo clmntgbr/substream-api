@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Core\RemoteEvent;
 
-use App\Application\Command\TransformSubtitleCommand;
-use App\Application\Command\UpdateTaskSuccessCommand;
+use App\Application\Core\Command\TransformSubtitleCommand;
+use App\Application\Task\Command\UpdateTaskSuccessCommand;
 use App\Application\Trait\WorkflowTrait;
 use App\Domain\Core\Dto\GenerateSubtitleSuccess;
 use App\Domain\Stream\Enum\StreamStatusEnum;

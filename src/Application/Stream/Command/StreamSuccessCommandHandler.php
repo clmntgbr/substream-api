@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Stream\Command;
 
-use App\Application\Command\CreateStreamNotificationCommand;
+use App\Application\Notification\Command\CreateStreamNotificationCommand;
 use App\Application\Trait\WorkflowTrait;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Enum\StreamStatusEnum;
