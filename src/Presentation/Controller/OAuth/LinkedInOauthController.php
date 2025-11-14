@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Controller\OAuth;
 
-use App\Domain\User\Entity\User;
 use App\Domain\OAuth\Dto\LinkedIn\LinkedInExchangeTokenPayload;
+use App\Domain\User\Entity\User;
 use App\Infrastructure\OAuth\Linkedin\LinkedInOAuthService;
 use App\Shared\Domain\Response\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;

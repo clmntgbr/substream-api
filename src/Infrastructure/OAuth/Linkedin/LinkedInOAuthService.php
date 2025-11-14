@@ -6,11 +6,11 @@ namespace App\Infrastructure\OAuth\Linkedin;
 
 use App\Application\SocialAccount\Command\CreateSocialAccountCommand;
 use App\Application\User\Command\CreateOrUpdateUserCommand;
-use App\Domain\OAuth\Gateway\OAuthServiceInterface;
-use App\Domain\User\Entity\User;
 use App\Domain\OAuth\Dto\ExchangeTokenPayloadInterface;
 use App\Domain\OAuth\Dto\LinkedIn\LinkedInAccount;
 use App\Domain\OAuth\Dto\LinkedIn\LinkedInExchangeTokenPayload;
+use App\Domain\OAuth\Gateway\OAuthServiceInterface;
+use App\Domain\User\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Token\AccessTokenInterface;

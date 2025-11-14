@@ -1,32 +1,158 @@
-# Substream API - Cursor Rules & Best Practices
+# Substream API - Cursor Rules & Best Practices (DDD Architecture)
 
-## Architecture & Patterns
+## Architecture Overview
 
-### 1. Command Handlers
+This project follows **Domain-Driven Design (DDD)** with clear layer separation:
+
+- **Domain Layer** (`src/Domain/`): Entities, Value Objects, Repositories, DTOs, Enums, Gateway Interfaces
+- **Application Layer** (`src/Application/`): Commands, CommandHandlers, Messages, Events, RemoteEvents
+- **Infrastructure Layer** (`src/Infrastructure/`): Technical services, Gateway implementations, External integrations
+- **Presentation Layer** (`src/Presentation/`): Controllers, Webhooks
+- **Shared Kernel** (`src/Shared/`): Bus interfaces, Repository abstractions, Domain abstractions, Utils
+
+## Layer-Specific Guidelines
+
+### 1. Domain Layer (`src/Domain/`)
+
+#### Entities
 
 **DO**:
+- Keep entities under 300 lines when possible
+- Place entities in `Domain/{BoundedContext}/Entity/`
+- Use factory methods (`create()`, `fromArray()`) for entity creation
+- Keep `markAs*()` methods simple and focused on state changes
+- Use Value Objects for complex domain concepts
+- Use Enums for fixed sets of values
+- Entities should contain business logic, not presentation logic
+
+**DON'T**:
+- Don't put formatting logic in entities (`getProcessingTimeFormatted()`)
+- Don't add presentation logic (Groups should be minimal)
+- Don't duplicate logic across entities
+- Don't mix entity and DTO concerns
+- Don't access infrastructure services from entities
+
+**Example**:
+```php
+namespace App\Domain\Stream\Entity;
+
+class Stream
+{
+    public static function create(
+        Uuid $id,
+        User $user,
+        Option $option,
+        // ... parameters
+    ): self {
+        $stream = new self();
+        $stream->id = $id;
+        // ... initialization
+        return $stream;
+    }
+
+    public function markAsFailed(StreamStatusEnum $status): void
+    {
+        $this->status = $status;
+    }
+}
+```
+
+#### Value Objects
+
+**DO**:
+- Place in `Domain/{BoundedContext}/ValueObject/`
+- Extend `App\Shared\Domain\ValueObject\ValueObject` when implementing `Stringable`
+- Make Value Objects immutable
+- Include validation logic within Value Objects
+- Use Value Objects to encapsulate domain concepts
+
+**DON'T**:
+- Don't make Value Objects mutable
+- Don't put infrastructure concerns in Value Objects
+
+#### Repositories
+
+**DO**:
+- Place repositories in `Domain/{BoundedContext}/Repository/`
+- Extend `App\Shared\Domain\Repository\AbstractRepository`
+- Use `save()` for persist-only operations (no flush)
+- Use `saveAndFlush()` when you need immediate flush (async messages, race conditions)
+- Call `flush()` explicitly at the end of transactions when needed
+- Add domain-specific query methods (e.g., `findByUuid()`)
+- Use typed return values and parameters
+
+**DON'T**:
+- Don't use `save($entity, $persist = true/false)` - param removed, always call `persist()`
+- Don't use `update()` method (deprecated and dangerous)
+- Don't rely on `doctrine_transaction` middleware (not configured)
+- Don't put business logic in repositories
+
+**Example**:
+```php
+namespace App\Domain\Stream\Repository;
+
+class StreamRepository extends AbstractRepository
+{
+    public function findByUuid(Uuid $id): ?Stream
+    {
+        return $this->findOneBy(['id' => $id]);
+    }
+}
+```
+
+#### DTOs
+
+**DO**:
+- Place DTOs in `Domain/{BoundedContext}/Dto/`
+- Use DTOs for data transfer between layers
+- Keep DTOs simple and focused
+- Use interfaces for DTO contracts when needed (e.g., `ExchangeTokenPayloadInterface`)
+
+**DON'T**:
+- Don't put business logic in DTOs
+- Don't mix DTOs with entities
+
+#### Gateways (Interfaces)
+
+**DO**:
+- Place gateway interfaces in `Domain/{BoundedContext}/Gateway/`
+- Define interfaces in Domain layer
+- Implement interfaces in Infrastructure layer
+- Use gateways to abstract external services
+
+**DON'T**:
+- Don't put implementations in Domain layer
+- Don't create dependencies on infrastructure in Domain layer
+
+### 2. Application Layer (`src/Application/`)
+
+#### Command Handlers
+
+**DO**:
+- Place handlers in `Application/{BoundedContext}/Command/`
 - Use `AbstractStreamWorkflowCommandHandler` for workflow handlers (ChunkVideo, ExtractSound, etc.)
 - Implement `getTransition()`, `createMessage()`, `markStreamAsFailed()`, `getCommandClass()`, `getWorkflowActionName()`
 - Use `executeWorkflow()` template method from abstract handler
 - Always use `saveAndFlush()` when dispatching async messages (race condition prevention)
 - Never re-throw exceptions in catch blocks (to avoid blocking the Messenger consumer)
+- Use `CommandBusInterface` from Shared layer for dispatching commands
+- Use `CoreBusInterface` for async messages
 
 **DON'T**:
 - Don't duplicate stream finding, error handling, or Mercure publication logic
 - Don't use `finally` blocks for Mercure publications (only for cleanup)
 - Don't catch `\Exception` generically - use `WorkflowTransitionException` and `\Throwable`
+- Don't access infrastructure services directly (use gateways/interfaces)
 
 **Example**:
 ```php
+namespace App\Application\Core\Command;
+
 #[AsMessageHandler]
 class ChunkVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 {
-    private ChunkVideoCommand $currentCommand;
-
     public function __invoke(ChunkVideoCommand $command): void
     {
-        $this->currentCommand = $command;
-        
         $this->executeWorkflow(
             $command->getStreamId(),
             fn(Stream $stream, Task $task) => new ChunkVideoMessage(...)
@@ -40,57 +166,210 @@ class ChunkVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
     protected function markStreamAsFailed(Stream $stream): void
     {
-        $stream->markAsChunkingVideoFailed();
+        $stream->markAsFailed(StreamStatusEnum::CHUNKING_VIDEO_FAILED);
     }
 }
 ```
 
-### 2. Repository Pattern
+#### Commands
 
 **DO**:
-- Use `save()` for persist-only operations (no flush)
-- Use `saveAndFlush()` when you need immediate flush (async messages, race conditions)
-- Call `flush()` explicitly at the end of transactions when needed
-- Use typed return values and parameters
+- Place commands in `Application/{BoundedContext}/Command/`
+- Implement `SynchronousInterface` or `AsynchronousInterface` from Shared layer
+- Use readonly properties when possible
+- Keep commands focused and simple
 
 **DON'T**:
-- Don't use `save($entity, $persist = true/false)` - param removed, always call `persist()`
-- Don't use `update()` method (deprecated and dangerous)
-- Don't rely on `doctrine_transaction` middleware (not configured)
+- Don't put business logic in commands
+- Don't mix command and handler concerns
+
+#### Messages
+
+**DO**:
+- Place messages in `Application/{BoundedContext}/Message/`
+- Implement `AsynchronousMessageInterface` from Shared layer
+- Use messages for async communication between bounded contexts
+
+**DON'T**:
+- Don't put business logic in messages
+- Don't use messages for synchronous operations
+
+#### RemoteEvents (Webhook Consumers)
+
+**DO**:
+- Place in `Application/{BoundedContext}/RemoteEvent/`
+- Handle external webhook events
+- Dispatch commands to update domain state
+- Use proper error handling
+
+**DON'T**:
+- Don't put business logic in RemoteEvents
+- Don't access repositories directly (use command handlers)
+
+### 3. Infrastructure Layer (`src/Infrastructure/`)
+
+#### Gateway Implementations
+
+**DO**:
+- Place implementations in `Infrastructure/{BoundedContext}/`
+- Implement gateway interfaces from Domain layer
+- Handle external service communication
+- Use DTOs for data transformation
+- Dispatch commands via `CommandBusInterface` for domain operations
+
+**DON'T**:
+- Don't put business logic in infrastructure services
+- Don't create domain entities directly (use command handlers)
+- Don't bypass the application layer
 
 **Example**:
 ```php
-// OAuth/Create handlers - need immediate flush
-$this->userRepository->saveAndFlush($user);
-$this->socialAccountRepository->saveAndFlush($socialAccount);
+namespace App\Infrastructure\OAuth\Github;
 
-// Regular handlers - let transaction handle it
-$this->streamRepository->save($stream);
-// ... later
-$this->streamRepository->flush();
+class GithubOAuthService implements OAuthServiceInterface
+{
+    public function __construct(
+        private readonly CommandBusInterface $commandBus,
+        // ... other dependencies
+    ) {}
+
+    public function callback(ExchangeTokenPayloadInterface $payload): User
+    {
+        // ... OAuth logic
+        $user = $this->commandBus->dispatch(new CreateOrUpdateUserCommand(...));
+        return $user;
+    }
+}
 ```
 
-### 3. Entity Design
+#### Technical Services
 
 **DO**:
-- Keep entities under 300 lines when possible
-- Separate business logic into Value Objects
-- Use Groups sparingly - consider DTOs for complex serialization
-- Keep `markAs*()` methods simple and focused
+- Place in `Infrastructure/{TechnicalConcern}/` (e.g., `RealTime/Mercure/`, `Storage/S3/`)
+- Implement interfaces defined in Domain or Shared layers
+- Handle technical concerns (Mercure, S3, etc.)
 
 **DON'T**:
-- Don't put formatting logic in entities (`getProcessingTimeFormatted()`)
-- Don't add presentation logic (Groups should be minimal)
-- Don't duplicate logic across entities
+- Don't expose domain concepts in technical services
+- Don't create dependencies on domain entities (use DTOs)
 
-**Current issues to avoid**:
-- Stream entity is 716 lines (too large)
-- Format logic duplicated in Stream, Task, etc.
+### 4. Presentation Layer (`src/Presentation/`)
 
-### 4. Exception Handling
+#### Controllers
+
+**DO**:
+- Place in `Presentation/Controller/{BoundedContext}/`
+- Keep controllers thin - delegate to application services
+- Use DTOs for request/response mapping
+- Return standardized responses using `App\Shared\Domain\Response\Response`
+- Use `#[MapRequestPayload]` for request DTOs
+
+**DON'T**:
+- Don't put business logic in controllers
+- Don't access repositories directly
+- Don't create domain entities directly
+- Don't mix presentation and domain concerns
+
+**Example**:
+```php
+namespace App\Presentation\Controller\OAuth;
+
+#[Route('/api/oauth/github')]
+class GithubOauthController extends AbstractController
+{
+    public function __construct(
+        private GithubOAuthService $githubOAuthService,
+    ) {}
+
+    #[Route('/exchange-token', methods: ['POST'])]
+    public function exchangeToken(#[MapRequestPayload()] GithubExchangeTokenPayload $payload): JsonResponse
+    {
+        $user = $this->githubOAuthService->callback($payload);
+        return Response::successResponse(['user' => $user]);
+    }
+}
+```
+
+#### Webhooks
+
+**DO**:
+- Place in `Presentation/Webhook/{BoundedContext}/`
+- Parse webhook payloads
+- Dispatch commands or remote events
+- Keep webhook handlers thin
+
+**DON'T**:
+- Don't put business logic in webhooks
+- Don't access repositories directly
+
+### 5. Shared Kernel (`src/Shared/`)
+
+#### Bus Interfaces
+
+**DO**:
+- Use `CommandBusInterface` for synchronous/asynchronous commands
+- Use `CoreBusInterface` for async messages
+- Place interfaces in `Shared/Application/Bus/`
+- Place implementations in `Shared/Infrastructure/Bus/`
+
+**DON'T**:
+- Don't create custom bus implementations without reason
+- Don't bypass the bus pattern
+
+#### Repository Abstractions
+
+**DO**:
+- Extend `AbstractRepository` from `Shared/Domain/Repository/`
+- Use provided methods: `save()`, `saveAndFlush()`, `flush()`, `delete()`, etc.
+
+**DON'T**:
+- Don't override repository methods unnecessarily
+- Don't add infrastructure-specific logic to abstract repository
+
+## Cross-Layer Patterns
+
+### 1. Workflow & State Management
+
+**DO**:
+- Use `WorkflowTransitionEnum` for all transitions
+- Apply transitions before creating tasks
+- Save and flush stream after transition
+- Use abstract handler's `apply()` method
+- Workflow configuration in `config/packages/workflow.yaml`
+
+**DON'T**:
+- Don't skip transition application
+- Don't save entities before applying transitions
+- Don't forget to flush after transition
+
+### 2. Async Message Dispatching
+
+**DO**:
+- Always use `saveAndFlush()` before dispatching async messages
+- This prevents race conditions where external service can't find entities
+- Use `CoreBusInterface` for async messages
+- Messages must implement `AsynchronousMessageInterface`
+
+**DON'T**:
+- Don't use `save()` before async dispatch
+- Don't rely on middleware to flush before dispatch
+
+**Critical pattern**:
+```php
+$stream->apply($transition);
+$this->streamRepository->saveAndFlush($stream); // FLUSH before dispatch
+
+$task = Task::create(...);
+$this->taskRepository->saveAndFlush($task); // FLUSH before dispatch
+
+$this->coreBus->dispatch(new Message(...)); // External service needs entities
+```
+
+### 3. Exception Handling
 
 **DO**:
 - Create specific exception types (`WorkflowTransitionException`, `StreamProcessingException`)
+- Place exceptions in appropriate layer (Domain exceptions in Domain, Application exceptions in Application)
 - Catch exceptions in order of specificity (`WorkflowTransitionException` then `\Throwable`)
 - Log errors with context: `stream_id`, `exception_class`, `trace`
 - Mark stream as failed and save in catch blocks
@@ -126,84 +405,60 @@ try {
 // NO finally block for Mercure publications
 ```
 
-### 5. Workflow & State Management
+### 4. Dependency Direction
 
 **DO**:
-- Use `WorkflowTransitionEnum` for all transitions
-- Apply transitions before creating tasks
-- Save and flush stream after transition
-- Use abstract handler's `apply()` method
+- Domain layer has NO dependencies on other layers
+- Application layer depends on Domain layer only
+- Infrastructure layer depends on Domain and Application layers
+- Presentation layer depends on all layers
+- Shared layer has minimal dependencies
 
 **DON'T**:
-- Don't skip transition application
-- Don't save entities before applying transitions
-- Don't forget to flush after transition
+- Don't create circular dependencies
+- Don't let Domain depend on Infrastructure
+- Don't let Domain depend on Application
+- Don't let Application depend on Infrastructure (use interfaces)
 
-### 6. Async Message Dispatching
-
-**DO**:
-- Always use `saveAndFlush()` before dispatching async messages
-- This prevents race conditions where external service can't find entities
-- Use `CoreBusInterface` for async messages
-
-**DON'T**:
-- Don't use `save()` before async dispatch
-- Don't rely on middleware to flush before dispatch
-
-**Critical pattern**:
-```php
-$stream->apply($transition);
-$this->streamRepository->saveAndFlush($stream); // FLUSH before dispatch
-
-$task = Task::create(...);
-$this->taskRepository->saveAndFlush($task); // FLUSH before dispatch
-
-$this->coreBus->dispatch(new Message(...)); // External service needs entities
-```
-
-### 7. Code Organization
-
-**DO**:
-- Place handlers in `App\Application\CommandHandler`
-- Use interfaces for dependency inversion
-- Keep services thin and focused
-- Use `readonly` properties where immutable
-
-**DON'T**:
-- Don't duplicate code (use abstract base classes)
-- Don't create god classes (700+ lines)
-- Don't mix concerns (entity + DTO + formatting)
-
-### 8. File Naming Conventions
+## File Naming Conventions
 
 **DO**:
 - Commands: `{Action}Command.php`
 - Handlers: `{Action}CommandHandler.php`
 - Messages: `{Action}Message.php`
-- DTOs: Group by domain (OAuth, Stream, etc.)
+- DTOs: `{Purpose}Dto.php` or `{Provider}{Purpose}Dto.php`
+- Entities: `{EntityName}.php`
+- Repositories: `{EntityName}Repository.php`
+- Value Objects: `{ValueObjectName}.php`
+- Gateways: `{Service}Interface.php`
+- Controllers: `{Resource}Controller.php`
 
-### 9. Testing Guidelines
+## Testing Guidelines
 
 **DO**:
 - Test workflow transitions separately
 - Test error handling paths
 - Test race conditions in async scenarios
 - Mock external services (Mercure, Elasticsearch)
+- Test domain logic in isolation
+- Test application services with mocked repositories
 
 **DON'T**:
 - Don't test implementation details
 - Don't skip error path testing
+- Don't test infrastructure details in domain tests
 
-### 10. Logging
+## Logging
 
 **DO**:
 - Use structured logging with context
 - Include `stream_id`, `task_id`, `exception_class`
 - Add `trace` for debugging
 - Different log levels (error for failures, info for flows)
+- Log at appropriate layer (Application layer for business events)
 
 **DON'T**:
-- Don't log sensitive data
+- Don't log sensitive data (passwords, tokens)
 - Don't log too verbosely in production
 - Don't forget context in logs
 
@@ -212,13 +467,17 @@ $this->coreBus->dispatch(new Message(...)); // External service needs entities
 1. ❌ Using `finally` for state publications
 2. ❌ Generic `catch (\Exception)`
 3. ❌ Not flushing before async dispatch
-4. ❌ Entity obèse (700+ lignes)
+4. ❌ Large entities (700+ lines)
 5. ❌ Duplication across handlers
 6. ❌ Using `update()` repository method
 7. ❌ Relying on `doctrine_transaction` middleware
 8. ❌ Re-throwing in handler catch blocks
 9. ❌ Mixing entity and presentation logic
 10. ❌ Format logic in entities
+11. ❌ Domain layer depending on Infrastructure
+12. ❌ Business logic in controllers
+13. ❌ Direct repository access from controllers
+14. ❌ Infrastructure services creating domain entities directly
 
 ## Quick Reference
 
@@ -233,6 +492,7 @@ $this->coreBus->dispatch(new Message(...)); // External service needs entities
 - [ ] Catch `WorkflowTransitionException` then `\Throwable`
 - [ ] Don't re-throw in catch blocks
 - [ ] Log with proper context
+- [ ] Place in correct bounded context directory
 
 ### Repository Usage Guide
 
@@ -248,20 +508,21 @@ $this->repository->saveAll($entities); // no flush
 $this->repository->flush(); // explicit flush
 ```
 
-### Common Handler Patterns
+### Layer Interaction Patterns
 
 ```php
-// Workflow handler (USE THIS)
-class XxxCommandHandler extends AbstractStreamWorkflowCommandHandler { }
+// Controller -> Infrastructure Service -> Command Handler -> Domain
+// Presentation -> Application -> Domain
 
-// Non-workflow handler (manual pattern)
-class YyyCommandHandler {
-    public function __invoke(YyyCommand $command): void {
-        $entity = $this->repository->find(...);
-        // ... logic
-        $this->repository->saveAndFlush($entity);
-    }
-}
+// Controller
+$user = $this->oauthService->callback($payload); // Infrastructure
+
+// Infrastructure Service
+$user = $this->commandBus->dispatch(new CreateUserCommand(...)); // Application
+
+// Command Handler
+$user = User::create(...); // Domain
+$this->userRepository->saveAndFlush($user); // Domain
 ```
 
 ## Project-Specific Notes
@@ -271,6 +532,7 @@ class YyyCommandHandler {
 - **Messenger**: No retry strategy (max_retries: 0)
 - **Mercure**: Refresh streams in success/error paths, not finally
 - **Elasticsearch**: Refresh handled by `PublishService`
+- **Doctrine**: Entities mapped from `src/Domain` only (see `config/packages/doctrine.yaml`)
 
 ## Performance Considerations
 
@@ -278,11 +540,12 @@ class YyyCommandHandler {
 - Batch operations when possible
 - Avoid N+1 queries in handlers
 - Consider caching for frequently accessed data
+- Keep domain logic in Domain layer for testability
 
 ## Security Notes
 
 - Never log sensitive data (passwords, tokens)
-- Validate all inputs
+- Validate all inputs at boundaries (Controllers, Webhooks)
 - Use typed parameters
 - Sanitize file paths and names
-
+- Validate DTOs at application boundaries
