@@ -1,4 +1,4 @@
-App\CoreDD\Domain\Plan\Entity\Plan:
+App\Domain\Plan\Entity\Plan:
   plan_free:
     setIdFromString: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd"
     reference: "plan_free"

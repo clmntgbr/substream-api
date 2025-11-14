@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Bus;
 
-use App\Exception\BusinessException;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Command\AsynchronousInterface;
 use App\Shared\Application\Command\SynchronousInterface;
+use Safe\DateTimeImmutable;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -41,7 +41,7 @@ class CommandBus implements CommandBusInterface
             $previousException = $exception->getPrevious();
 
             while (null !== $previousException) {
-                if ($previousException instanceof BusinessException) {
+                if ($previousException instanceof \Exception) {
                     throw $previousException;
                 }
 
@@ -76,7 +76,7 @@ class CommandBus implements CommandBusInterface
         return [
             'status' => 'queued',
             'command' => $command::class,
-            'timestamp' => new \DateTimeImmutable(),
+            'timestamp' => new DateTimeImmutable(),
         ];
     }
 }

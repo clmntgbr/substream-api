@@ -82,28 +82,4 @@ abstract class AbstractRepository extends ServiceEntityRepository
             $this->save($entity);
         }
     }
-
-    /**
-     * @param iterable<T> $entities
-     */
-    public function saveAllChunks(iterable $entities, int $chunkSize = 50): void
-    {
-        if ($chunkSize <= 0) {
-            throw new \ValueError(__METHOD__.': Argument #2 ($chunkSize) must be greater than 0');
-        }
-
-        $em = $this->getEntityManager();
-
-        $chunks = iterator_chunk($entities, $chunkSize);
-        foreach ($chunks as $chunk) {
-            foreach ($chunk as $entity) {
-                if (!$em->contains($entity)) {
-                    $em->persist($entity);
-                }
-            }
-
-            $em->flush();
-            $em->clear();
-        }
-    }
 }

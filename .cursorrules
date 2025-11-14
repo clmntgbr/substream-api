@@ -164,7 +164,7 @@ $this->coreBus->dispatch(new Message(...)); // External service needs entities
 ### 7. Code Organization
 
 **DO**:
-- Place handlers in `App\CoreDD\Application\CommandHandler`
+- Place handlers in `App\Application\CommandHandler`
 - Use interfaces for dependency inversion
 - Keep services thin and focused
 - Use `readonly` properties where immutable

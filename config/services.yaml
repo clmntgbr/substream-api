@@ -16,7 +16,6 @@ services:
             string $env: '%env(APP_ENV)%'
             string $frontendUrl: '%env(FRONTEND_URL)%'
             string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
-            string $stripeApiPublicKey: '%env(STRIPE_API_PUBLIC_KEY)%'
             string $stripeApiSecretKey: '%env(STRIPE_API_SECRET_KEY)%'
 
     App\:
@@ -28,7 +27,7 @@ services:
             - '../src/Util/iterator_functions.php'
 
     app.event.authentication_success_listener:
-        class: App\Listener\AuthenticationSuccessListener
+        class: App\Infrastructure\OAuth\Listener\AuthenticationSuccessListener
         tags:
             - {
                   name: kernel.event_listener,
@@ -46,30 +45,11 @@ services:
                     key: '%env(S3_ACCESS_KEY)%'
                     secret: '%env(S3_SECRET_KEY)%'
 
-    App\Service\JsonMessageSerializer:
+    App\Infrastructure\Core\Serializer\JsonMessageSerializer:
         tags:
             - { name: messenger.serializer }
 
-    App\Serializer\ValidationErrorNormalizer:
-        decorates: 'api_platform.jsonld.normalizer.error'
-        arguments:
-            $decorated: '@.inner'
-
-    App\Fixture\AliceProvider:
+    
+    App\Shared\Infrastructure\Fixture\AliceProvider:
         tags:
             - { name: nelmio_alice.faker.provider }
-
-    # Elastica
-    App\Repository\ElasticaStreamRepository:
-        arguments:
-            $finder: '@fos_elastica.finder.stream'
-
-    App\Repository\ElasticaNotificationRepository:
-        arguments:
-            $finder: '@fos_elastica.finder.notification'
-
-    # Elasticsearch index for refresh service
-    App\CoreDD\Infrastructure\Search\Elasticsearch\ElasticsearchRefresher:
-        arguments:
-            $streamIndex: '@fos_elastica.index.stream'
-            $notificationIndex: '@fos_elastica.index.notification'

@@ -1,4 +1,4 @@
-App\CoreDD\Domain\User\Entity\User:
+App\Domain\User\Entity\User:
   user_1:
     email: "dummy@gmail.com"
     plainPassword: "password123"
