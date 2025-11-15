@@ -141,7 +141,7 @@ php-stan:
 	$(PHP_CONT) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1
 
 consume:
-	$(SYMFONY) messenger:consume async -vv
+	$(SYMFONY) messenger:consume async.priority async -vv
 
 transform-subtitle:
 	$(SYMFONY) transform-subtitle

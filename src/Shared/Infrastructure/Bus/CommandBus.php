@@ -18,20 +18,25 @@ class CommandBus implements CommandBusInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessageBusInterface $asyncCommandBus,
+        private MessageBusInterface $asyncPriorityCommandBus,
     ) {
     }
 
     public function dispatch(object $command): mixed
     {
-        if (!$command instanceof SynchronousInterface && !$command instanceof AsynchronousInterface && !$command instanceof AsynchronousPriorityInterface) {
-            throw new \RuntimeException('The message must implement SynchronousInterface or AsynchronousInterface or AsynchronousPriorityInterface.');
-        }
-
         if ($command instanceof SynchronousInterface) {
             return $this->dispatchSynchronous($command);
         }
 
-        return $this->dispatchAsynchronous($command);
+        if ($command instanceof AsynchronousPriorityInterface) {
+            return $this->dispatchAsynchronous($command);
+        }
+
+        if ($command instanceof AsynchronousInterface) {
+            return $this->dispatchAsynchronous($command);
+        }
+
+        throw new \RuntimeException('The message must implement SynchronousInterface or AsynchronousInterface or AsynchronousPriorityInterface.');
     }
 
     private function dispatchSynchronous(object $command): mixed
