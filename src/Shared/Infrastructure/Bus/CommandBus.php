@@ -6,6 +6,7 @@ namespace App\Shared\Infrastructure\Bus;
 
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Command\AsynchronousInterface;
+use App\Shared\Application\Command\AsynchronousPriorityInterface;
 use App\Shared\Application\Command\SynchronousInterface;
 use Safe\DateTimeImmutable;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
@@ -22,8 +23,8 @@ class CommandBus implements CommandBusInterface
 
     public function dispatch(object $command): mixed
     {
-        if (!$command instanceof SynchronousInterface && !$command instanceof AsynchronousInterface) {
-            throw new \RuntimeException('The message must implement SynchronousInterface or AsynchronousInterface.');
+        if (!$command instanceof SynchronousInterface && !$command instanceof AsynchronousInterface && !$command instanceof AsynchronousPriorityInterface) {
+            throw new \RuntimeException('The message must implement SynchronousInterface or AsynchronousInterface or AsynchronousPriorityInterface.');
         }
 
         if ($command instanceof SynchronousInterface) {

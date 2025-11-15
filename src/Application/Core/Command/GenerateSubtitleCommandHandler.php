@@ -99,8 +99,7 @@ class GenerateSubtitleCommandHandler
             $stream->markAsFailed(StreamStatusEnum::GENERATING_SUBTITLE_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         } finally {
-            $this->mercurePublisher->refreshStream($stream, GenerateSubtitleCommand::class);
-            $this->mercurePublisher->refreshStreams($stream, GenerateSubtitleCommand::class);
+            $this->mercurePublisher->refreshStreams($stream->getUser(), GenerateSubtitleCommand::class);
         }
     }
 

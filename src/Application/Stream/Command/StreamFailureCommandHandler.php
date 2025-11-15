@@ -37,7 +37,6 @@ class StreamFailureCommandHandler
             return;
         }
 
-        $this->mercurePublisher->refreshStream($stream, StreamFailureCommand::class);
-        $this->mercurePublisher->refreshStreams($stream, StreamFailureCommand::class);
+        $this->mercurePublisher->refreshStreams($stream->getUser(), StreamFailureCommand::class);
     }
 }

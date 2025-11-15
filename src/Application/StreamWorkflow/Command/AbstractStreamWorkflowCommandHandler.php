@@ -112,8 +112,7 @@ abstract class AbstractStreamWorkflowCommandHandler
             $this->markStreamAsFailed($stream);
             $this->streamRepository->saveAndFlush($stream);
         } finally {
-            $this->mercurePublisher->refreshStream($stream, $this->getCommandClass());
-            $this->mercurePublisher->refreshStreams($stream, $this->getCommandClass());
+            $this->mercurePublisher->refreshStreams($stream->getUser(), $this->getCommandClass());
         }
     }
 }

@@ -6,6 +6,7 @@ namespace App\Presentation\Controller\Stream;
 
 use App\Application\Stream\Command\CreateStreamUrlCommand;
 use App\Domain\Stream\Dto\CreateStreamUrlPayload;
+use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\User\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -30,7 +31,8 @@ class CreateStreamUrlController extends AbstractController
         #[MapRequestPayload()] CreateStreamUrlPayload $payload,
         #[CurrentUser] User $user,
     ): JsonResponse {
-        $createStreamModel = $this->commandBus->dispatch(
+        /** @var Stream $stream */
+        $stream = $this->commandBus->dispatch(
             new CreateStreamUrlCommand(
                 name: $payload->getName(),
                 url: $payload->getUrl(),
@@ -39,8 +41,6 @@ class CreateStreamUrlController extends AbstractController
                 user: $user,
             ),
         );
-
-        $stream = $this->streamRepository->find($createStreamModel->streamId);
 
         return new JsonResponse([
             'success' => true,

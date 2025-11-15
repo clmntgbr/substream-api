@@ -69,8 +69,7 @@ class GetVideoCommandHandler
             $stream->markAsFailed(StreamStatusEnum::UPLOAD_FAILED);
             $this->streamRepository->saveAndFlush($stream);
         } finally {
-            $this->mercurePublisher->refreshStream($stream, GetVideoCommand::class);
-            $this->mercurePublisher->refreshStreams($stream, GetVideoCommand::class);
+            $this->mercurePublisher->refreshStreams($stream->getUser(), GetVideoCommand::class);
         }
     }
 }

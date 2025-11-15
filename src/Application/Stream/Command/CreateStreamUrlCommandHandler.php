@@ -59,6 +59,7 @@ class CreateStreamUrlCommandHandler
         $this->apply($stream, WorkflowTransitionEnum::UPLOADING);
         $this->streamRepository->saveAndFlush($stream);
 
+        dump('get video');
         $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),
             url: $command->getUrl(),

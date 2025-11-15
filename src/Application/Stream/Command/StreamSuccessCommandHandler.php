@@ -54,8 +54,7 @@ class StreamSuccessCommandHandler
             status: 'success',
         ));
 
-        $this->mercurePublisher->refreshStream($stream, StreamSuccessCommand::class);
-        $this->mercurePublisher->refreshStreams($stream, StreamSuccessCommand::class);
+        $this->mercurePublisher->refreshStreams($stream->getUser(), StreamSuccessCommand::class);
     }
 
     private function complete(Stream $stream): void

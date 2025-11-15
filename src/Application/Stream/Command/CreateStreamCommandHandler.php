@@ -25,7 +25,7 @@ class CreateStreamCommandHandler
         $option = $this->optionRepository->findByUuid($command->getOptionId());
 
         if (null === $option) {
-            throw new \Exception($command->getOptionId()->toRfc4122());
+            throw new \Exception('Option not found');
         }
 
         $stream = Stream::create(
@@ -42,9 +42,9 @@ class CreateStreamCommandHandler
 
         $this->streamRepository->saveAndFlush($stream);
 
-        $this->commandBus->dispatch(new DeleteStreamAfter14DaysCommand(
-            streamId: $stream->getId(),
-        ));
+        // $this->commandBus->dispatch(new DeleteStreamAfter14DaysCommand(
+        //     streamId: $stream->getId(),
+        // ));
 
         return $stream;
     }
