@@ -32,10 +32,8 @@ class MercurePublisher implements MercurePublisherInterface
         $this->publish("/users/{$user->getId()}", $data);
     }
 
-    public function refreshStreams(Stream $stream, ?string $context = null): void
+    public function refreshStreams(User $user, ?string $context = null): void
     {
-        $user = $stream->getUser();
-
         $data = json_encode([
             'type' => 'streams.refresh',
             'userId' => $user->getId(),

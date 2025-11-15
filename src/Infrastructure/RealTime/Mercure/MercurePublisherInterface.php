@@ -11,7 +11,7 @@ interface MercurePublisherInterface
 {
     public function refreshStream(Stream $stream, ?string $context = null): void;
 
-    public function refreshStreams(Stream $stream, ?string $context = null): void;
+    public function refreshStreams(User $user, ?string $context = null): void;
 
     public function refreshNotifications(User $user, ?string $context = null): void;
 

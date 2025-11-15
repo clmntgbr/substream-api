@@ -41,11 +41,8 @@ class RegisterController extends AbstractController
         $token = $this->jwtManager->create($user);
 
         return new JsonResponse([
-            'success' => true,
-            'data' => [
-                'user' => $this->normalizer->normalize($user, null, ['groups' => User::GROUP_USER_READ]),
-                'token' => $token,
-            ],
+            'user' => $this->normalizer->normalize($user, null, ['groups' => User::GROUP_USER_READ]),
+            'token' => $token,
         ]);
     }
 }
