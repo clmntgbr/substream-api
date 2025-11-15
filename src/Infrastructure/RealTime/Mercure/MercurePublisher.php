@@ -29,7 +29,18 @@ class MercurePublisher implements MercurePublisherInterface
             'context' => $context,
         ]);
 
-        $this->publish("/users/{$user->getId()}", $data);
+        $this->publish($user, $data);
+    }
+
+    public function refreshUser(User $user, ?string $context = null): void
+    {
+        $data = json_encode([
+            'type' => 'user.refresh',
+            'userId' => $user->getId(),
+            'context' => $context,
+        ]);
+
+        $this->publish($user, $data);
     }
 
     public function refreshStreams(User $user, ?string $context = null): void
@@ -40,7 +51,7 @@ class MercurePublisher implements MercurePublisherInterface
             'context' => $context,
         ]);
 
-        $this->publish("/users/{$user->getId()}", $data);
+        $this->publish($user, $data);
     }
 
     public function refreshNotifications(User $user, ?string $context = null): void
@@ -51,7 +62,7 @@ class MercurePublisher implements MercurePublisherInterface
             'context' => $context,
         ]);
 
-        $this->publish("/users/{$user->getId()}", $data);
+        $this->publish($user, $data);
     }
 
     public function refreshPlans(User $user, ?string $context = null): void
@@ -62,13 +73,13 @@ class MercurePublisher implements MercurePublisherInterface
             'context' => $context,
         ]);
 
-        $this->publish("/users/{$user->getId()}", $data);
+        $this->publish($user, $data);
     }
 
-    private function publish(string $topic, string $data): void
+    private function publish(User $user, string $data): void
     {
         $update = new Update(
-            $topic,
+            "/users/{$user->getId()}",
             $data
         );
 

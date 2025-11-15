@@ -29,7 +29,7 @@ class DummyCommand extends Command
     {
         $user = $this->userRepository->findByUuid(Uuid::fromString('019a8409-efb5-7c22-aaf5-86ca263b890d'));
 
-        $this->publisher->refreshStreams($user);
+        $this->publisher->refreshUser($user);
 
         return Command::SUCCESS;
     }
