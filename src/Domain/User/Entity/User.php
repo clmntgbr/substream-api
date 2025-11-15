@@ -29,7 +29,7 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new Get(
-            normalizationContext: ['groups' => ['user:read', 'plan:read', 'subscription:read']],
+            normalizationContext: ['groups' => ['user:read']],
             uriTemplate: '/me',
         ),
         new Post(
@@ -61,7 +61,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $picture = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['user:read'])]
     private ?string $stripeCustomerId = null;
 
     /**

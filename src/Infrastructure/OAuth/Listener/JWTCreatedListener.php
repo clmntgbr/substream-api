@@ -26,7 +26,6 @@ final class JWTCreatedListener
 
         $payload = $event->getData();
 
-        $payload['id'] = (string) $user->getId();
         $payload['email'] = $user->getEmail();
         $payload['firstname'] = $user->getFirstname();
         $payload['lastname'] = $user->getLastname();
