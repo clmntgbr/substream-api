@@ -6,6 +6,7 @@ namespace App\Presentation\Controller\Stream;
 
 use App\Application\Stream\Command\CreateStreamVideoCommand;
 use App\Domain\Stream\Dto\CreateStreamVideoPayload;
+use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\User\Entity\User;
 use App\Infrastructure\Validation\UploadedFileValidator;
@@ -39,7 +40,8 @@ class CreateStreamVideoController extends AbstractController
         $this->fileValidator->validateVideo($video);
         $this->fileValidator->validateThumbnail($thumbnail);
 
-        $createStreamModel = $this->commandBus->dispatch(
+        /** @var Stream $stream */
+        $stream = $this->commandBus->dispatch(
             new CreateStreamVideoCommand(
                 file: $video,
                 thumbnail: $thumbnail,
@@ -49,7 +51,7 @@ class CreateStreamVideoController extends AbstractController
             ),
         );
 
-        $stream = $this->streamRepository->find($createStreamModel->streamId);
+        $stream = $this->streamRepository->find($stream->getId());
 
         return new JsonResponse([
             'success' => true,

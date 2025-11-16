@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Stream\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\PartialSearchFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\QueryParameter;
 use App\Domain\Option\Entity\Option;
 use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
@@ -40,7 +43,19 @@ use Symfony\Component\Uid\Uuid;
             normalizationContext: ['groups' => ['stream:read', 'option:read']],
         ),
         new GetCollection(
-            normalizationContext: ['groups' => ['stream:read']],
+            normalizationContext: ['groups' => ['stream:read', 'option:read']],
+            parameters: [
+                'originalFileName' => new QueryParameter(
+                    description: 'Search streams by original file name',
+                    property: 'originalFileName',
+                    filter: new PartialSearchFilter(),
+                ),
+                'createdAt' => new QueryParameter(
+                    description: 'Search streams by created at',
+                    property: 'createdAt',
+                    filter: new DateFilter(),
+                ),
+            ],
         ),
         new Get(
             uriTemplate: '/streams/{id}/delete',

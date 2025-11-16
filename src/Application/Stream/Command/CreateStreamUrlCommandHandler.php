@@ -8,7 +8,6 @@ use App\Application\Core\Command\GetVideoCommand;
 use App\Application\Trait\WorkflowTrait;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
-use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -55,9 +54,6 @@ class CreateStreamUrlCommandHandler
             thumbnailUrl: null,
             thumbnail: $thumbnailFile,
         ));
-
-        $this->apply($stream, WorkflowTransitionEnum::UPLOADING);
-        $this->streamRepository->saveAndFlush($stream);
 
         $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),
