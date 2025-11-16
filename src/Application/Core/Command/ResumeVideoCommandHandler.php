@@ -47,18 +47,6 @@ class ResumeVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
 
         $this->executeWorkflow(
             $command->getStreamId(),
-            function (Stream $stream, Task $task) use ($command) {
-                $taskId = $task->getId();
-                if (null === $taskId) {
-                    throw new \RuntimeException('Task ID is required');
-                }
-
-                return new ResumeVideoMessage(
-                    streamId: $stream->getId(),
-                    taskId: $taskId,
-                    subtitleSrtFileName: $command->getSubtitleSrtFileName(),
-                );
-            }
         );
     }
 

@@ -65,7 +65,7 @@ abstract class AbstractStreamWorkflowCommandHandler
         return $stream;
     }
 
-    protected function executeWorkflow(Uuid $streamId, ?callable $messageBuilder = null): void
+    protected function executeWorkflow(Uuid $streamId): void
     {
         $stream = $this->findStreamOrFail($streamId);
 
@@ -85,12 +85,7 @@ abstract class AbstractStreamWorkflowCommandHandler
                 throw new \RuntimeException('Task ID is required');
             }
 
-            if (null !== $messageBuilder) {
-                $message = $messageBuilder($stream, $task);
-            } else {
-                $message = $this->createMessage($stream, $task);
-            }
-
+            $message = $this->createMessage($stream, $task);
             $this->coreBus->dispatch($message);
         } catch (\Exception $e) {
             $this->logger->error(sprintf('Workflow transition failed during %s', $this->getWorkflowActionName()), [
@@ -99,6 +94,7 @@ abstract class AbstractStreamWorkflowCommandHandler
                 'trace' => $e->getTraceAsString(),
             ]);
 
+            dd($e->getMessage());
             $this->markStreamAsFailed($stream);
             $this->streamRepository->saveAndFlush($stream);
         } catch (\Throwable $e) {
@@ -109,6 +105,7 @@ abstract class AbstractStreamWorkflowCommandHandler
                 'trace' => $e->getTraceAsString(),
             ]);
 
+            dd($e->getMessage());
             $this->markStreamAsFailed($stream);
             $this->streamRepository->saveAndFlush($stream);
         } finally {

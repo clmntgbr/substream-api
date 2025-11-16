@@ -60,7 +60,7 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/streams/{id}/delete',
             controller: DeleteStreamController::class,
-            normalizationContext: ['groups' => ['stream:read:status']],
+            normalizationContext: ['groups' => ['stream:read']],
         ),
         new Get(
             uriTemplate: '/streams/{id}/download',
@@ -144,13 +144,14 @@ class Stream
     private ?array $chunkFileNames = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['stream:read', 'stream:read:status'])]
+    #[Groups(['stream:read'])]
     private string $status;
 
     /**
      * @var array<int, string>
      */
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['stream:read'])]
     private array $statuses = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -201,7 +202,7 @@ class Stream
         return $stream;
     }
 
-    #[Groups(['stream:read', 'stream:read:status'])]
+    #[Groups(['stream:read'])]
     public function getId(): Uuid
     {
         return $this->id;

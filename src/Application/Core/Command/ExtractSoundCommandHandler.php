@@ -47,18 +47,6 @@ class ExtractSoundCommandHandler extends AbstractStreamWorkflowCommandHandler
 
         $this->executeWorkflow(
             $command->getStreamId(),
-            function (Stream $stream, Task $task) use ($command) {
-                $taskId = $task->getId();
-                if (null === $taskId) {
-                    throw new \RuntimeException('Task ID is required');
-                }
-
-                return new ExtractSoundMessage(
-                    streamId: $stream->getId(),
-                    taskId: $taskId,
-                    fileName: $command->getFileName(),
-                );
-            }
         );
     }
 

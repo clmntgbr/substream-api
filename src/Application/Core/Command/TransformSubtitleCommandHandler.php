@@ -43,23 +43,11 @@ class TransformSubtitleCommandHandler extends AbstractStreamWorkflowCommandHandl
 
     public function __invoke(TransformSubtitleCommand $command): void
     {
+        exit('TransformSubtitleCommandHandler');
         $this->currentCommand = $command;
 
         $this->executeWorkflow(
             $command->getStreamId(),
-            function (Stream $stream, Task $task) use ($command) {
-                $taskId = $task->getId();
-                if (null === $taskId) {
-                    throw new \RuntimeException('Task ID is required');
-                }
-
-                return new TransformSubtitleMessage(
-                    taskId: $taskId,
-                    streamId: $stream->getId(),
-                    option: $stream->getOption(),
-                    subtitleSrtFileName: $command->getSubtitleSrtFileName(),
-                );
-            }
         );
     }
 
