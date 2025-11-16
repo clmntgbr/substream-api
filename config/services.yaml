@@ -62,3 +62,7 @@ services:
     App\Shared\Infrastructure\Fixture\AliceProvider:
         tags:
             - { name: nelmio_alice.faker.provider }
+    
+    App\Infrastructure\Serializer\CollectionNormalizer:
+        tags:
+            - { name: 'serializer.normalizer', priority: 64 }
