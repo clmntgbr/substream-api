@@ -18,7 +18,7 @@ readonly class GenerateSubtitleMessage implements AsynchronousMessageInterface
         private Uuid $streamId,
         private array $audioFiles,
         private string $language,
-        private bool $fakeIt,
+        private bool $isFake,
     ) {
     }
 
@@ -50,7 +50,7 @@ readonly class GenerateSubtitleMessage implements AsynchronousMessageInterface
             'stream_id' => (string) $this->streamId,
             'audio_files' => $this->audioFiles,
             'language' => $this->language,
-            'fakeIt' => $this->fakeIt,
+            'is_fake' => $this->isFake,
         ];
     }
 

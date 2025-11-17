@@ -94,7 +94,6 @@ abstract class AbstractStreamWorkflowCommandHandler
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            dd($e->getMessage());
             $this->markStreamAsFailed($stream);
             $this->streamRepository->saveAndFlush($stream);
         } catch (\Throwable $e) {
@@ -105,7 +104,6 @@ abstract class AbstractStreamWorkflowCommandHandler
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            dd($e->getMessage());
             $this->markStreamAsFailed($stream);
             $this->streamRepository->saveAndFlush($stream);
         } finally {

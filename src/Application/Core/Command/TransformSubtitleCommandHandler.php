@@ -43,7 +43,6 @@ class TransformSubtitleCommandHandler extends AbstractStreamWorkflowCommandHandl
 
     public function __invoke(TransformSubtitleCommand $command): void
     {
-        exit('TransformSubtitleCommandHandler');
         $this->currentCommand = $command;
 
         $this->executeWorkflow(

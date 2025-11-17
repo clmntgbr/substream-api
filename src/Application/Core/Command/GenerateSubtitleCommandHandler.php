@@ -67,7 +67,7 @@ class GenerateSubtitleCommandHandler extends AbstractStreamWorkflowCommandHandle
             taskId: $taskId,
             audioFiles: $this->currentCommand->getAudioFiles(),
             language: $this->currentCommand->getLanguage(),
-            fakeIt: true
+            isFake: true
         );
     }
 

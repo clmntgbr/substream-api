@@ -7,6 +7,7 @@ namespace App\Application\Stream\Command;
 use App\Domain\Option\Repository\OptionRepository;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
+use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -17,6 +18,7 @@ class CreateStreamCommandHandler
         private StreamRepository $streamRepository,
         private OptionRepository $optionRepository,
         private CommandBusInterface $commandBus,
+        private MercurePublisherInterface $mercurePublisher,
     ) {
     }
 
@@ -41,10 +43,11 @@ class CreateStreamCommandHandler
         );
 
         $this->streamRepository->saveAndFlush($stream);
+        $this->mercurePublisher->refreshStreams($stream->getUser(), CreateStreamCommand::class);
 
-        // $this->commandBus->dispatch(new DeleteStreamAfter14DaysCommand(
-        //     streamId: $stream->getId(),
-        // ));
+        $this->commandBus->dispatch(new DeleteStreamAfter14DaysCommand(
+            streamId: $stream->getId(),
+        ));
 
         return $stream;
     }
