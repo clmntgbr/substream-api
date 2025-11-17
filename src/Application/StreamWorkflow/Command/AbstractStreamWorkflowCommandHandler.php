@@ -15,6 +15,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+use function Safe\json_encode;
+
 abstract class AbstractStreamWorkflowCommandHandler
 {
     public function __construct(
@@ -107,7 +109,10 @@ abstract class AbstractStreamWorkflowCommandHandler
             $this->markStreamAsFailed($stream);
             $this->streamRepository->saveAndFlush($stream);
         } finally {
-            $this->mercurePublisher->refreshStreams($stream->getUser(), $this->getCommandClass());
+            $this->mercurePublisher->refreshStreams($stream->getUser(), json_encode([
+                'status' => $stream->getStatus(),
+                'command' => $this->getCommandClass(),
+            ]));
         }
     }
 }

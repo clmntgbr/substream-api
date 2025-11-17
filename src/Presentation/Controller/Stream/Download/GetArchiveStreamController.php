@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Controller\Stream;
+namespace App\Presentation\Controller\Stream\Download;
 
 use App\Domain\Stream\Entity\Stream;
 use App\Infrastructure\Stream\Archive\BuildArchiveServiceInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 
 #[AsController]
-class BuildArchiveStreamController extends AbstractController
+class GetArchiveStreamController extends AbstractController
 {
     public function __construct(
         private BuildArchiveServiceInterface $buildArchiveService,

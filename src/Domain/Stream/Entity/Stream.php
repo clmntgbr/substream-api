@@ -18,12 +18,13 @@ use App\Domain\Stream\ValueObject\StreamStatus;
 use App\Domain\Task\Entity\Task;
 use App\Domain\Trait\UuidTrait;
 use App\Domain\User\Entity\User;
-use App\Presentation\Controller\Stream\BuildArchiveStreamController;
+use App\Infrastructure\Stream\Filter\StatusSearchFilter;
 use App\Presentation\Controller\Stream\CreateStreamUrlController;
 use App\Presentation\Controller\Stream\CreateStreamVideoController;
 use App\Presentation\Controller\Stream\DeleteStreamController;
-use App\Presentation\Controller\Stream\GetResumeVideoStreamController;
-use App\Presentation\Controller\Stream\GetSubtitleSrtStreamController;
+use App\Presentation\Controller\Stream\Download\GetArchiveStreamController;
+use App\Presentation\Controller\Stream\Download\GetResumeStreamController;
+use App\Presentation\Controller\Stream\Download\GetSubtitleStreamController;
 use App\Shared\Utils\DurationFormatter;
 use App\Shared\Utils\StreamFileCleaner;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -55,6 +56,11 @@ use Symfony\Component\Uid\Uuid;
                     property: 'createdAt',
                     filter: new DateFilter(),
                 ),
+                'status' => new QueryParameter(
+                    description: 'Search streams by status',
+                    property: 'status',
+                    filter: new StatusSearchFilter(),
+                ),
             ],
         ),
         new Get(
@@ -64,15 +70,15 @@ use Symfony\Component\Uid\Uuid;
         ),
         new Get(
             uriTemplate: '/streams/{id}/download',
-            controller: BuildArchiveStreamController::class,
+            controller: GetArchiveStreamController::class,
         ),
         new Get(
             uriTemplate: '/streams/{id}/download/subtitle',
-            controller: GetSubtitleSrtStreamController::class,
+            controller: GetSubtitleStreamController::class,
         ),
         new Get(
             uriTemplate: '/streams/{id}/download/resume',
-            controller: GetResumeVideoStreamController::class,
+            controller: GetResumeStreamController::class,
         ),
         new Post(
             uriTemplate: '/streams/video',
