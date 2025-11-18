@@ -11,6 +11,7 @@ use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\User\Entity\User;
 use App\Infrastructure\Validation\UploadedFileValidator;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +29,7 @@ class CreateStreamVideoController extends AbstractController
         private readonly UploadedFileValidator $fileValidator,
         private readonly StreamRepository $streamRepository,
         private readonly NormalizerInterface $normalizer,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -37,27 +39,36 @@ class CreateStreamVideoController extends AbstractController
         #[CurrentUser] User $user,
         #[MapRequestPayload()] CreateStreamVideoPayload $payload,
     ): JsonResponse {
-        $this->fileValidator->validateVideo($video);
-        $this->fileValidator->validateThumbnail($thumbnail);
+        try {
+            $this->fileValidator->validateVideo($video);
+            $this->fileValidator->validateThumbnail($thumbnail);
 
-        /** @var Stream $stream */
-        $stream = $this->commandBus->dispatch(
-            new CreateStreamVideoCommand(
-                file: $video,
-                thumbnail: $thumbnail,
-                duration: $payload->getDuration(),
-                optionId: $payload->getOptionId(),
-                user: $user,
-            ),
-        );
+            /** @var Stream $stream */
+            $stream = $this->commandBus->dispatch(
+                new CreateStreamVideoCommand(
+                    file: $video,
+                    thumbnail: $thumbnail,
+                    duration: $payload->getDuration(),
+                    optionId: $payload->getOptionId(),
+                    user: $user,
+                ),
+            );
 
-        $stream = $this->streamRepository->find($stream->getId());
+            $stream = $this->streamRepository->find($stream->getId());
 
-        return new JsonResponse([
-            'success' => true,
-            'data' => [
-                'stream' => $this->normalizer->normalize($stream, null, ['groups' => ['stream:read', 'option:read']]),
-            ],
-        ]);
+            return new JsonResponse([
+                'success' => true,
+                'data' => [
+                    'stream' => $this->normalizer->normalize($stream, null, ['groups' => ['stream:read', 'option:read']]),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->logger->error($e->getMessage());
+
+            return new JsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

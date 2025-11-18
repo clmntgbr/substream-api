@@ -23,7 +23,7 @@ class UploadedFileValidator
         $this->validateFile(
             $file,
             ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo'],
-            524288000, // 500MB in bytes
+            524288000,
             'video'
         );
     }
