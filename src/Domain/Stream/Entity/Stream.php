@@ -66,7 +66,6 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/streams/{id}/delete',
             controller: DeleteStreamController::class,
-            normalizationContext: ['groups' => ['stream:read']],
         ),
         new Get(
             uriTemplate: '/streams/{id}/download',
