@@ -61,7 +61,6 @@ class CreateStreamVideoCommandHandler
 
         $this->commandBus->dispatch(new UploadThumbnailCommand(
             streamId: $stream->getId(),
-            thumbnailUrl: null,
             thumbnail: $command->getThumbnail(),
         ));
 

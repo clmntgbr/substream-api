@@ -51,9 +51,10 @@ class CreateStreamUrlCommandHandler
 
         $this->commandBus->dispatch(new UploadThumbnailCommand(
             streamId: $stream->getId(),
-            thumbnailUrl: null,
             thumbnail: $thumbnailFile,
         ));
+
+        $this->streamRepository->saveAndFlush($stream);
 
         $this->commandBus->dispatch(new GetVideoCommand(
             streamId: $command->getStreamId(),

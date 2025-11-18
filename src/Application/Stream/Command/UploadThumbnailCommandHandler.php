@@ -12,10 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 use function Safe\fclose;
-use function Safe\file_get_contents;
 use function Safe\fopen;
-use function Safe\fwrite;
-use function Safe\rewind;
 
 #[AsMessageHandler]
 class UploadThumbnailCommandHandler
@@ -34,12 +31,6 @@ class UploadThumbnailCommandHandler
         $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
-            return;
-        }
-
-        if (null !== $command->getThumbnailUrl()) {
-            $this->uploadThumbnailFromUrl($command->getThumbnailUrl(), $stream);
-
             return;
         }
 
@@ -66,41 +57,6 @@ class UploadThumbnailCommandHandler
 
             $stream->setThumbnailUrl($this->backendUrl.'/uploads/'.$path);
         } catch (\Exception $e) {
-            return;
-        }
-    }
-
-    private function uploadThumbnailFromUrl(string $url, Stream $stream): void
-    {
-        try {
-            $imageContents = file_get_contents($url);
-
-            $imageInfo = @getimagesizefromstring($imageContents);
-            $mime = $imageInfo['mime'] ?? null;
-            $extension = match ($mime) {
-                'image/jpeg' => 'jpg',
-                'image/png' => 'png',
-                'image/gif' => 'gif',
-                default => 'jpg',
-            };
-
-            $fileName = 'thumbnail.'.$extension;
-            $path = $stream->getId().'/'.$fileName;
-
-            $tempStream = fopen('php://temp', 'r+');
-            if (false === $tempStream) {
-                return;
-            }
-
-            fwrite($tempStream, $imageContents);
-            rewind($tempStream);
-
-            $this->localStorage->writeStream($path, $tempStream);
-
-            fclose($tempStream);
-
-            $stream->setThumbnailUrl($this->backendUrl.'/uploads/'.$path);
-        } catch (\Throwable $e) {
             return;
         }
     }

@@ -12,7 +12,6 @@ final class UploadThumbnailCommand implements SynchronousInterface
 {
     public function __construct(
         private Uuid $streamId,
-        private ?string $thumbnailUrl = null,
         private ?UploadedFile $thumbnail = null,
     ) {
     }
@@ -20,11 +19,6 @@ final class UploadThumbnailCommand implements SynchronousInterface
     public function getStreamId(): Uuid
     {
         return $this->streamId;
-    }
-
-    public function getThumbnailUrl(): ?string
-    {
-        return $this->thumbnailUrl;
     }
 
     public function getThumbnail(): ?UploadedFile
