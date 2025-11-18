@@ -26,11 +26,9 @@ class DeleteStreamController extends AbstractController
     public function __invoke(Stream $stream): JsonResponse
     {
         $stream->markAsDeleted();
-
         $this->streamRepository->saveAndFlush($stream);
-
+        // $this->mercurePublisher->refreshStreams($stream->getUser(), self::class);
         $this->commandBus->dispatch(new DeleteStreamCommand($stream->getId()));
-        $this->mercurePublisher->refreshStreams($stream->getUser(), self::class);
 
         return new JsonResponse([
             'success' => true,
