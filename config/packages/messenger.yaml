@@ -11,6 +11,9 @@ framework:
             async.command.bus:
                 middleware:
                     - validation
+            async.priority.command.bus:
+                middleware:
+                    - validation
             query.bus:
                 middleware:
                     - validation
@@ -33,13 +36,26 @@ framework:
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
+                    exchange:
+                        name: 'async'
+                        type: 'direct'
                     queues:
                         async: ~
                 retry_strategy:
                     max_retries: 0
+            async.priority:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: 'async.priority'
+                        type: 'direct'
+                    queues:
+                        async.priority: ~
+                retry_strategy:
+                    max_retries: 0
             core:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                serializer: App\Serializer\JsonMessageSerializer
+                serializer: App\Infrastructure\Core\Serializer\JsonMessageSerializer
                 options:
                     exchange:
                         name: 'core'
@@ -65,5 +81,6 @@ framework:
                     max_retries: 0
 
         routing:
-            'App\Shared\Application\Command\AsyncCommandInterface': async
-            'App\Shared\Application\Message\AsyncMessageInterface': core
+            'App\Shared\Application\Command\AsynchronousPriorityInterface': async.priority
+            'App\Shared\Application\Command\AsynchronousInterface': async
+            'App\Shared\Application\Message\AsynchronousMessageInterface': core

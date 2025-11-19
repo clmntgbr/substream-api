@@ -24,7 +24,6 @@
         "doctrine/doctrine-migrations-bundle": "*",
         "doctrine/orm": "*",
         "dragonmantank/cron-expression": "*",
-        "friendsofsymfony/elastica-bundle": "*",
         "hautelook/alice-bundle": "*",
         "knpuniversity/oauth2-client-bundle": "*",
         "league/flysystem-aws-s3-v3": "*",
@@ -38,6 +37,7 @@
         "phpstan/phpdoc-parser": "*",
         "runtime/frankenphp-symfony": "*",
         "stof/doctrine-extensions-bundle": "*",
+        "stripe/stripe-php": "^18.2",
         "symfony/amqp-messenger": "7.3.*",
         "symfony/asset": "7.3.*",
         "symfony/console": "7.3.*",
@@ -63,7 +63,8 @@
         "symfony/webhook": "7.3.*",
         "symfony/webpack-encore-bundle": "*",
         "symfony/workflow": "7.3.*",
-        "symfony/yaml": "7.3.*"
+        "symfony/yaml": "7.3.*",
+        "thecodingmachine/safe": "^3.3"
     },
     "config": {
         "allow-plugins": {
@@ -119,6 +120,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.89",
         "phpstan/phpstan": "^2.1",
-        "symfony/maker-bundle": "^1.64"
+        "symfony/maker-bundle": "^1.64",
+        "thecodingmachine/phpstan-safe-rule": "^1.4"
     }
 }

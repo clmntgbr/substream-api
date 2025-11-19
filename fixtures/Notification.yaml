@@ -1,4 +1,4 @@
-# App\Entity\Notification:
+# App\Domain\Notification\Entity\Notification:
 #   notification_1:
 #     title: "stream_success"
 #     message: "stream_success_message"

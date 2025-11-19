@@ -1,4 +1,10 @@
 parameters:
+    stripe.plan.price_starter_monthly: '%env(PRICE_STARTER_MONTHLY)%'
+    stripe.plan.price_starter_yearly: '%env(PRICE_STARTER_YEARLY)%'
+    stripe.plan.price_pro_monthly: '%env(PRICE_PRO_MONTHLY)%'
+    stripe.plan.price_pro_yearly: '%env(PRICE_PRO_YEARLY)%'
+    stripe.plan.price_business_monthly: '%env(PRICE_BUSINESS_MONTHLY)%'
+    stripe.plan.price_business_yearly: '%env(PRICE_BUSINESS_YEARLY)%'
 
 services:
     _defaults:
@@ -8,7 +14,9 @@ services:
             string $apiUrl: '%env(API_URL)%'
             string $backendUrl: '%env(BACKEND_URL)%'
             string $env: '%env(APP_ENV)%'
+            string $frontendUrl: '%env(FRONTEND_URL)%'
             string $uploadDirectory: '%kernel.project_dir%/public/uploads/'
+            string $stripeApiSecretKey: '%env(STRIPE_API_SECRET_KEY)%'
 
     App\:
         resource: '../src/'
@@ -19,12 +27,21 @@ services:
             - '../src/Util/iterator_functions.php'
 
     app.event.authentication_success_listener:
-        class: App\Listener\AuthenticationSuccessListener
+        class: App\Infrastructure\OAuth\Listener\AuthenticationSuccessListener
         tags:
             - {
                   name: kernel.event_listener,
                   event: lexik_jwt_authentication.on_authentication_success,
                   method: onAuthenticationSuccessResponse,
+              }
+    
+    app.event.jwt_created_listener:
+        class: App\Infrastructure\OAuth\Listener\JWTCreatedListener
+        tags:
+            - {
+                  name: kernel.event_listener,
+                  event: lexik_jwt_authentication.on_jwt_created,
+                  method: onJWTCreated,
               }
     
     Aws\S3\S3Client:
@@ -37,30 +54,15 @@ services:
                     key: '%env(S3_ACCESS_KEY)%'
                     secret: '%env(S3_SECRET_KEY)%'
 
-    App\Service\JsonMessageSerializer:
+    App\Infrastructure\Core\Serializer\JsonMessageSerializer:
         tags:
             - { name: messenger.serializer }
 
-    App\Serializer\ValidationErrorNormalizer:
-        decorates: 'api_platform.jsonld.normalizer.error'
-        arguments:
-            $decorated: '@.inner'
-
-    App\Fixture\AliceProvider:
+    
+    App\Shared\Infrastructure\Fixture\AliceProvider:
         tags:
             - { name: nelmio_alice.faker.provider }
-
-    # Elastica
-    App\Repository\ElasticaStreamRepository:
-        arguments:
-            $finder: '@fos_elastica.finder.stream'
-
-    App\Repository\ElasticaNotificationRepository:
-        arguments:
-            $finder: '@fos_elastica.finder.notification'
-
-    # Elasticsearch index for refresh service
-    App\Service\ElasticsearchRefreshService:
-        arguments:
-            $streamIndex: '@fos_elastica.index.stream'
-            $notificationIndex: '@fos_elastica.index.notification'
+    
+    App\Infrastructure\Serializer\CollectionNormalizer:
+        tags:
+            - { name: 'serializer.normalizer', priority: 64 }

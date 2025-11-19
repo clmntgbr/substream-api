@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Bus;
 
-use App\Exception\BusinessException;
 use App\Shared\Application\Bus\CommandBusInterface;
-use App\Shared\Application\Command\AsyncCommandInterface;
-use App\Shared\Application\Command\SyncCommandInterface;
+use App\Shared\Application\Command\AsynchronousInterface;
+use App\Shared\Application\Command\AsynchronousPriorityInterface;
+use App\Shared\Application\Command\SynchronousInterface;
+use Safe\DateTimeImmutable;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -17,23 +18,28 @@ class CommandBus implements CommandBusInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessageBusInterface $asyncCommandBus,
+        private MessageBusInterface $asyncPriorityCommandBus,
     ) {
     }
 
     public function dispatch(object $command): mixed
     {
-        if (!$command instanceof SyncCommandInterface && !$command instanceof AsyncCommandInterface) {
-            throw new \RuntimeException('The message must implement SyncCommandInterface or  AsyncCommandInterface.');
+        if ($command instanceof SynchronousInterface) {
+            return $this->dispatchSynchronous($command);
         }
 
-        if ($command instanceof SyncCommandInterface) {
-            return $this->dispatchSync($command);
+        if ($command instanceof AsynchronousPriorityInterface) {
+            return $this->dispatchAsynchronous($command);
         }
 
-        return $this->dispatchAsync($command);
+        if ($command instanceof AsynchronousInterface) {
+            return $this->dispatchAsynchronous($command);
+        }
+
+        throw new \RuntimeException('The message must implement SynchronousInterface or AsynchronousInterface or AsynchronousPriorityInterface.');
     }
 
-    private function dispatchSync(object $command): mixed
+    private function dispatchSynchronous(object $command): mixed
     {
         try {
             $envelope = $this->commandBus->dispatch($command);
@@ -41,7 +47,7 @@ class CommandBus implements CommandBusInterface
             $previousException = $exception->getPrevious();
 
             while (null !== $previousException) {
-                if ($previousException instanceof BusinessException) {
+                if ($previousException instanceof \Exception) {
                     throw $previousException;
                 }
 
@@ -67,16 +73,16 @@ class CommandBus implements CommandBusInterface
     }
 
     /**
-     * @param AsyncCommandInterface $command
+     * @param AsynchronousInterface $command
      */
-    private function dispatchAsync(object $command): mixed
+    private function dispatchAsynchronous(object $command): mixed
     {
         $this->asyncCommandBus->dispatch($command, $command->getStamps());
 
         return [
             'status' => 'queued',
             'command' => $command::class,
-            'timestamp' => new \DateTimeImmutable(),
+            'timestamp' => new DateTimeImmutable(),
         ];
     }
 }

@@ -115,9 +115,6 @@ migrate:
 
 fixture:
 	$(SYMFONY) hautelook:fixtures:load -n
-	$(SYMFONY) fos:elastica:delete
-	$(SYMFONY) fos:elastica:create
-	$(SYMFONY) fos:elastica:populate
 
 schema:
 	$(SYMFONY) doctrine:schema:update -f
@@ -144,7 +141,7 @@ php-stan:
 	$(PHP_CONT) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1
 
 consume:
-	$(SYMFONY) messenger:consume async -vv
+	$(SYMFONY) messenger:consume async.priority async -vv
 
 transform-subtitle:
 	$(SYMFONY) transform-subtitle
@@ -158,13 +155,11 @@ unzip:
 	rm -r public/debug/__MACOSX
 	rm -r public/debug/1bba6dc7-21ed-41c2-9694-6a2ea4db41fd.zip
 
-elastica:
-	$(SYMFONY) fos:elastica:delete
-	$(SYMFONY) fos:elastica:create
-	$(SYMFONY) fos:elastica:populate
-
 debug:
 	$(SYMFONY) debug:dotenv
 
 dummy:
 	$(SYMFONY) dummy:command
+
+ngrok: 
+	ngrok http --url=choice-pretty-leech.ngrok-free.app --host-header=localhost https://localhost:443

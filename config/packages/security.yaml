@@ -4,7 +4,7 @@ security:
     providers:
         app_user_provider:
             entity:
-                class: App\Entity\User
+                class: App\Domain\User\Entity\User
                 property: email
     firewalls:
         dev:
@@ -17,7 +17,7 @@ security:
             provider: app_user_provider
             entry_point: jwt
             json_login:
-                check_path: /api/token
+                check_path: /api/auth/login
                 username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
@@ -35,8 +35,8 @@ security:
     access_control:
         - { path: ^/api/oauth, roles: PUBLIC_ACCESS, methods: [GET, POST] }
         - { path: ^/api/docs, roles: PUBLIC_ACCESS, methods: GET }
-        - { path: ^/api/token, roles: PUBLIC_ACCESS, methods: POST }
-        - { path: ^/api/register, roles: PUBLIC_ACCESS, methods: POST }
+        - { path: ^/api/auth/login, roles: PUBLIC_ACCESS, methods: POST }
+        - { path: ^/api/auth/register, roles: PUBLIC_ACCESS, methods: POST }
         - { path: ^/api/status, roles: PUBLIC_ACCESS, methods: GET }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api, roles: ROLE_USER }
