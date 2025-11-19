@@ -12,6 +12,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: PlanRepository::class)]
@@ -24,7 +25,7 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/plan',
             controller: GetPlanController::class,
-            normalizationContext: ['groups' => ['plan:read']],
+            normalizationContext: ['groups' => ['plan:get:read']],
         ),
     ]
 )]
@@ -48,6 +49,10 @@ class Plan
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['plan:read'])]
     private ?int $discountPercentage = null;
+
+    #[ORM\Column(type: Types::BOOLEAN)]
+    #[Groups(['plan:read'])]
+    private bool $isPopular = false;
 
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['plan:read'])]
@@ -93,7 +98,7 @@ class Plan
         $this->features = [];
     }
 
-    #[Groups(['plan:read'])]
+    #[Groups(['plan:read', 'plan:get:read'])]
     public function getId(): Uuid
     {
         return $this->id;
@@ -253,5 +258,31 @@ class Plan
         $this->discountPercentage = $discountPercentage;
 
         return $this;
+    }
+
+    public function getIsPopular(): bool
+    {
+        return $this->isPopular;
+    }
+
+    public function setIsPopular(bool $isPopular): self
+    {
+        $this->isPopular = $isPopular;
+
+        return $this;
+    }
+
+    #[Groups(['plan:read'])]
+    #[SerializedName('isYearly')]
+    public function isYearly(): bool
+    {
+        return 'yearly' === $this->interval || 'both' === $this->interval;
+    }
+
+    #[Groups(['plan:read'])]
+    #[SerializedName('isMonthly')]
+    public function isMonthly(): bool
+    {
+        return 'monthly' === $this->interval || 'both' === $this->interval;
     }
 }

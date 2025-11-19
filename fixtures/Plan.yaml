@@ -11,6 +11,7 @@ App\Domain\Plan\Entity\Plan:
     maxSizeInMegabytes: 500
     maxDurationMinutes: 15
     expirationDays: "50 years"
+    isPopular: false
     
   plan_starter_monthly:
     setIdFromString: "<uuid()>"
@@ -25,7 +26,8 @@ App\Domain\Plan\Entity\Plan:
     maxDurationMinutes: 60
     expirationDays: "1 month"
     stripePriceId: '<{stripe.plan.price_starter_monthly}>'
-
+    isPopular: false
+  
   plan_starter_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_starter_yearly"
@@ -40,6 +42,7 @@ App\Domain\Plan\Entity\Plan:
     maxDurationMinutes: 60
     expirationDays: "1 year"
     stripePriceId: '<{stripe.plan.price_starter_yearly}>'
+    isPopular: false
 
   plan_pro_monthly:
     setIdFromString: "<uuid()>"
@@ -54,6 +57,7 @@ App\Domain\Plan\Entity\Plan:
     maxDurationMinutes: 180
     expirationDays: "1 month"
     stripePriceId: '<{stripe.plan.price_pro_monthly}>'
+    isPopular: true
     
   plan_pro_yearly:
     setIdFromString: "<uuid()>"
@@ -69,6 +73,7 @@ App\Domain\Plan\Entity\Plan:
     expirationDays: "1 year"
     discountPercentage: 17
     stripePriceId: '<{stripe.plan.price_pro_yearly}>'
+    isPopular: true
 
   plan_business_monthly:
     setIdFromString: "<uuid()>"
@@ -83,6 +88,7 @@ App\Domain\Plan\Entity\Plan:
     maxDurationMinutes: 360
     expirationDays: "1 month"
     stripePriceId: '<{stripe.plan.price_business_monthly}>'
+    isPopular: false
 
   plan_business_yearly:
     setIdFromString: "<uuid()>"
@@ -98,3 +104,4 @@ App\Domain\Plan\Entity\Plan:
     maxDurationMinutes: 360
     expirationDays: "1 year"
     stripePriceId: '<{stripe.plan.price_business_yearly}>'
+    isPopular: false
