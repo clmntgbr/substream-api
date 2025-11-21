@@ -4,6 +4,7 @@ namespace App\Application\Payment\RemoteEvent;
 
 use App\Application\Payment\Command\CreateCheckoutCommand;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Psr\Log\LoggerInterface;
 use Stripe\Event;
 use Stripe\StripeObject;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
@@ -15,6 +16,7 @@ final class CreateCheckoutWebhookConsumer implements ConsumerInterface
 {
     public function __construct(
         private readonly CommandBusInterface $commandBus,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

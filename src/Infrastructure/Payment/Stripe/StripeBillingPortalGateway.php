@@ -25,7 +25,7 @@ class StripeBillingPortalGateway implements StripeBillingPortalGatewayInterface
 
         $billingPortalSession = $stripe->billingPortal->sessions->create([
             'customer' => (string) $user->getStripeCustomerId(),
-            'return_url' => $this->frontendUrl.'/studio/billing',
+            'return_url' => $this->frontendUrl.'/studio/account',
         ]);
 
         if (null === $billingPortalSession->url) {

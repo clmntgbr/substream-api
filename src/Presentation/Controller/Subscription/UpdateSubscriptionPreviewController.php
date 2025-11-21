@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presentation\Controller\Subscription;
 
-use App\Application\Payment\Command\CreateStripeCheckoutSessionCommand;
 use App\Domain\Plan\Repository\PlanRepository;
-use App\Domain\Subscription\Dto\CreateSubscriptionPayload;
+use App\Domain\Subscription\Dto\UpdateSubscriptionPayload;
 use App\Domain\User\Entity\User;
+use App\Infrastructure\Payment\Stripe\StripeCheckoutSessionGatewayInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,21 +18,22 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Uid\Uuid;
 
 #[AsController]
-class CreateSubscriptionController extends AbstractController
+class UpdateSubscriptionPreviewController extends AbstractController
 {
     public function __construct(
         private readonly PlanRepository $planRepository,
         private readonly CommandBusInterface $commandBus,
+        private readonly StripeCheckoutSessionGatewayInterface $stripeCheckoutSessionGateway,
     ) {
     }
 
-    public function __invoke(#[MapRequestPayload()] CreateSubscriptionPayload $createSubscription, #[CurrentUser] User $user): JsonResponse
+    public function __invoke(#[MapRequestPayload()] UpdateSubscriptionPayload $upgradeSubscription, #[CurrentUser] User $user): JsonResponse
     {
-        if ($user->getActiveSubscription()->isPaidSubscription()) {
-            throw new \Exception('User already has a paid subscription');
+        if ($user->getActiveSubscription()->isFreeSubscription()) {
+            throw new \Exception('User already has a free subscription');
         }
 
-        $plan = $this->planRepository->findByUuid(Uuid::fromString($createSubscription->getPlanId()));
+        $plan = $this->planRepository->findByUuid(Uuid::fromString($upgradeSubscription->getPlanId()));
 
         if (null === $plan) {
             return new JsonResponse([
@@ -42,20 +43,14 @@ class CreateSubscriptionController extends AbstractController
         }
 
         if ($plan->isFree()) {
-            throw new \Exception('You cannot create a subscription for a free plan');
+            throw new \Exception('You cannot upgrade to a free plan');
         }
 
-        $checkoutUrl = $this->commandBus->dispatch(new CreateStripeCheckoutSessionCommand(
-            user: $user,
-            plan: $plan,
-            subscription: $user->getActiveSubscription(),
-        ));
+        $preview = $this->stripeCheckoutSessionGateway->preview($plan, $user);
 
         return new JsonResponse([
             'success' => true,
-            'data' => [
-                'url' => $checkoutUrl,
-            ],
+            'data' => $preview,
         ]);
     }
 }

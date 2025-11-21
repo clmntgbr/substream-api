@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Payment\Stripe;
 
+use App\Domain\Payment\Dto\Preview;
 use App\Domain\Plan\Entity\Plan;
 use App\Domain\User\Entity\User;
+use Stripe\Invoice;
 use Stripe\StripeClient;
+use Stripe\Subscription;
 
 class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterface
 {
@@ -24,7 +27,7 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
             'client_reference_id' => (string) $user->getId(),
             'customer_email' => $user->getEmail(),
             'success_url' => $this->frontendUrl.'/studio/subscription/success',
-            'cancel_url' => $this->frontendUrl.'/studio/pricing',
+            'cancel_url' => $this->frontendUrl.'/studio/account',
             'line_items' => [[
                 'price' => $plan->getStripePriceId(),
                 'quantity' => 1,
@@ -48,5 +51,97 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         }
 
         return $session->url;
+    }
+
+    public function update(Plan $plan, User $user): Subscription
+    {
+        $subscription = $user->getActiveSubscription();
+        $stripe = new StripeClient($this->stripeApiSecretKey);
+
+        $currentItemId = $this->getCurrentItemId($user);
+
+        return $stripe->subscriptions->update($subscription->getSubscriptionId(), [
+            'items' => [[
+                'id' => $currentItemId,
+                'price' => $plan->getStripePriceId(),
+            ]],
+            'proration_behavior' => 'create_prorations',
+        ]);
+    }
+
+    private function getCurrentItemId(User $user): string
+    {
+        $subscription = $user->getActiveSubscription();
+        $stripe = new StripeClient($this->stripeApiSecretKey);
+        $stripeSubscription = $this->retrieve($subscription->getSubscriptionId());
+
+        if (null === $stripeSubscription->items->data[0]->id) {
+            throw new \RuntimeException('Subscription item ID is required');
+        }
+
+        return $stripeSubscription->items->data[0]->id;
+    }
+
+    public function preview(Plan $plan, User $user): Preview
+    {
+        $subscription = $user->getActiveSubscription();
+        $stripe = new StripeClient($this->stripeApiSecretKey);
+
+        $currentItemId = $this->getCurrentItemId($user);
+
+        $preview = $stripe->invoices->createPreview([
+            'customer' => $user->getStripeCustomerId(),
+            'subscription' => $subscription->getSubscriptionId(),
+            'subscription_details' => [
+                'items' => [
+                    [
+                        'id' => $currentItemId,
+                        'price' => $plan->getStripePriceId(),
+                    ],
+                ],
+            ],
+        ]);
+
+        return new Preview(
+            amountDue: $preview->amount_due / 100,
+            credit: $this->getCredit($preview) / 100,
+            debit: $this->getDebit($preview) / 100,
+            currency: $preview->currency,
+            nextBillingDate: date('Y-m-d H:i:s', $preview->period_end),
+        );
+    }
+
+    private function getCredit(Invoice $invoice): float
+    {
+        $credit = 0;
+        foreach ($invoice->lines->data as $line) {
+            if ($line->amount < 0) {
+                $credit += abs($line->amount);
+            }
+        }
+
+        return $credit;
+    }
+
+    private function getDebit(Invoice $invoice): float
+    {
+        $debit = 0;
+        foreach ($invoice->lines->data as $line) {
+            if ($line->amount > 0) {
+                $debit += $line->amount;
+            }
+        }
+
+        return $debit;
+    }
+
+    public function retrieve(string $subscriptionId): Subscription
+    {
+        $stripe = new StripeClient($this->stripeApiSecretKey);
+
+        /** @var Subscription $subscription */
+        $subscription = $stripe->subscriptions->retrieve($subscriptionId);
+
+        return $subscription;
     }
 }

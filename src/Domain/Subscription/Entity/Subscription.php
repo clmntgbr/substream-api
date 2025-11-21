@@ -15,6 +15,8 @@ use App\Domain\User\Entity\User;
 use App\Presentation\Controller\Subscription\CreateSubscriptionController;
 use App\Presentation\Controller\Subscription\GetBillingPortalUrlController;
 use App\Presentation\Controller\Subscription\GetSubscriptionController;
+use App\Presentation\Controller\Subscription\UpdateSubscriptionController;
+use App\Presentation\Controller\Subscription\UpdateSubscriptionPreviewController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -44,6 +46,14 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/subscription',
             controller: GetSubscriptionController::class,
+        ),
+        new Post(
+            uriTemplate: '/subscription/update/preview',
+            controller: UpdateSubscriptionPreviewController::class,
+        ),
+        new Post(
+            uriTemplate: '/subscription/update',
+            controller: UpdateSubscriptionController::class,
         ),
     ]
 )]
