@@ -7,15 +7,12 @@ namespace App\Application\Payment\Command;
 use App\Application\Subscription\Command\CreateSubscriptionCommand;
 use App\Domain\Plan\Entity\Plan;
 use App\Domain\Plan\Repository\PlanRepository;
-use App\Domain\Subscription\Entity\Subscription;
-use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
 use App\Domain\User\Entity\User;
 use App\Domain\User\Repository\UserRepository;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
-use Safe\DateTime;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -92,7 +89,7 @@ class CreateCheckoutCommandHandler
             checkoutSessionId: $checkoutSessionId,
             subscriptionId: $subscriptionId,
         ));
-        
+
         $this->subscriptionRepository->saveAndFlush($subscription);
     }
 }
