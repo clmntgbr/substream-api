@@ -5,6 +5,7 @@ namespace App\Domain\Plan\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Domain\Plan\Enum\PlanTypeEnum;
 use App\Domain\Plan\Repository\PlanRepository;
 use App\Domain\Trait\UuidTrait;
 use App\Presentation\Controller\Plan\GetPlanController;
@@ -35,7 +36,7 @@ class Plan
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['plan:read'])]
+    #[Groups(['plan:read', 'plan:get:read'])]
     private string $name;
 
     #[ORM\Column(type: Types::STRING)]
@@ -57,6 +58,10 @@ class Plan
     #[ORM\Column(type: Types::STRING)]
     #[Groups(['plan:read'])]
     private string $interval;
+
+    #[ORM\Column(type: Types::STRING)]
+    #[Groups(['plan:read'])]
+    private string $type;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['plan:read'])]
@@ -284,5 +289,28 @@ class Plan
     public function isMonthly(): bool
     {
         return 'monthly' === $this->interval || 'both' === $this->interval;
+    }
+
+    #[Groups(['plan:read'])]
+    public function isFree(): bool
+    {
+        return $this->type === PlanTypeEnum::FREE->value;
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->type === PlanTypeEnum::PAID->value;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 }

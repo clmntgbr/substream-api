@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Payment\Command;
 
-use App\Shared\Application\Command\AsynchronousInterface;
+use App\Shared\Application\Command\AsynchronousPriorityInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class CheckoutCompletedCommand implements AsynchronousInterface
+final class CreateCheckoutCommand implements AsynchronousPriorityInterface
 {
     public function __construct(
         #[Assert\NotBlank]

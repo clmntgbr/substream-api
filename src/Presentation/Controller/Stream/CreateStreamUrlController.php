@@ -7,7 +7,6 @@ namespace App\Presentation\Controller\Stream;
 use App\Application\Stream\Command\CreateStreamUrlCommand;
 use App\Domain\Stream\Dto\CreateStreamUrlPayload;
 use App\Domain\Stream\Entity\Stream;
-use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\User\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +21,6 @@ class CreateStreamUrlController extends AbstractController
 {
     public function __construct(
         private readonly CommandBusInterface $commandBus,
-        private readonly StreamRepository $streamRepository,
         private readonly NormalizerInterface $normalizer,
     ) {
     }

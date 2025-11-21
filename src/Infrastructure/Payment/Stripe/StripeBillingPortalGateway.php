@@ -7,7 +7,7 @@ namespace App\Infrastructure\Payment\Stripe;
 use App\Domain\User\Entity\User;
 use Stripe\StripeClient;
 
-class StripeSubscriptionGateway implements StripeSubscriptionGatewayInterface
+class StripeBillingPortalGateway implements StripeBillingPortalGatewayInterface
 {
     public function __construct(
         private readonly string $frontendUrl,
@@ -15,13 +15,17 @@ class StripeSubscriptionGateway implements StripeSubscriptionGatewayInterface
     ) {
     }
 
-    public function getBillingPortalUrl(User $user): string
+    public function getUrl(User $user): string
     {
         $stripe = new StripeClient($this->stripeApiSecretKey);
 
+        if (null === $user->getStripeCustomerId()) {
+            throw new \RuntimeException('User has no Stripe customer ID');
+        }
+
         $billingPortalSession = $stripe->billingPortal->sessions->create([
             'customer' => (string) $user->getStripeCustomerId(),
-            'return_url' => $this->frontendUrl.'/billing',
+            'return_url' => $this->frontendUrl.'/studio/billing',
         ]);
 
         if (null === $billingPortalSession->url) {

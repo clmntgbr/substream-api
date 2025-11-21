@@ -7,17 +7,17 @@ App\Domain\User\Entity\User:
     lastname: 'dummy'
     picture: '<envar("BACKEND_URL")>/uploads/avatar.jpg'
     
-  user_2:
-    email: "dummmmy@gmail.com"
-    plainPassword: "password123"
-    roles: ["ROLE_USER"]
-    firstname: 'dummy'
-    lastname: 'dummy'
+  # user_2:
+  #   email: "dummmmy@gmail.com"
+  #   plainPassword: "password123"
+  #   roles: ["ROLE_USER"]
+  #   firstname: 'dummy'
+  #   lastname: 'dummy'
 
-  user_{3..100}:
-    email: "<email()>"
-    plainPassword: "password123"
-    roles: ["ROLE_USER"]
-    firstname: '<firstName()>'
-    lastname: '<lastName()>'
+  # user_{3..100}:
+  #   email: "<email()>"
+  #   plainPassword: "password123"
+  #   roles: ["ROLE_USER"]
+  #   firstname: '<firstName()>'
+  #   lastname: '<lastName()>'
   

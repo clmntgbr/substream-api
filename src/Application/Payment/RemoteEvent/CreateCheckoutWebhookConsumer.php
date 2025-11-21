@@ -2,7 +2,7 @@
 
 namespace App\Application\Payment\RemoteEvent;
 
-use App\Application\Payment\Command\CheckoutCompletedCommand;
+use App\Application\Payment\Command\CreateCheckoutCommand;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Stripe\Event;
 use Stripe\StripeObject;
@@ -10,8 +10,8 @@ use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 
-#[AsRemoteEventConsumer('checkout')]
-final class CheckoutWebhookConsumer implements ConsumerInterface
+#[AsRemoteEventConsumer('createcheckout')]
+final class CreateCheckoutWebhookConsumer implements ConsumerInterface
 {
     public function __construct(
         private readonly CommandBusInterface $commandBus,
@@ -26,7 +26,7 @@ final class CheckoutWebhookConsumer implements ConsumerInterface
         /** @var StripeObject $stripeObject */
         $stripeObject = $payload->data->object;
 
-        $this->commandBus->dispatch(new CheckoutCompletedCommand(
+        $this->commandBus->dispatch(new CreateCheckoutCommand(
             checkoutSessionId: $stripeObject->id,
             userId: $stripeObject->client_reference_id,
             userEmail: $stripeObject->customer_email,

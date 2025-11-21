@@ -5,6 +5,7 @@ namespace App\Domain\Subscription\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Domain\Payment\Entity\Payment;
 use App\Domain\Plan\Entity\Plan;
 use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
@@ -32,8 +33,8 @@ use Symfony\Component\Uid\Uuid;
             normalizationContext: ['groups' => ['subscription:read', 'plan:read', 'payment:read']],
         ),
         new Get(),
-        new Get(
-            uriTemplate: '/subscribe/{planId}',
+        new Post(
+            uriTemplate: '/subscription/create',
             controller: CreateSubscriptionController::class,
         ),
         new Get(
@@ -57,7 +58,6 @@ class Subscription
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['subscription:read'])]
     private Plan $plan;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -201,6 +201,20 @@ class Subscription
     }
 
     #[Groups(['subscription:read'])]
+    #[SerializedName('isPaidSubscription')]
+    public function isPaidSubscription(): bool
+    {
+        return $this->plan->isPaid();
+    }
+
+    #[Groups(['subscription:read'])]
+    #[SerializedName('isFreeSubscription')]
+    public function isFreeSubscription(): bool
+    {
+        return $this->plan->isFree();
+    }
+
+    #[Groups(['subscription:read'])]
     #[SerializedName('isActive')]
     public function isActive(): bool
     {
@@ -276,6 +290,14 @@ class Subscription
     public function setCheckoutSessionId(string $checkoutSessionId): self
     {
         $this->checkoutSessionId = $checkoutSessionId;
+
+        return $this;
+    }
+
+    public function expire(): self
+    {
+        $this->status = SubscriptionStatusEnum::EXPIRED->value;
+        $this->endDate = new DateTime();
 
         return $this;
     }

@@ -1,7 +1,7 @@
 App\Domain\Subscription\Entity\Subscription:
-  subscription_free_monthly_{1..100}:
+  subscription_free_monthly_1:
     setIdFromString: "<uuid()>"
-    user: "@user_<current()>"
+    user: "@user_1"
     plan: "@plan_free"
     status: "active"
     autoRenew: true

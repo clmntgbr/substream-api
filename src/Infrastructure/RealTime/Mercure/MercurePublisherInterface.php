@@ -12,6 +12,10 @@ interface MercurePublisherInterface
 
     public function refreshUser(User $user, ?string $context = null): void;
 
+    public function refreshPlan(User $user, ?string $context = null): void;
+
+    public function refreshSubscription(User $user, ?string $context = null): void;
+
     public function refreshNotifications(User $user, ?string $context = null): void;
 
     public function refreshPlans(User $user, ?string $context = null): void;

@@ -43,6 +43,28 @@ class MercurePublisher implements MercurePublisherInterface
         $this->publish($user, $data);
     }
 
+    public function refreshPlan(User $user, ?string $context = null): void
+    {
+        $data = json_encode([
+            'type' => 'plan.refresh',
+            'userId' => $user->getId(),
+            'context' => $context,
+        ]);
+
+        $this->publish($user, $data);
+    }
+
+    public function refreshSubscription(User $user, ?string $context = null): void
+    {
+        $data = json_encode([
+            'type' => 'subscription.refresh',
+            'userId' => $user->getId(),
+            'context' => $context,
+        ]);
+
+        $this->publish($user, $data);
+    }
+
     public function refreshStreams(User $user, ?string $context = null): void
     {
         $data = json_encode([

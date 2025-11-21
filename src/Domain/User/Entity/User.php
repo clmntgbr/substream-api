@@ -324,4 +324,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->getActiveSubscription()->getPlan();
     }
+
+    #[Groups(['user:read'])]
+    public function getHasStripeCustomerId(): bool
+    {
+        return null !== $this->stripeCustomerId;
+    }
 }

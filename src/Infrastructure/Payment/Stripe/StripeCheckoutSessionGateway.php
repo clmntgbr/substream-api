@@ -23,8 +23,8 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         $session = $stripe->checkout->sessions->create([
             'client_reference_id' => (string) $user->getId(),
             'customer_email' => $user->getEmail(),
-            'success_url' => $this->frontendUrl.'/subscribe/success',
-            'cancel_url' => $this->frontendUrl.'/pricing',
+            'success_url' => $this->frontendUrl.'/studio/subscription/success',
+            'cancel_url' => $this->frontendUrl.'/studio/pricing',
             'line_items' => [[
                 'price' => $plan->getStripePriceId(),
                 'quantity' => 1,

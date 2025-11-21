@@ -27,9 +27,10 @@ class DummyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $user = $this->userRepository->findByUuid(Uuid::fromString('019a8409-efb5-7c22-aaf5-86ca263b890d'));
+        $user = $this->userRepository->findByUuid(Uuid::fromString('019aa69b-8f23-7680-844d-6876849b070d'));
 
-        $this->publisher->refreshUser($user);
+        $this->publisher->refreshPlan($user);
+        $this->publisher->refreshSubscription($user);
 
         return Command::SUCCESS;
     }

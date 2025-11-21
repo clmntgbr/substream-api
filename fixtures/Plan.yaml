@@ -2,6 +2,7 @@ App\Domain\Plan\Entity\Plan:
   plan_free:
     setIdFromString: "1bba6dc7-21ed-41c2-9694-6a2ea4db41fd"
     reference: "plan_free"
+    type: "free"
     name: "Free"
     description: "Perfect for trying out our service with basic video upload and standard definition quality"
     price: 0.00
@@ -16,6 +17,7 @@ App\Domain\Plan\Entity\Plan:
   plan_starter_monthly:
     setIdFromString: "<uuid()>"
     reference: "plan_starter_monthly"
+    type: "paid"
     name: "Starter"
     description: "Ideal for individuals and content creators getting started with professional video tools"
     price: 9.99
@@ -31,6 +33,7 @@ App\Domain\Plan\Entity\Plan:
   plan_starter_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_starter_yearly"
+    type: "paid"
     name: "Starter"
     description: "Ideal for individuals and content creators getting started with professional video tools"
     price: 99.99
@@ -47,6 +50,7 @@ App\Domain\Plan\Entity\Plan:
   plan_pro_monthly:
     setIdFromString: "<uuid()>"
     reference: "plan_pro_monthly"
+    type: "paid"
     name: "Pro"
     description: "Designed for professionals and small teams with higher video processing needs"
     price: 29.99
@@ -62,6 +66,7 @@ App\Domain\Plan\Entity\Plan:
   plan_pro_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_pro_yearly"
+    type: "paid"
     name: "Pro"
     description: "Designed for professionals and small teams with higher video processing needs"
     price: 299.99
@@ -78,6 +83,7 @@ App\Domain\Plan\Entity\Plan:
   plan_business_monthly:
     setIdFromString: "<uuid()>"
     reference: "plan_business_monthly"
+    type: "paid"
     name: "Business"
     description: "Built for growing businesses and agencies requiring extensive video processing capabilities"
     price: 79.99
@@ -93,6 +99,7 @@ App\Domain\Plan\Entity\Plan:
   plan_business_yearly:
     setIdFromString: "<uuid()>"
     reference: "plan_business_yearly"
+    type: "paid"
     name: "Business"
     description: "Built for growing businesses and agencies requiring extensive video processing capabilities"
     price: 799.99

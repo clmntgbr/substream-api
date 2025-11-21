@@ -14,7 +14,7 @@ use Symfony\Component\RemoteEvent\RemoteEvent;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
-final class CheckoutRequestParser extends AbstractRequestParser
+final class CreateCheckoutRequestParser extends AbstractRequestParser
 {
     public const WEBHOOK_NAME = 'checkout';
     public const EVENT_TYPE_CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed';

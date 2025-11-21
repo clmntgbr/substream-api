@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Payment\Command;
 
 use App\Application\Subscription\Command\CreateSubscriptionCommand;
+use App\Domain\Plan\Entity\Plan;
 use App\Domain\Plan\Repository\PlanRepository;
+use App\Domain\Subscription\Entity\Subscription;
 use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
+use App\Domain\User\Entity\User;
 use App\Domain\User\Repository\UserRepository;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
@@ -16,7 +19,7 @@ use Safe\DateTime;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class CheckoutCompletedCommandHandler
+class CreateCheckoutCommandHandler
 {
     public function __construct(
         private UserRepository $userRepository,
@@ -28,7 +31,7 @@ class CheckoutCompletedCommandHandler
     ) {
     }
 
-    public function __invoke(CheckoutCompletedCommand $command): void
+    public function __invoke(CreateCheckoutCommand $command): void
     {
         $user = $this->userRepository->findOneBy([
             'id' => $command->getUserId(),
@@ -54,22 +57,11 @@ class CheckoutCompletedCommandHandler
             return;
         }
 
-        $subscription = $user->getActiveSubscription();
-        $subscription->setStatus(SubscriptionStatusEnum::EXPIRED->value);
-        $subscription->setEndDate(new DateTime('now'));
-
-        $newSubscription = $this->commandBus->dispatch(new CreateSubscriptionCommand(
-            user: $user,
-            planReference: $plan->getReference(),
-            checkoutSessionId: $command->getCheckoutSessionId(),
-            subscriptionId: $command->getSubscriptionId(),
-        ));
+        $this->expireCurrentSubscription($user);
+        $this->createNewSubscription($user, $plan, $command->getCheckoutSessionId(), $command->getSubscriptionId());
 
         $user->setStripeCustomerId($command->getStripeCustomerId());
         $this->userRepository->saveAndFlush($user);
-
-        $this->subscriptionRepository->saveAndFlush($subscription);
-        $this->subscriptionRepository->saveAndFlush($newSubscription);
 
         $this->commandBus->dispatch(new CreatePaymentCommand(
             customerId: $command->getStripeCustomerId(),
@@ -80,6 +72,27 @@ class CheckoutCompletedCommandHandler
             amount: $command->getAmount(),
         ));
 
-        $this->mercurePublisher->refreshPlans($user);
+        $this->mercurePublisher->refreshPlan($user);
+        $this->mercurePublisher->refreshSubscription($user);
+    }
+
+    private function expireCurrentSubscription(User $user): void
+    {
+        $subscription = $user->getActiveSubscription();
+        $subscription->expire();
+
+        $this->subscriptionRepository->saveAndFlush($subscription);
+    }
+
+    private function createNewSubscription(User $user, Plan $plan, string $checkoutSessionId, string $subscriptionId): void
+    {
+        $subscription = $this->commandBus->dispatch(new CreateSubscriptionCommand(
+            user: $user,
+            planReference: $plan->getReference(),
+            checkoutSessionId: $checkoutSessionId,
+            subscriptionId: $subscriptionId,
+        ));
+        
+        $this->subscriptionRepository->saveAndFlush($subscription);
     }
 }

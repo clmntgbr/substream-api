@@ -6,7 +6,7 @@ namespace App\Infrastructure\Payment\Stripe;
 
 use App\Domain\User\Entity\User;
 
-interface StripeSubscriptionGatewayInterface
+interface StripeBillingPortalGatewayInterface
 {
-    public function getBillingPortalUrl(User $user): string;
+    public function getUrl(User $user): string;
 }
