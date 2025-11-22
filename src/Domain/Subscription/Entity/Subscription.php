@@ -231,6 +231,13 @@ class Subscription
     }
 
     #[Groups(['subscription:read'])]
+    #[SerializedName('isPendingCancel')]
+    public function isPendingCancel(): bool
+    {
+        return $this->status === SubscriptionStatusEnum::PENDING_CANCEL->value;
+    }
+
+    #[Groups(['subscription:read'])]
     #[SerializedName('isExpired')]
     public function isExpired(): bool
     {
