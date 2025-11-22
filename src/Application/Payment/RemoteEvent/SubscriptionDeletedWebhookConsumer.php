@@ -2,7 +2,7 @@
 
 namespace App\Application\Payment\RemoteEvent;
 
-use App\Application\Payment\Command\UpdateSubscriptionCommand;
+use App\Application\Payment\Command\DeleteSubscriptionCommand;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Stripe\StripeObject;
@@ -10,10 +10,8 @@ use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 
-use function Safe\json_encode;
-
-#[AsRemoteEventConsumer('subscriptionupdated')]
-final class SubscriptionUpdatedWebhookConsumer implements ConsumerInterface
+#[AsRemoteEventConsumer('subscriptiondeleted')]
+final class SubscriptionDeletedWebhookConsumer implements ConsumerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -29,14 +27,13 @@ final class SubscriptionUpdatedWebhookConsumer implements ConsumerInterface
         /** @var StripeObject $stripeObject */
         $stripeObject = $payload->data->object;
 
-        $updateSubscriptionCommand = new UpdateSubscriptionCommand(
+        $deleteSubscriptionCommand = new DeleteSubscriptionCommand(
             userStripeId: $stripeObject->customer,
-            planId: $stripeObject->plan->id,
-            cancelAt: $stripeObject->cancel_at,
+            subscriptionId: $stripeObject->id,
         );
 
-        $this->logger->info(json_encode($payload, JSON_PRETTY_PRINT));
-        // $this->logger->info('Subscription updated', $updateSubscriptionCommand->jsonSerialize());
-        $this->commandBus->dispatch($updateSubscriptionCommand);
+        $this->logger->info('Subscription deleted', $deleteSubscriptionCommand->jsonSerialize());
+        $this->logger->info(json_encode($payload));
+        $this->commandBus->dispatch($deleteSubscriptionCommand);
     }
 }

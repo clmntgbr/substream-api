@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Application\Payment\Command;
 
 use App\Domain\Plan\Repository\PlanRepository;
+use App\Domain\Subscription\Entity\Subscription;
+use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
+use App\Domain\User\Entity\User;
 use App\Domain\User\Repository\UserRepository;
 use App\Infrastructure\Payment\Stripe\StripeCheckoutSessionGatewayInterface;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
@@ -46,11 +49,39 @@ class UpdateSubscriptionCommandHandler
             return;
         }
 
-        $user->getActiveSubscription()->setEndDate((new DateTime())->modify($plan->getExpirationDays()));
-        $user->getActiveSubscription()->setPlan($plan);
+        $subscription = $user->getActiveSubscription();
 
-        $this->userRepository->saveAndFlush($user);
+        $subscription->setPlan($plan);
 
+        if (null !== $command->getCancelAt()) {
+            $this->cancelSubscription($subscription, $command->getCancelAt());
+            $this->refreshSubscription($user);
+
+            return;
+        }
+
+        $this->uncancelSubscription($subscription);
+        $this->refreshSubscription($user);
+    }
+
+    private function cancelSubscription(Subscription $subscription, int $cancelAt): void
+    {
+        $subscription->setStatus(SubscriptionStatusEnum::PENDING_CANCEL->value);
+        $subscription->setCanceledAt((new DateTime())->setTimestamp($cancelAt));
+        $subscription->setAutoRenew(false);
+        $this->subscriptionRepository->saveAndFlush($subscription);
+    }
+
+    private function uncancelSubscription(Subscription $subscription): void
+    {
+        $subscription->setStatus(SubscriptionStatusEnum::ACTIVE->value);
+        $subscription->setCanceledAt(null);
+        $subscription->setAutoRenew(true);
+        $this->subscriptionRepository->saveAndFlush($subscription);
+    }
+
+    private function refreshSubscription(User $user): void
+    {
         $this->mercurePublisher->refreshPlan($user);
         $this->mercurePublisher->refreshSubscription($user);
     }

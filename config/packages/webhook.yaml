@@ -55,3 +55,6 @@ framework:
       subscriptionupdated:
         service: App\Presentation\Webhook\Payment\SubscriptionUpdatedRequestParser
         secret: '%env(STRIPE_WEBHOOK_SUBSCRIPTION_UPDATED_KEY)%'
+      subscriptiondeleted:
+        service: App\Presentation\Webhook\Payment\SubscriptionDeletedRequestParser
+        secret: '%env(STRIPE_WEBHOOK_SUBSCRIPTION_DELETED_KEY)%'

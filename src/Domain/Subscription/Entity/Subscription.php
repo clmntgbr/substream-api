@@ -82,7 +82,6 @@ class Subscription
     private ?string $subscriptionId = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['subscription:read'])]
     private ?string $checkoutSessionId = null;
 
     #[ORM\Column(type: Types::STRING)]
@@ -93,10 +92,10 @@ class Subscription
     private bool $autoRenew = true;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['subscription:read'])]
     private ?\DateTimeInterface $canceledAt = null;
 
     #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'subscription')]
-    #[Groups(['subscription:read'])]
     private Collection $payments;
 
     public function __construct()
@@ -228,7 +227,7 @@ class Subscription
     #[SerializedName('isActive')]
     public function isActive(): bool
     {
-        return $this->status === SubscriptionStatusEnum::ACTIVE->value;
+        return in_array($this->status, [SubscriptionStatusEnum::ACTIVE->value, SubscriptionStatusEnum::PENDING_CANCEL->value]);
     }
 
     #[Groups(['subscription:read'])]
@@ -308,6 +307,18 @@ class Subscription
     {
         $this->status = SubscriptionStatusEnum::EXPIRED->value;
         $this->endDate = new DateTime();
+
+        return $this;
+    }
+
+    public function getCanceledAt(): ?\DateTimeInterface
+    {
+        return $this->canceledAt;
+    }
+
+    public function setCanceledAt(?\DateTimeInterface $canceledAt): self
+    {
+        $this->canceledAt = $canceledAt;
 
         return $this;
     }

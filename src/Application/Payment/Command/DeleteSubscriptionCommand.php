@@ -7,14 +7,13 @@ namespace App\Application\Payment\Command;
 use App\Shared\Application\Command\AsynchronousPriorityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateSubscriptionCommand implements AsynchronousPriorityInterface
+final class DeleteSubscriptionCommand implements AsynchronousPriorityInterface
 {
     public function __construct(
         #[Assert\NotBlank]
         private string $userStripeId,
         #[Assert\NotBlank]
-        private string $planId,
-        private ?int $cancelAt = null,
+        private string $subscriptionId,
     ) {
     }
 
@@ -23,22 +22,16 @@ final class UpdateSubscriptionCommand implements AsynchronousPriorityInterface
         return $this->userStripeId;
     }
 
-    public function getPlanId(): string
+    public function getSubscriptionId(): string
     {
-        return $this->planId;
-    }
-
-    public function getCancelAt(): ?int
-    {
-        return $this->cancelAt;
+        return $this->subscriptionId;
     }
 
     public function jsonSerialize(): array
     {
         return [
             'userStripeId' => $this->userStripeId,
-            'planId' => $this->planId,
-            'cancelAt' => $this->cancelAt,
+            'subscriptionId' => $this->subscriptionId,
         ];
     }
 
