@@ -28,7 +28,7 @@ final class CreateCheckoutWebhookConsumer implements ConsumerInterface
         /** @var StripeObject $stripeObject */
         $stripeObject = $payload->data->object;
 
-        $this->commandBus->dispatch(new CreateCheckoutCommand(
+        $createCheckoutCommand = new CreateCheckoutCommand(
             checkoutSessionId: $stripeObject->id,
             userId: $stripeObject->client_reference_id,
             userEmail: $stripeObject->customer_email,
@@ -39,6 +39,9 @@ final class CreateCheckoutWebhookConsumer implements ConsumerInterface
             paymentStatus: $stripeObject->payment_status,
             amount: $stripeObject->amount_total,
             currency: $stripeObject->currency,
-        ));
+        );
+
+        $this->logger->info('Create checkout webhook received', $createCheckoutCommand->jsonSerialize());
+        $this->commandBus->dispatch($createCheckoutCommand);
     }
 }

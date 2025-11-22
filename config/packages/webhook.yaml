@@ -52,3 +52,6 @@ framework:
       createcheckout:
         service: App\Presentation\Webhook\Payment\CreateCheckoutRequestParser
         secret: '%env(STRIPE_WEBHOOK_CHECKOUT_KEY)%'
+      subscriptionupdated:
+        service: App\Presentation\Webhook\Payment\SubscriptionUpdatedRequestParser
+        secret: '%env(STRIPE_WEBHOOK_SUBSCRIPTION_UPDATED_KEY)%'

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Presentation\Controller\Subscription;
 
-use App\Application\Payment\Command\UpdateSubscriptionCommand;
 use App\Domain\Plan\Repository\PlanRepository;
 use App\Domain\Subscription\Dto\UpdateSubscriptionPayload;
 use App\Domain\User\Entity\User;
@@ -49,10 +48,7 @@ class UpdateSubscriptionController extends AbstractController
             throw new \Exception('You cannot upgrade to a free plan');
         }
 
-        $this->commandBus->dispatch(new UpdateSubscriptionCommand(
-            userId: $user->getId(),
-            planId: $plan->getId(),
-        ));
+        $this->stripeCheckoutSessionGateway->update($plan, $user);
 
         return new JsonResponse([
             'success' => true,

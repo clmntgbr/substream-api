@@ -4,28 +4,35 @@ declare(strict_types=1);
 
 namespace App\Application\Payment\Command;
 
-use App\Shared\Application\Command\SynchronousInterface;
-use Symfony\Component\Uid\Uuid;
+use App\Shared\Application\Command\AsynchronousPriorityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateSubscriptionCommand implements SynchronousInterface
+final class UpdateSubscriptionCommand implements AsynchronousPriorityInterface
 {
     public function __construct(
         #[Assert\NotBlank]
-        private Uuid $userId,
+        private string $userStripeId,
         #[Assert\NotBlank]
-        private Uuid $planId,
+        private string $planId,
     ) {
     }
 
-    public function getUserId(): Uuid
+    public function getUserStripeId(): string
     {
-        return $this->userId;
+        return $this->userStripeId;
     }
 
-    public function getPlanId(): Uuid
+    public function getPlanId(): string
     {
         return $this->planId;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'userStripeId' => $this->userStripeId,
+            'planId' => $this->planId,
+        ];
     }
 
     public function getStamps(): array

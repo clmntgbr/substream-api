@@ -123,6 +123,22 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
         return $this->currency;
     }
 
+    public function jsonSerialize(): array
+    {
+        return [
+            'checkoutSessionId' => $this->checkoutSessionId,
+            'userId' => $this->userId,
+            'userEmail' => $this->userEmail,
+            'planId' => $this->planId,
+            'stripeCustomerId' => $this->stripeCustomerId,
+            'subscriptionId' => $this->subscriptionId,
+            'stripeInvoiceId' => $this->stripeInvoiceId,
+            'paymentStatus' => $this->paymentStatus,
+            'amount' => $this->amount,
+            'currency' => $this->currency,
+        ];
+    }
+
     public function getStamps(): array
     {
         return [];

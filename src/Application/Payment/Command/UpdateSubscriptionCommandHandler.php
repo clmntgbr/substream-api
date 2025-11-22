@@ -30,44 +30,26 @@ class UpdateSubscriptionCommandHandler
 
     public function __invoke(UpdateSubscriptionCommand $command): void
     {
-        $user = $this->userRepository->findOneBy([
-            'id' => $command->getUserId(),
-        ]);
+        $user = $this->userRepository->findOneBy(['stripeCustomerId' => $command->getUserStripeId()]);
 
         if (null === $user) {
-            $this->logger->error('User not found', [
-                'user_id' => $command->getUserId(),
-            ]);
+            $this->logger->error('User not found', ['userStripeId' => $command->getUserStripeId()]);
 
             return;
         }
 
-        $subscription = $user->getActiveSubscription();
-        if ($subscription->isFreeSubscription()) {
-            throw new \Exception('User has a free subscription, you cannot update it');
-        }
-
-        $plan = $this->planRepository->findOneBy(['id' => $command->getPlanId()]);
+        $plan = $this->planRepository->findOneBy(['stripePriceId' => $command->getPlanId()]);
 
         if (null === $plan) {
-            $this->logger->error('Plan not found', [
-                'plan_id' => $command->getPlanId(),
-            ]);
+            $this->logger->error('Plan not found', ['planId' => $command->getPlanId()]);
 
             return;
         }
 
-        if ($plan->isFree()) {
-            throw new \Exception('You cannot update to a free plan');
-        }
+        $user->getActiveSubscription()->setEndDate((new DateTime())->modify($plan->getExpirationDays()));
+        $user->getActiveSubscription()->setPlan($plan);
 
-        $this->stripeCheckoutSessionGateway->update($plan, $user);
-
-        // TODO update dans un webhook
-        $subscription->setEndDate((new DateTime())->modify($plan->getExpirationDays()));
-        $subscription->setPlan($plan);
-
-        $this->subscriptionRepository->saveAndFlush($subscription);
+        $this->userRepository->saveAndFlush($user);
 
         $this->mercurePublisher->refreshPlan($user);
         $this->mercurePublisher->refreshSubscription($user);
