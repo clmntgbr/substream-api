@@ -37,6 +37,7 @@ RUN set -eux; \
 		amqp \
 		xml \
 		sodium \
+		imagick \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
