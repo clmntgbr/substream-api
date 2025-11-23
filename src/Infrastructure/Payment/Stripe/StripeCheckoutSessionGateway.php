@@ -65,14 +65,15 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
                 'id' => $currentItemId,
                 'price' => $plan->getStripePriceId(),
             ]],
-            'proration_behavior' => 'create_prorations',
+            'proration_behavior' => 'always_invoice',
+            'billing_cycle_anchor' => 'unchanged',
+            'payment_behavior' => 'pending_if_incomplete',
         ]);
     }
 
     private function getCurrentItemId(User $user): string
     {
         $subscription = $user->getActiveSubscription();
-        $stripe = new StripeClient($this->stripeApiSecretKey);
         $stripeSubscription = $this->retrieve($subscription->getSubscriptionId());
 
         if (null === $stripeSubscription->items->data[0]->id) {
@@ -99,6 +100,8 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
                         'price' => $plan->getStripePriceId(),
                     ],
                 ],
+                'proration_behavior' => 'always_invoice',
+                'billing_cycle_anchor' => 'unchanged',
             ],
         ]);
 
