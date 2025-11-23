@@ -14,7 +14,7 @@ use Symfony\Component\RemoteEvent\RemoteEvent;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
-final class SubscriptionUpdatedRequestParser extends AbstractRequestParser
+final class UpdateSubscriptionRequestParser extends AbstractRequestParser
 {
     public const WEBHOOK_NAME = 'subscriptionupdated';
     public const EVENT_TYPE_SUBSCRIPTION_UPDATED = 'customer.subscription.updated';

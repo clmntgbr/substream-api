@@ -74,13 +74,11 @@ class CreateCheckoutCommandHandler
 
     private function createNewSubscription(User $user, Plan $plan, string $checkoutSessionId, string $subscriptionId): void
     {
-        $subscription = $this->commandBus->dispatch(new CreateSubscriptionCommand(
+        $this->commandBus->dispatch(new CreateSubscriptionCommand(
             user: $user,
             planReference: $plan->getReference(),
             checkoutSessionId: $checkoutSessionId,
             subscriptionId: $subscriptionId,
         ));
-
-        $this->subscriptionRepository->saveAndFlush($subscription);
     }
 }

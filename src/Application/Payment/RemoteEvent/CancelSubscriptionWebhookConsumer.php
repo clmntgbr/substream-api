@@ -2,7 +2,7 @@
 
 namespace App\Application\Payment\RemoteEvent;
 
-use App\Application\Payment\Command\UpdateSubscriptionCommand;
+use App\Application\Payment\Command\CancelSubscriptionCommand;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Stripe\StripeObject;
@@ -10,8 +10,8 @@ use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 
-#[AsRemoteEventConsumer('subscriptionupdated')]
-final class SubscriptionUpdatedWebhookConsumer implements ConsumerInterface
+#[AsRemoteEventConsumer('subscriptiondeleted')]
+final class CancelSubscriptionWebhookConsumer implements ConsumerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -27,12 +27,11 @@ final class SubscriptionUpdatedWebhookConsumer implements ConsumerInterface
         /** @var StripeObject $stripeObject */
         $stripeObject = $payload->data->object;
 
-        $updateSubscriptionCommand = new UpdateSubscriptionCommand(
+        $cancelSubscriptionCommand = new CancelSubscriptionCommand(
             userStripeId: $stripeObject->customer,
-            planId: $stripeObject->plan->id,
-            cancelAt: $stripeObject->cancel_at,
+            subscriptionId: $stripeObject->id,
         );
 
-        $this->commandBus->dispatch($updateSubscriptionCommand);
+        $this->commandBus->dispatch($cancelSubscriptionCommand);
     }
 }

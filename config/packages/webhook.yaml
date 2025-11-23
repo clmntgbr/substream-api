@@ -53,10 +53,10 @@ framework:
         service: App\Presentation\Webhook\Payment\CreateCheckoutRequestParser
         secret: '%env(STRIPE_WEBHOOK_CHECKOUT_KEY)%'
       subscriptionupdated:
-        service: App\Presentation\Webhook\Payment\SubscriptionUpdatedRequestParser
+        service: App\Presentation\Webhook\Payment\UpdateSubscriptionRequestParser
         secret: '%env(STRIPE_WEBHOOK_SUBSCRIPTION_UPDATED_KEY)%'
       subscriptiondeleted:
-        service: App\Presentation\Webhook\Payment\SubscriptionDeletedRequestParser
+        service: App\Presentation\Webhook\Payment\CancelSubscriptionRequestParser
         secret: '%env(STRIPE_WEBHOOK_SUBSCRIPTION_DELETED_KEY)%'
       invoicepaid:
         service: App\Presentation\Webhook\Payment\InvoicePaidRequestParser

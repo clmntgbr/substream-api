@@ -14,7 +14,7 @@ use Symfony\Component\RemoteEvent\RemoteEvent;
 use Symfony\Component\Webhook\Client\AbstractRequestParser;
 use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
-final class SubscriptionDeletedRequestParser extends AbstractRequestParser
+final class CancelSubscriptionRequestParser extends AbstractRequestParser
 {
     public const WEBHOOK_NAME = 'subscriptiondeleted';
     public const EVENT_TYPE_SUBSCRIPTION_DELETED = 'customer.subscription.deleted';

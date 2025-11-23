@@ -7,7 +7,7 @@ namespace App\Application\Payment\Command;
 use App\Shared\Application\Command\AsynchronousPriorityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class DeleteSubscriptionCommand implements AsynchronousPriorityInterface
+final class CancelSubscriptionCommand implements AsynchronousPriorityInterface
 {
     public function __construct(
         #[Assert\NotBlank]
