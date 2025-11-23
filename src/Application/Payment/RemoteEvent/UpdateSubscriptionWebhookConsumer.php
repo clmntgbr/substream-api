@@ -24,6 +24,8 @@ final class UpdateSubscriptionWebhookConsumer implements ConsumerInterface
         /** @var Event $payload */
         $payload = $event->getPayload()['payload'];
 
+        $this->logger->info(json_encode($payload, JSON_PRETTY_PRINT));
+
         /** @var StripeObject $stripeObject */
         $stripeObject = $payload->data->object;
 

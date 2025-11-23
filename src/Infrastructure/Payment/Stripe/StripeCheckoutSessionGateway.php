@@ -67,7 +67,7 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
             ]],
             'proration_behavior' => 'always_invoice',
             'billing_cycle_anchor' => 'unchanged',
-            'payment_behavior' => 'pending_if_incomplete',
+            'cancel_at_period_end' => false,
         ]);
     }
 
