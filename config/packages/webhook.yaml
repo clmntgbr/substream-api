@@ -58,3 +58,9 @@ framework:
       subscriptiondeleted:
         service: App\Presentation\Webhook\Payment\SubscriptionDeletedRequestParser
         secret: '%env(STRIPE_WEBHOOK_SUBSCRIPTION_DELETED_KEY)%'
+      invoicepaid:
+        service: App\Presentation\Webhook\Payment\InvoicePaidRequestParser
+        secret: '%env(STRIPE_WEBHOOK_INVOICE_PAID_KEY)%'
+      invoicefailed:
+        service: App\Presentation\Webhook\Payment\InvoiceFailedRequestParser
+        secret: '%env(STRIPE_WEBHOOK_INVOICE_FAILED_KEY)%'

@@ -41,7 +41,6 @@ final class CreateCheckoutWebhookConsumer implements ConsumerInterface
             currency: $stripeObject->currency,
         );
 
-        $this->logger->info('Create checkout webhook received', $createCheckoutCommand->jsonSerialize());
         $this->commandBus->dispatch($createCheckoutCommand);
     }
 }

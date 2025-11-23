@@ -32,7 +32,6 @@ class CreateSubscriptionCommandHandler
             user: $command->getUser(),
             plan: $plan,
             startDate: new DateTime(),
-            endDate: (new DateTime())->modify($plan->getExpirationDays()),
             status: SubscriptionStatusEnum::ACTIVE->value,
             autoRenew: true,
             subscriptionId: $command->getSubscriptionId(),

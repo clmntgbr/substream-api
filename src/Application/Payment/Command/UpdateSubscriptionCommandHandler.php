@@ -67,7 +67,7 @@ class UpdateSubscriptionCommandHandler
     private function cancelSubscription(Subscription $subscription, int $cancelAt): void
     {
         $subscription->setStatus(SubscriptionStatusEnum::PENDING_CANCEL->value);
-        $subscription->setCanceledAt((new DateTime())->setTimestamp($cancelAt));
+        $subscription->setEndDate((new DateTime())->setTimestamp($cancelAt));
         $subscription->setAutoRenew(false);
         $this->subscriptionRepository->saveAndFlush($subscription);
     }
@@ -75,7 +75,7 @@ class UpdateSubscriptionCommandHandler
     private function uncancelSubscription(Subscription $subscription): void
     {
         $subscription->setStatus(SubscriptionStatusEnum::ACTIVE->value);
-        $subscription->setCanceledAt(null);
+        $subscription->setEndDate(null);
         $subscription->setAutoRenew(true);
         $this->subscriptionRepository->saveAndFlush($subscription);
     }

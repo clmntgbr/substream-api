@@ -2,7 +2,7 @@
 
 namespace App\Application\Payment\RemoteEvent;
 
-use App\Application\Payment\Command\UpdateSubscriptionCommand;
+use App\Application\Payment\Command\CreatePaymentCommand;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Stripe\StripeObject;
@@ -10,8 +10,8 @@ use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 
-#[AsRemoteEventConsumer('subscriptionupdated')]
-final class SubscriptionUpdatedWebhookConsumer implements ConsumerInterface
+#[AsRemoteEventConsumer('invoicepaid')]
+final class InvoicePaidWebhookConsumer implements ConsumerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -24,15 +24,20 @@ final class SubscriptionUpdatedWebhookConsumer implements ConsumerInterface
         /** @var Event $payload */
         $payload = $event->getPayload()['payload'];
 
+        $this->logger->info(json_encode($payload, JSON_PRETTY_PRINT));
+
         /** @var StripeObject $stripeObject */
         $stripeObject = $payload->data->object;
 
-        $updateSubscriptionCommand = new UpdateSubscriptionCommand(
-            userStripeId: $stripeObject->customer,
-            planId: $stripeObject->plan->id,
-            cancelAt: $stripeObject->cancel_at,
+        $createPaymentCommand = new CreatePaymentCommand(
+            customerId: $stripeObject->customer,
+            subscriptionId: $stripeObject->parent->subscription_details->subscription,
+            amount: $stripeObject->amount_paid,
+            currency: $stripeObject->currency,
+            invoiceId: $stripeObject->id,
+            paymentStatus: $stripeObject->status,
         );
 
-        $this->commandBus->dispatch($updateSubscriptionCommand);
+        $this->commandBus->dispatch($createPaymentCommand);
     }
 }

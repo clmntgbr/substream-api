@@ -60,15 +60,6 @@ class CreateCheckoutCommandHandler
         $user->setStripeCustomerId($command->getStripeCustomerId());
         $this->userRepository->saveAndFlush($user);
 
-        $this->commandBus->dispatch(new CreatePaymentCommand(
-            customerId: $command->getStripeCustomerId(),
-            subscriptionId: $command->getSubscriptionId(),
-            invoiceId: $command->getStripeInvoiceId(),
-            paymentStatus: $command->getPaymentStatus(),
-            currency: $command->getCurrency(),
-            amount: $command->getAmount(),
-        ));
-
         $this->mercurePublisher->refreshPlan($user);
         $this->mercurePublisher->refreshSubscription($user);
     }

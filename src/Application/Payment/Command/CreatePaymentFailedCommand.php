@@ -6,15 +6,12 @@ namespace App\Application\Payment\Command;
 
 use App\Shared\Application\Command\AsynchronousPriorityInterface;
 
-final class CreatePaymentCommand implements AsynchronousPriorityInterface
+final class CreatePaymentFailedCommand implements AsynchronousPriorityInterface
 {
     public function __construct(
         private string $customerId,
         private string $subscriptionId,
         private string $invoiceId,
-        private string $paymentStatus,
-        private string $currency,
-        private string $amount,
     ) {
     }
 
@@ -31,21 +28,6 @@ final class CreatePaymentCommand implements AsynchronousPriorityInterface
     public function getInvoiceId(): string
     {
         return $this->invoiceId;
-    }
-
-    public function getPaymentStatus(): string
-    {
-        return $this->paymentStatus;
-    }
-
-    public function getCurrency(): string
-    {
-        return $this->currency;
-    }
-
-    public function getAmount(): string
-    {
-        return $this->amount;
     }
 
     public function getStamps(): array

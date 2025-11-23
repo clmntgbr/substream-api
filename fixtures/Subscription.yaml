@@ -4,4 +4,5 @@ App\Domain\Subscription\Entity\Subscription:
     user: "@user_1"
     plan: "@plan_free"
     status: "active"
+    isActive: true
     autoRenew: true

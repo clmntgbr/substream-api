@@ -74,9 +74,9 @@ class Subscription
     #[Groups(['subscription:read'])]
     private \DateTimeInterface $startDate;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Groups(['subscription:read'])]
-    private \DateTimeInterface $endDate;
+    private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $subscriptionId = null;
@@ -88,12 +88,11 @@ class Subscription
     #[Groups(['subscription:read'])]
     private string $status;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isActive = false;
+
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $autoRenew = true;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(['subscription:read'])]
-    private ?\DateTimeInterface $canceledAt = null;
 
     #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'subscription')]
     private Collection $payments;
@@ -109,7 +108,6 @@ class Subscription
         User $user,
         Plan $plan,
         \DateTimeInterface $startDate,
-        \DateTimeInterface $endDate,
         string $status,
         bool $autoRenew = true,
         ?string $subscriptionId = null,
@@ -117,9 +115,9 @@ class Subscription
     ): self {
         $subscription = new self();
         $subscription->user = $user;
+        $subscription->isActive = true;
         $subscription->plan = $plan;
         $subscription->startDate = $startDate;
-        $subscription->endDate = $endDate;
         $subscription->status = $status;
         $subscription->autoRenew = $autoRenew;
         $subscription->subscriptionId = $subscriptionId;
@@ -224,13 +222,6 @@ class Subscription
     }
 
     #[Groups(['subscription:read'])]
-    #[SerializedName('isActive')]
-    public function isActive(): bool
-    {
-        return in_array($this->status, [SubscriptionStatusEnum::ACTIVE->value, SubscriptionStatusEnum::PENDING_CANCEL->value]);
-    }
-
-    #[Groups(['subscription:read'])]
     #[SerializedName('isPendingCancel')]
     public function isPendingCancel(): bool
     {
@@ -312,20 +303,21 @@ class Subscription
 
     public function expire(): self
     {
+        $this->isActive = false;
         $this->status = SubscriptionStatusEnum::EXPIRED->value;
         $this->endDate = new DateTime();
 
         return $this;
     }
 
-    public function getCanceledAt(): ?\DateTimeInterface
+    public function isActive(): bool
     {
-        return $this->canceledAt;
+        return $this->isActive;
     }
 
-    public function setCanceledAt(?\DateTimeInterface $canceledAt): self
+    public function setIsActive(bool $isActive): self
     {
-        $this->canceledAt = $canceledAt;
+        $this->isActive = $isActive;
 
         return $this;
     }

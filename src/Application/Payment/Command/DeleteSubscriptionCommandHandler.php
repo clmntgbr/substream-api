@@ -36,5 +36,7 @@ class DeleteSubscriptionCommandHandler
 
             return;
         }
+
+        // TODO: Send an email to the user to inform them that their subscription has been deleted and plan to free user
     }
 }

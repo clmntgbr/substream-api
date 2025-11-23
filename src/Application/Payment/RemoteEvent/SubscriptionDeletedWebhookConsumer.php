@@ -32,8 +32,6 @@ final class SubscriptionDeletedWebhookConsumer implements ConsumerInterface
             subscriptionId: $stripeObject->id,
         );
 
-        $this->logger->info('Subscription deleted', $deleteSubscriptionCommand->jsonSerialize());
-        $this->logger->info(json_encode($payload));
         $this->commandBus->dispatch($deleteSubscriptionCommand);
     }
 }
