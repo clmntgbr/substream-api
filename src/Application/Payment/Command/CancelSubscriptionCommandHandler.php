@@ -48,7 +48,7 @@ class CancelSubscriptionCommandHandler
 
             return;
         }
-        
+
         $plan = $this->planRepository->findOneBy(['reference' => 'plan_free']);
 
         if (null === $plan) {
