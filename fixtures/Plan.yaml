@@ -6,7 +6,7 @@ App\Domain\Plan\Entity\Plan:
     name: "Free"
     description: "Perfect for trying out our service with basic video upload and standard definition quality"
     price: 0.00
-    interval: "both"
+    interval: "mixed"
     features: ['FEATURE_BASIC_UPLOAD', 'FEATURE_SD_QUALITY']
     maxVideosPerMonth: 5
     maxSizeInMegabytes: 500

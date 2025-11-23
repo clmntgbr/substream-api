@@ -281,17 +281,18 @@ class Plan
     #[SerializedName('isYearly')]
     public function isYearly(): bool
     {
-        return 'yearly' === $this->interval || 'both' === $this->interval;
+        return 'yearly' === $this->interval || 'mixed' === $this->interval;
     }
 
     #[Groups(['plan:read'])]
     #[SerializedName('isMonthly')]
     public function isMonthly(): bool
     {
-        return 'monthly' === $this->interval || 'both' === $this->interval;
+        return 'monthly' === $this->interval || 'mixed' === $this->interval;
     }
 
     #[Groups(['plan:read'])]
+    #[SerializedName('isFree')]
     public function isFree(): bool
     {
         return $this->type === PlanTypeEnum::FREE->value;
