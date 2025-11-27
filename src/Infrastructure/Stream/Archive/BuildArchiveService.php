@@ -8,8 +8,10 @@ use App\Domain\Stream\Entity\Stream;
 use App\Infrastructure\Storage\S3\S3StorageServiceInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use ZipArchive;
 
 use function Safe\unlink;
+use function sprintf;
 
 class BuildArchiveService implements BuildArchiveServiceInterface
 {
@@ -21,7 +23,7 @@ class BuildArchiveService implements BuildArchiveServiceInterface
 
     public function build(Stream $stream): File
     {
-        $archive = new \ZipArchive();
+        $archive = new ZipArchive();
         $tmpFiles = [];
 
         $archivePath = sprintf(
@@ -30,7 +32,7 @@ class BuildArchiveService implements BuildArchiveServiceInterface
             $stream->getId()->toRfc4122(),
         );
 
-        if (true !== $archive->open($archivePath, \ZipArchive::CREATE)) {
+        if (true !== $archive->open($archivePath, ZipArchive::CREATE)) {
             throw new UnprocessableEntityHttpException('Unable to create zip archive');
         }
 

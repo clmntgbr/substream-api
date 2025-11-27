@@ -6,7 +6,10 @@ namespace App\Application\Trait;
 
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
+use InvalidArgumentException;
 use Symfony\Component\Workflow\WorkflowInterface;
+
+use function sprintf;
 
 trait WorkflowTrait
 {
@@ -22,8 +25,8 @@ trait WorkflowTrait
 
     public function apply(Stream $stream, WorkflowTransitionEnum $transition): void
     {
-        if (!$this->canApply($stream, $transition)) {
-            throw new \InvalidArgumentException(sprintf('Transition "%s" cannot be applied to stream "%s"', $transition->value, $stream->getId()));
+        if (! $this->canApply($stream, $transition)) {
+            throw new InvalidArgumentException(sprintf('Transition "%s" cannot be applied to stream "%s"', $transition->value, $stream->getId()));
         }
 
         $this->streamsStateMachine->apply($stream, $transition->value);

@@ -12,6 +12,7 @@ use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
@@ -54,7 +55,7 @@ final class ResumeVideoSuccessWebhookConsumer implements ConsumerInterface
             $this->commandBus->dispatch(new StreamSuccessCommand(
                 streamId: $stream->getId(),
             ));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error resuming video', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),

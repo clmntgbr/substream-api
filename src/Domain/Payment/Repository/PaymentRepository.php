@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Payment\Repository;
 
 use App\Domain\Payment\Entity\Payment;
@@ -12,9 +14,9 @@ use Symfony\Component\Uid\Uuid;
  * @extends AbstractRepository<Payment>
  *
  * @method Payment|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
- * @method Payment[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
+ * @method Payment[] findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
  * @method Payment|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method Payment[]    findAll()
+ * @method Payment[] findAll()
  */
 class PaymentRepository extends AbstractRepository
 {

@@ -8,6 +8,7 @@ use App\Domain\OAuth\Dto\Github\GithubExchangeTokenPayload;
 use App\Domain\User\Entity\User;
 use App\Infrastructure\OAuth\Github\GithubOAuthService;
 use App\Shared\Domain\Response\Response;
+use Exception;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +33,7 @@ class GithubOauthController extends AbstractController
             $data = $this->githubOAuthService->connect();
 
             return Response::successResponse($data);
-        } catch (\Exception) {
+        } catch (Exception) {
             return Response::errorResponse('Could not connect to Github');
         }
     }
@@ -51,7 +52,7 @@ class GithubOauthController extends AbstractController
                 ],
                 status: JsonResponse::HTTP_OK
             );
-        } catch (\Exception) {
+        } catch (Exception) {
             return Response::errorResponse('Could not exchange token');
         }
     }

@@ -7,6 +7,7 @@ namespace App\Infrastructure\Payment\Stripe;
 use App\Domain\Payment\Dto\Preview;
 use App\Domain\Plan\Entity\Plan;
 use App\Domain\User\Entity\User;
+use RuntimeException;
 use Stripe\Invoice;
 use Stripe\StripeClient;
 use Stripe\Subscription;
@@ -26,8 +27,8 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         $session = $stripe->checkout->sessions->create([
             'client_reference_id' => (string) $user->getId(),
             'customer_email' => $user->getEmail(),
-            'success_url' => $this->frontendUrl.'/studio/subscription/success',
-            'cancel_url' => $this->frontendUrl.'/studio/account',
+            'success_url' => $this->frontendUrl . '/studio/subscription/success',
+            'cancel_url' => $this->frontendUrl . '/studio/account',
             'line_items' => [[
                 'price' => $plan->getStripePriceId(),
                 'quantity' => 1,
@@ -47,7 +48,7 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         ]);
 
         if (null === $session->url) {
-            throw new \RuntimeException('Checkout session URL is required');
+            throw new RuntimeException('Checkout session URL is required');
         }
 
         return $session->url;
@@ -77,18 +78,6 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         }
 
         return $stripe->subscriptions->update($subscription->getSubscriptionId(), $options);
-    }
-
-    private function getCurrentItemId(User $user): string
-    {
-        $subscription = $user->getActiveSubscription();
-        $stripeSubscription = $this->retrieve($subscription->getSubscriptionId());
-
-        if (null === $stripeSubscription->items->data[0]->id) {
-            throw new \RuntimeException('Subscription item ID is required');
-        }
-
-        return $stripeSubscription->items->data[0]->id;
     }
 
     public function preview(Plan $plan, User $user): Preview
@@ -130,6 +119,28 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         );
     }
 
+    public function retrieve(string $subscriptionId): Subscription
+    {
+        $stripe = new StripeClient($this->stripeApiSecretKey);
+
+        /** @var Subscription $subscription */
+        $subscription = $stripe->subscriptions->retrieve($subscriptionId);
+
+        return $subscription;
+    }
+
+    private function getCurrentItemId(User $user): string
+    {
+        $subscription = $user->getActiveSubscription();
+        $stripeSubscription = $this->retrieve($subscription->getSubscriptionId());
+
+        if (null === $stripeSubscription->items->data[0]->id) {
+            throw new RuntimeException('Subscription item ID is required');
+        }
+
+        return $stripeSubscription->items->data[0]->id;
+    }
+
     private function getCredit(Invoice $invoice): float
     {
         $credit = 0;
@@ -152,15 +163,5 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         }
 
         return $debit;
-    }
-
-    public function retrieve(string $subscriptionId): Subscription
-    {
-        $stripe = new StripeClient($this->stripeApiSecretKey);
-
-        /** @var Subscription $subscription */
-        $subscription = $stripe->subscriptions->retrieve($subscriptionId);
-
-        return $subscription;
     }
 }

@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Validation;
 
+use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+use function count;
+use function in_array;
+use function is_string;
 
 class UploadedFileValidator
 {
@@ -16,7 +21,7 @@ class UploadedFileValidator
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function validateVideo(UploadedFile $file): void
     {
@@ -29,7 +34,7 @@ class UploadedFileValidator
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function validateThumbnail(UploadedFile $file): void
     {
@@ -44,7 +49,7 @@ class UploadedFileValidator
     /**
      * @param array<string> $allowedMimeTypes
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function validateFile(
         UploadedFile $file,
@@ -52,21 +57,21 @@ class UploadedFileValidator
         int $maxSize,
         string $fileType,
     ): void {
-        if (!$file->isValid()) {
-            throw new \Exception($file->getErrorMessage());
+        if (! $file->isValid()) {
+            throw new Exception($file->getErrorMessage());
         }
 
         $mimeType = $file->getMimeType();
         if (null === $mimeType) {
-            throw new \Exception('Invalid mime type');
+            throw new Exception('Invalid mime type');
         }
 
-        if (!in_array($mimeType, $allowedMimeTypes, true)) {
-            throw new \Exception('Invalid mime type');
+        if (! in_array($mimeType, $allowedMimeTypes, true)) {
+            throw new Exception('Invalid mime type');
         }
 
         if ($file->getSize() > $maxSize) {
-            throw new \Exception('File too large');
+            throw new Exception('File too large');
         }
 
         $constraints = new File([
@@ -81,11 +86,11 @@ class UploadedFileValidator
         if (count($violations) > 0) {
             $firstViolation = $violations[0];
             if (null === $firstViolation) {
-                throw new \Exception('Validation failed');
+                throw new Exception('Validation failed');
             }
 
             $message = $firstViolation->getMessage();
-            throw new \Exception(is_string($message) ? $message : (string) $message);
+            throw new Exception(is_string($message) ? $message : (string) $message);
         }
     }
 }

@@ -9,6 +9,7 @@ use App\Domain\Subscription\Dto\UpdateSubscriptionPayload;
 use App\Domain\User\Entity\User;
 use App\Infrastructure\Payment\Stripe\StripeCheckoutSessionGatewayInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,7 @@ class UpdateSubscriptionPreviewController extends AbstractController
     public function __invoke(#[MapRequestPayload()] UpdateSubscriptionPayload $upgradeSubscription, #[CurrentUser] User $user): JsonResponse
     {
         if ($user->getActiveSubscription()->isFreeSubscription()) {
-            throw new \Exception('User already has a free subscription');
+            throw new Exception('User already has a free subscription');
         }
 
         $plan = $this->planRepository->findByUuid(Uuid::fromString($upgradeSubscription->getPlanId()));
@@ -43,7 +44,7 @@ class UpdateSubscriptionPreviewController extends AbstractController
         }
 
         if ($plan->isFree()) {
-            throw new \Exception('You cannot upgrade to a free plan');
+            throw new Exception('You cannot upgrade to a free plan');
         }
 
         $preview = $this->stripeCheckoutSessionGateway->preview($plan, $user);

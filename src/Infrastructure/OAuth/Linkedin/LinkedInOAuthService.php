@@ -12,14 +12,16 @@ use App\Domain\OAuth\Dto\LinkedIn\LinkedInExchangeTokenPayload;
 use App\Domain\OAuth\Gateway\OAuthServiceInterface;
 use App\Domain\User\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Token\AccessTokenInterface;
+use RuntimeException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class LinkedInOAuthService implements OAuthServiceInterface
 {
     private const LINKEDIN_API_URL = 'https://api.linkedin.com';
-    private const LINKEDIN_ACCOUNT = self::LINKEDIN_API_URL.'/v2/userinfo';
+    private const LINKEDIN_ACCOUNT = self::LINKEDIN_API_URL . '/v2/userinfo';
 
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
@@ -72,7 +74,7 @@ class LinkedInOAuthService implements OAuthServiceInterface
 
         $email = $userInfo->getEmail();
         if (null === $email) {
-            throw new \RuntimeException('Email is required');
+            throw new RuntimeException('Email is required');
         }
 
         /** @var User $user */
@@ -103,7 +105,7 @@ class LinkedInOAuthService implements OAuthServiceInterface
             $response = $this->httpClient->request('GET', $url, [
                 'timeout' => 30,
                 'headers' => [
-                    'Authorization' => 'Bearer '.$token->getToken(),
+                    'Authorization' => 'Bearer ' . $token->getToken(),
                     'Connection' => 'Keep-Alive',
                     'Accept' => 'application/json',
                 ],
@@ -112,12 +114,12 @@ class LinkedInOAuthService implements OAuthServiceInterface
             $statusCode = $response->getStatusCode();
 
             if (200 !== $statusCode) {
-                throw new \RuntimeException('Could not retrieve Linkedin account: an exception occurred during the request.');
+                throw new RuntimeException('Could not retrieve Linkedin account: an exception occurred during the request.');
             }
 
             return LinkedInAccount::fromArray($response->toArray());
-        } catch (\Exception) {
-            throw new \RuntimeException('Could not retrieve Linkedin account: an exception occurred during the request.');
+        } catch (Exception) {
+            throw new RuntimeException('Could not retrieve Linkedin account: an exception occurred during the request.');
         }
     }
 }

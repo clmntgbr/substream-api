@@ -20,7 +20,7 @@ final class JWTCreatedListener
         /** @var User $user */
         $user = $event->getUser();
 
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return;
         }
 

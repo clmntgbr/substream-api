@@ -9,6 +9,7 @@ use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Uuid;
 
+use function is_resource;
 use function Safe\fclose;
 use function Safe\fopen;
 use function Safe\mkdir;
@@ -36,23 +37,23 @@ class S3StorageService implements S3StorageServiceInterface
 
     public function delete(Uuid $uuid, string $fileName): void
     {
-        $this->awsStorage->delete($uuid.'/'.$fileName);
+        $this->awsStorage->delete($uuid . '/' . $fileName);
     }
 
     public function download(Uuid $uuid, string $fileName): string
     {
-        $tmpDir = sys_get_temp_dir().'/'.$uuid->toRfc4122();
-        if (!is_dir($tmpDir)) {
+        $tmpDir = sys_get_temp_dir() . '/' . $uuid->toRfc4122();
+        if (! is_dir($tmpDir)) {
             mkdir($tmpDir, 0777, true);
         }
 
-        $tmpFilePath = $tmpDir.'/'.basename($fileName);
+        $tmpFilePath = $tmpDir . '/' . basename($fileName);
 
         $stream = null;
         $tmpFile = null;
 
         try {
-            $stream = $this->awsStorage->readStream($uuid.'/'.$fileName);
+            $stream = $this->awsStorage->readStream($uuid . '/' . $fileName);
             $tmpFile = fopen($tmpFilePath, 'w');
             if (false === $tmpFile) {
                 return $tmpFilePath;
@@ -76,8 +77,8 @@ class S3StorageService implements S3StorageServiceInterface
 
     public function upload(Uuid $uuid, UploadedFile $file): UploadedFileDto
     {
-        $fileName = $uuid.'.'.$file->guessExtension();
-        $path = $uuid.'/'.$fileName;
+        $fileName = $uuid . '.' . $file->guessExtension();
+        $path = $uuid . '/' . $fileName;
 
         $handle = null;
 

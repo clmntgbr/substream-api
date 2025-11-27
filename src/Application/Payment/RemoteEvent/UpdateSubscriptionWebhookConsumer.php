@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Payment\RemoteEvent;
 
 use App\Application\Payment\Command\UpdateSubscriptionCommand;

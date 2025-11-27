@@ -9,12 +9,16 @@ use App\Domain\Stream\Entity\Stream;
 use App\Domain\Task\Enum\TaskStatusEnum;
 use App\Domain\Task\Repository\TaskRepository;
 use App\Domain\Trait\UuidTrait;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use RuntimeException;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Uid\Uuid;
+
+use function sprintf;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ApiResource]
@@ -110,20 +114,20 @@ class Task
     }
 
     #[Groups(['stream:read'])]
-    public function getCreatedAt(): \DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
         if (null === $this->createdAt) {
-            throw new \RuntimeException('CreatedAt is not set');
+            throw new RuntimeException('CreatedAt is not set');
         }
 
         return $this->createdAt;
     }
 
     #[Groups(['stream:read'])]
-    public function getUpdatedAt(): \DateTimeInterface
+    public function getUpdatedAt(): DateTimeInterface
     {
         if (null === $this->updatedAt) {
-            throw new \RuntimeException('UpdatedAt is not set');
+            throw new RuntimeException('UpdatedAt is not set');
         }
 
         return $this->updatedAt;

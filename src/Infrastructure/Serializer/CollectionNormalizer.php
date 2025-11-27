@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Serializer;
 
 use ApiPlatform\State\Pagination\PaginatorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+
+use function is_array;
 
 final class CollectionNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {

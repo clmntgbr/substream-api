@@ -10,9 +10,11 @@ use ApiPlatform\Metadata\Patch;
 use App\Domain\Notification\Repository\NotificationRepository;
 use App\Domain\Trait\UuidTrait;
 use App\Domain\User\Entity\User;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use RuntimeException;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
@@ -191,20 +193,20 @@ class Notification
     }
 
     #[Groups(['notification:read'])]
-    public function getCreatedAt(): \DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
         if (null === $this->createdAt) {
-            throw new \RuntimeException('CreatedAt is not set');
+            throw new RuntimeException('CreatedAt is not set');
         }
 
         return $this->createdAt;
     }
 
     #[Groups(['notification:read'])]
-    public function getUpdatedAt(): \DateTimeInterface
+    public function getUpdatedAt(): DateTimeInterface
     {
         if (null === $this->updatedAt) {
-            throw new \RuntimeException('UpdatedAt is not set');
+            throw new RuntimeException('UpdatedAt is not set');
         }
 
         return $this->updatedAt;

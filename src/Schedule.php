@@ -21,7 +21,6 @@ class Schedule implements ScheduleProviderInterface
     {
         return (new SymfonySchedule())
             ->stateful($this->cache)
-            ->processOnlyLastMissedRun(true)
-        ;
+            ->processOnlyLastMissedRun(true);
     }
 }

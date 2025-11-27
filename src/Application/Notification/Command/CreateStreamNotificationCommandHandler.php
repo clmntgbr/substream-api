@@ -6,6 +6,7 @@ namespace App\Application\Notification\Command;
 
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -36,12 +37,12 @@ class CreateStreamNotificationCommandHandler
             title: match ($command->getStatus()) {
                 'success' => 'stream_success',
                 'failure' => 'stream_failure',
-                default => throw new \InvalidArgumentException('Invalid status'),
+                default => throw new InvalidArgumentException('Invalid status'),
             },
             message: match ($command->getStatus()) {
                 'success' => 'stream_success_message',
                 'failure' => 'stream_failure_message',
-                default => throw new \InvalidArgumentException('Invalid status'),
+                default => throw new InvalidArgumentException('Invalid status'),
             },
             context: 'stream',
             contextId: $stream->getId(),

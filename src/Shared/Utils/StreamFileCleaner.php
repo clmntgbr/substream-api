@@ -15,13 +15,13 @@ class StreamFileCleaner
     {
         $audioFilesPaths = [];
         foreach ($audioFiles as $audioFile) {
-            $audioFilesPaths[] = 'audios/'.$audioFile;
+            $audioFilesPaths[] = 'audios/' . $audioFile;
         }
 
         $files = $audioFilesPaths;
 
         if (null !== $subtitleAssFileName) {
-            $files[] = 'subtitles/'.$subtitleAssFileName;
+            $files[] = 'subtitles/' . $subtitleAssFileName;
         }
 
         if (null !== $resizeFileName) {

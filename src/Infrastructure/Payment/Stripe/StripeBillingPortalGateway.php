@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Payment\Stripe;
 
 use App\Domain\User\Entity\User;
+use RuntimeException;
 use Stripe\StripeClient;
 
 class StripeBillingPortalGateway implements StripeBillingPortalGatewayInterface
@@ -20,16 +21,16 @@ class StripeBillingPortalGateway implements StripeBillingPortalGatewayInterface
         $stripe = new StripeClient($this->stripeApiSecretKey);
 
         if (null === $user->getStripeCustomerId()) {
-            throw new \RuntimeException('User has no Stripe customer ID');
+            throw new RuntimeException('User has no Stripe customer ID');
         }
 
         $billingPortalSession = $stripe->billingPortal->sessions->create([
             'customer' => (string) $user->getStripeCustomerId(),
-            'return_url' => $this->frontendUrl.'/studio/account',
+            'return_url' => $this->frontendUrl . '/studio/account',
         ]);
 
         if (null === $billingPortalSession->url) {
-            throw new \RuntimeException('Billing portal session URL is required');
+            throw new RuntimeException('Billing portal session URL is required');
         }
 
         return $billingPortalSession->url;

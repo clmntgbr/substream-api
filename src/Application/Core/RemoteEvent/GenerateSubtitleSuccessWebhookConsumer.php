@@ -12,7 +12,9 @@ use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
@@ -53,14 +55,14 @@ final class GenerateSubtitleSuccessWebhookConsumer implements ConsumerInterface
 
             $subtitleSrtFileName = $stream->getSubtitleSrtFileName();
             if (null === $subtitleSrtFileName) {
-                throw new \RuntimeException('Subtitle SRT file name is required');
+                throw new RuntimeException('Subtitle SRT file name is required');
             }
 
             $this->commandBus->dispatch(new TransformSubtitleCommand(
                 streamId: $stream->getId(),
                 subtitleSrtFileName: $subtitleSrtFileName,
             ));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error generating subtitle', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),

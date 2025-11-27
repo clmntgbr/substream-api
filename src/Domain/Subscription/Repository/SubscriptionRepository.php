@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Subscription\Repository;
 
 use App\Domain\Subscription\Entity\Subscription;
@@ -11,9 +13,9 @@ use Symfony\Component\Uid\Uuid;
  * @extends AbstractRepository<Subscription>
  *
  * @method Subscription|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
- * @method Subscription[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
+ * @method Subscription[] findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
  * @method Subscription|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method Subscription[]    findAll()
+ * @method Subscription[] findAll()
  */
 class SubscriptionRepository extends AbstractRepository
 {

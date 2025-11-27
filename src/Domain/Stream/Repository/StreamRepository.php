@@ -13,9 +13,9 @@ use Symfony\Component\Uid\Uuid;
  * @extends AbstractRepository<Stream>
  *
  * @method Stream|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
- * @method Stream[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
+ * @method Stream[] findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
  * @method Stream|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method Stream[]    findAll()
+ * @method Stream[] findAll()
  */
 class StreamRepository extends AbstractRepository
 {

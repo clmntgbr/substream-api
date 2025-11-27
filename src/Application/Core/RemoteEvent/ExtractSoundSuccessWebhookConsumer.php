@@ -12,6 +12,7 @@ use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
@@ -57,7 +58,7 @@ final class ExtractSoundSuccessWebhookConsumer implements ConsumerInterface
                 audioFiles: $stream->getAudioFiles(),
                 language: $stream->getOption()->getLanguage(),
             ));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error extracting sound', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),

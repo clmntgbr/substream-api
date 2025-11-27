@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presentation\Webhook\Payment;
 
+use SensitiveParameter;
 use Stripe\Webhook;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
@@ -34,7 +37,7 @@ final class UpdateSubscriptionRequestParser extends AbstractRequestParser
     /**
      * @throws JsonException
      */
-    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): RemoteEvent
+    protected function doParse(Request $request, #[SensitiveParameter] string $secret): RemoteEvent
     {
         $event = Webhook::constructEvent(
             $request->getContent(),

@@ -9,6 +9,7 @@ use App\Application\Trait\WorkflowTrait;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -17,6 +18,8 @@ use function Safe\base64_decode;
 use function Safe\file_put_contents;
 use function Safe\preg_match;
 use function Safe\tempnam;
+
+use const UPLOAD_ERR_OK;
 
 #[AsMessageHandler]
 class CreateStreamUrlCommandHandler
@@ -44,7 +47,7 @@ class CreateStreamUrlCommandHandler
         $stream = $this->streamRepository->find($command->getStreamId());
 
         if (null === $stream) {
-            throw new \Exception($command->getStreamId()->toRfc4122());
+            throw new Exception($command->getStreamId()->toRfc4122());
         }
 
         $thumbnailFile = $this->convertBase64ToFile($command->getThumbnailFile());
@@ -66,11 +69,11 @@ class CreateStreamUrlCommandHandler
 
     private function convertBase64ToFile(string $base64Data): UploadedFile
     {
-        if (!preg_match('/^data:image\/(jpeg|jpg|png|gif|webp);base64,(.+)$/', $base64Data, $matches)) {
-            throw new \Exception('Invalid thumbnail format');
+        if (! preg_match('/^data:image\/(jpeg|jpg|png|gif|webp);base64,(.+)$/', $base64Data, $matches)) {
+            throw new Exception('Invalid thumbnail format');
         }
 
-        $mimeType = 'image/'.$matches[1];
+        $mimeType = 'image/' . $matches[1];
         $base64Content = $matches[2];
 
         $imageData = base64_decode($base64Content);
@@ -87,9 +90,9 @@ class CreateStreamUrlCommandHandler
 
         return new UploadedFile(
             path: $tempFile,
-            originalName: 'thumbnail.'.$extension,
+            originalName: 'thumbnail.' . $extension,
             mimeType: $mimeType,
-            error: \UPLOAD_ERR_OK,
+            error: UPLOAD_ERR_OK,
             test: true
         );
     }

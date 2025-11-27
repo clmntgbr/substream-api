@@ -15,6 +15,7 @@ use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -59,7 +60,7 @@ class EmbedVideoCommandHandler extends AbstractStreamWorkflowCommandHandler
     {
         $taskId = $task->getId();
         if (null === $taskId) {
-            throw new \RuntimeException('Task ID is required');
+            throw new RuntimeException('Task ID is required');
         }
 
         return new EmbedVideoMessage(

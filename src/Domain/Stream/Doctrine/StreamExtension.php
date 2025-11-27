@@ -11,8 +11,11 @@ use ApiPlatform\Metadata\Operation;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+
+use function sprintf;
 
 final readonly class StreamExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -22,7 +25,7 @@ final readonly class StreamExtension implements QueryCollectionExtensionInterfac
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
@@ -30,7 +33,7 @@ final readonly class StreamExtension implements QueryCollectionExtensionInterfac
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, ?Operation $operation = null, array $context = []): void
     {
@@ -38,7 +41,7 @@ final readonly class StreamExtension implements QueryCollectionExtensionInterfac
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
@@ -47,7 +50,7 @@ final readonly class StreamExtension implements QueryCollectionExtensionInterfac
         }
 
         $user = $this->security->getUser();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw new UnauthorizedHttpException('You have to be authenticated.');
         }
 

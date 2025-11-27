@@ -6,6 +6,9 @@ namespace App\Shared\Infrastructure\Fixture;
 
 use Faker\Generator;
 use Faker\Provider\Base;
+use RuntimeException;
+
+use function sprintf;
 
 final class AliceProvider extends Base
 {
@@ -19,7 +22,7 @@ final class AliceProvider extends Base
         $value = $_SERVER[$name] ?? $_ENV[$name] ?? getenv($name);
 
         if (false === $value) {
-            throw new \RuntimeException(sprintf('Environment variable "%s" is not set.', $name));
+            throw new RuntimeException(sprintf('Environment variable "%s" is not set.', $name));
         }
 
         return $value;

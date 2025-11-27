@@ -7,6 +7,7 @@ namespace App\Application\Payment\Command;
 use App\Domain\Payment\Repository\PaymentRepository;
 use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
+use Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -23,7 +24,7 @@ class CreatePaymentFailedCommandHandler
         $subscription = $this->subscriptionRepository->findOneBy(['subscriptionId' => $command->getSubscriptionId()]);
 
         if (null === $subscription) {
-            throw new \Exception('Subscription not found');
+            throw new Exception('Subscription not found');
         }
 
         $existingPayment = $this->paymentRepository->findOneBy([

@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace App\Shared\Utils;
 
+use Throwable;
+use Transliterator;
+
+use function function_exists;
+use function is_string;
 use function Safe\iconv;
 use function Safe\preg_replace;
 
 class Slugify
 {
     private static string $separator = '-';
+
     private static bool $lowercase = true;
+
     private static ?int $maxLength = null;
 
     public function __construct(
@@ -60,16 +67,16 @@ class Slugify
 
     private static function transliterate(string $text): string
     {
-        if (class_exists(\Transliterator::class)) {
+        if (class_exists(Transliterator::class)) {
             try {
-                $t = \Transliterator::create('Any-Latin; Latin-ASCII; NFD; [:Nonspacing Mark:] Remove; NFC');
+                $t = Transliterator::create('Any-Latin; Latin-ASCII; NFD; [:Nonspacing Mark:] Remove; NFC');
                 if (null !== $t) {
                     $result = $t->transliterate($text);
                     if (false !== $result && '' !== $result) {
                         return $result;
                     }
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 

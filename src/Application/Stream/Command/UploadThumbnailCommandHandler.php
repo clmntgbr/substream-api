@@ -7,10 +7,12 @@ namespace App\Application\Stream\Command;
 use App\Application\Trait\WorkflowTrait;
 use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
+use Exception;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+use function is_resource;
 use function Safe\fclose;
 use function Safe\fopen;
 
@@ -44,8 +46,8 @@ class UploadThumbnailCommandHandler
     private function uploadThumbnail(File $file, Stream $stream): void
     {
         try {
-            $fileName = 'thumbnail.'.$file->guessExtension();
-            $path = $stream->getId().'/'.$fileName;
+            $fileName = 'thumbnail.' . $file->guessExtension();
+            $path = $stream->getId() . '/' . $fileName;
 
             $handle = fopen($file->getPathname(), 'r');
 
@@ -55,8 +57,8 @@ class UploadThumbnailCommandHandler
                 fclose($handle);
             }
 
-            $stream->setThumbnailUrl($this->backendUrl.'/uploads/'.$path);
-        } catch (\Exception $e) {
+            $stream->setThumbnailUrl($this->backendUrl . '/uploads/' . $path);
+        } catch (Exception $e) {
             return;
         }
     }

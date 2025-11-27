@@ -8,6 +8,7 @@ use App\Domain\OAuth\Dto\Google\GoogleExchangeTokenPayload;
 use App\Domain\User\Entity\User;
 use App\Infrastructure\OAuth\Google\GoogleOAuthService;
 use App\Shared\Domain\Response\Response;
+use Exception;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +33,7 @@ class GoogleOauthController extends AbstractController
             $data = $this->googleOAuthService->connect();
 
             return Response::successResponse($data);
-        } catch (\Exception) {
+        } catch (Exception) {
             return Response::errorResponse('Could not connect to Google');
         }
     }
@@ -51,7 +52,7 @@ class GoogleOauthController extends AbstractController
                 ],
                 status: JsonResponse::HTTP_OK
             );
-        } catch (\Exception) {
+        } catch (Exception) {
             return Response::errorResponse('Could not exchange token');
         }
     }

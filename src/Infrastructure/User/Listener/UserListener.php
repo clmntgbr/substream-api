@@ -25,7 +25,7 @@ final class UserListener
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
         $entity = $prePersistEventArgs->getObject();
-        if (!$entity instanceof User) {
+        if (! $entity instanceof User) {
             return;
         }
 
@@ -35,7 +35,7 @@ final class UserListener
     public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
     {
         $entity = $postPersistEventArgs->getObject();
-        if (!$entity instanceof User) {
+        if (! $entity instanceof User) {
             return;
         }
     }
@@ -43,7 +43,7 @@ final class UserListener
     public function preUpdate(PreUpdateEventArgs $preUpdateEventArgs): void
     {
         $entity = $preUpdateEventArgs->getObject();
-        if (!$entity instanceof User) {
+        if (! $entity instanceof User) {
             return;
         }
 

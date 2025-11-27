@@ -12,7 +12,9 @@ use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
@@ -53,14 +55,14 @@ final class EmbedVideoSuccessWebhookConsumer implements ConsumerInterface
 
             $embedFileName = $stream->getEmbedFileName();
             if (null === $embedFileName) {
-                throw new \RuntimeException('Embed file name is required');
+                throw new RuntimeException('Embed file name is required');
             }
 
             $this->commandBus->dispatch(new ChunkVideoCommand(
                 streamId: $stream->getId(),
                 embedFileName: $embedFileName,
             ));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error embedding video', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),

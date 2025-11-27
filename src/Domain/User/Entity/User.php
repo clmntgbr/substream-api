@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -118,7 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getEmail(): string
     {
         if (null === $this->email) {
-            throw new \Exception('Email not found');
+            throw new Exception('Email not found');
         }
 
         return $this->email;
@@ -126,7 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getName(): string
     {
-        return $this->firstname.' '.$this->lastname;
+        return $this->firstname . ' ' . $this->lastname;
     }
 
     /**
@@ -289,7 +290,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addSubscription(Subscription $subscription): static
     {
-        if (!$this->subscriptions->contains($subscription)) {
+        if (! $this->subscriptions->contains($subscription)) {
             $this->subscriptions->add($subscription);
             $subscription->setUser($this);
         }
@@ -302,7 +303,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $subscription = $this->subscriptions->filter(fn (Subscription $subscription) => $subscription->isActive())->first();
 
         if (false === $subscription) {
-            throw new \Exception('Subscription not found');
+            throw new Exception('Subscription not found');
         }
 
         return $subscription;

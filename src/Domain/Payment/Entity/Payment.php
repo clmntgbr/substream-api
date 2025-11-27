@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Payment\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -10,6 +12,7 @@ use App\Domain\Payment\Repository\PaymentRepository;
 use App\Domain\Subscription\Entity\Subscription;
 use App\Domain\Trait\UuidTrait;
 use App\Presentation\Controller\Payment\GetPaymentsInformationsController;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -41,6 +44,7 @@ class Payment
     private string $customerId;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['payment:read'])]
     private string $invoiceId;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
@@ -144,8 +148,14 @@ class Payment
     }
 
     #[Groups(['payment:read'])]
-    public function getCreatedAt(): \DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
+    }
+
+    #[Groups(['payment:read'])]
+    public function getPlanName(): string
+    {
+        return $this->subscription->getPlan()->getName();
     }
 }

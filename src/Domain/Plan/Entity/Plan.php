@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Plan\Entity;
 
 use ApiPlatform\Metadata\ApiResource;

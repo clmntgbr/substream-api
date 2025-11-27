@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Stream\Command;
 
 use App\Domain\User\Entity\User;

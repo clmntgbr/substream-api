@@ -7,10 +7,13 @@ namespace App\Presentation\Controller\Stream\Download;
 use App\Domain\Stream\Entity\Stream;
 use App\Infrastructure\Stream\Archive\BuildArchiveServiceInterface;
 use App\Shared\Utils\Slugify;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+
+use function sprintf;
 
 #[AsController]
 class GetArchiveStreamController extends AbstractController
@@ -22,8 +25,8 @@ class GetArchiveStreamController extends AbstractController
 
     public function __invoke(Stream $stream): BinaryFileResponse
     {
-        if (!$stream->isDownloadable()) {
-            throw new \Exception($stream->getId()->toRfc4122());
+        if (! $stream->isDownloadable()) {
+            throw new Exception($stream->getId()->toRfc4122());
         }
 
         try {
@@ -45,7 +48,7 @@ class GetArchiveStreamController extends AbstractController
             $response->deleteFileAfterSend();
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }

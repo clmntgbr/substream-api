@@ -9,6 +9,7 @@ use App\Domain\Stream\Entity\Stream;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -27,7 +28,7 @@ class CreateStreamCommandHandler
         $option = $this->optionRepository->findByUuid($command->getOptionId());
 
         if (null === $option) {
-            throw new \Exception('Option not found');
+            throw new Exception('Option not found');
         }
 
         $stream = Stream::create(

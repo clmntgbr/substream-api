@@ -12,7 +12,9 @@ use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
@@ -56,14 +58,14 @@ final class GetVideoSuccessWebhookConsumer implements ConsumerInterface
 
             $fileName = $stream->getFileName();
             if (null === $fileName) {
-                throw new \RuntimeException('File name is required');
+                throw new RuntimeException('File name is required');
             }
 
             $this->commandBus->dispatch(new ExtractSoundCommand(
                 streamId: $stream->getId(),
                 fileName: $fileName,
             ));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error getting video', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),

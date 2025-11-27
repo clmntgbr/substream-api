@@ -64,7 +64,7 @@ class LinkedInAccount
 
     public function getName(): string
     {
-        return trim(($this->firstName ?? '').' '.($this->lastName ?? ''));
+        return trim(($this->firstName ?? '') . ' ' . ($this->lastName ?? ''));
     }
 
     public function getId(): string

@@ -6,6 +6,8 @@ namespace App\Domain\Stream\ValueObject;
 
 use App\Domain\Stream\Enum\StreamStatusEnum;
 
+use function in_array;
+
 readonly class StreamStatus
 {
     /**
@@ -37,7 +39,7 @@ readonly class StreamStatus
             StreamStatusEnum::CHUNKING_VIDEO_COMPLETED->value,
             StreamStatusEnum::RESUMING->value,
             StreamStatusEnum::RESUMING_COMPLETED->value,
-        ]);
+        ], true);
     }
 
     public function isCompleted(): bool
@@ -57,7 +59,7 @@ readonly class StreamStatus
             StreamStatusEnum::EMBEDDING_VIDEO_FAILED->value,
             StreamStatusEnum::CHUNKING_VIDEO_FAILED->value,
             StreamStatusEnum::RESUMING_FAILED->value,
-        ]);
+        ], true);
     }
 
     public function getProgress(): int
@@ -94,17 +96,17 @@ readonly class StreamStatus
 
     public function isDownloadable(): bool
     {
-        return in_array(StreamStatusEnum::COMPLETED->value, $this->statuses);
+        return in_array(StreamStatusEnum::COMPLETED->value, $this->statuses, true);
     }
 
     public function isSrtDownloadable(?string $subtitleSrtFileName): bool
     {
-        return in_array(StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value, $this->statuses) && null !== $subtitleSrtFileName;
+        return in_array(StreamStatusEnum::GENERATING_SUBTITLE_COMPLETED->value, $this->statuses, true) && null !== $subtitleSrtFileName;
     }
 
     public function isResumeDownloadable(?string $resumeFileName): bool
     {
-        return in_array(StreamStatusEnum::RESUMING_COMPLETED->value, $this->statuses) && null !== $resumeFileName;
+        return in_array(StreamStatusEnum::RESUMING_COMPLETED->value, $this->statuses, true) && null !== $resumeFileName;
     }
 
     public function getFilterStatus(): ?string

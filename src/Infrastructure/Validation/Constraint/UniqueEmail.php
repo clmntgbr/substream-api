@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Validation\Constraint;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute]
+#[Attribute]
 class UniqueEmail extends Constraint
 {
     public string $message = 'This email address is already registered';
 
     public function validatedBy(): string
     {
-        return static::class.'Validator';
+        return static::class . 'Validator';
     }
 }

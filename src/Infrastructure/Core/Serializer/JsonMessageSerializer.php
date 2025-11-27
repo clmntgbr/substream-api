@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Core\Serializer;
 
 use App\Shared\Application\Message\AsynchronousMessageInterface;
+use RuntimeException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
@@ -22,7 +23,7 @@ class JsonMessageSerializer implements SerializerInterface
      */
     public function decode(array $encodedEnvelope): Envelope
     {
-        throw new \RuntimeException('Decode not implemented');
+        throw new RuntimeException('Decode not implemented');
     }
 
     /**
@@ -32,15 +33,15 @@ class JsonMessageSerializer implements SerializerInterface
     {
         $message = $envelope->getMessage();
 
-        if (!$message instanceof AsynchronousMessageInterface) {
-            throw new \RuntimeException('The message must implement AsynchronousMessageInterface.');
+        if (! $message instanceof AsynchronousMessageInterface) {
+            throw new RuntimeException('The message must implement AsynchronousMessageInterface.');
         }
 
         $data = [
             'class' => $message::class,
             'payload' => $message->jsonSerialize(),
-            'webhook_url_success' => $this->apiUrl.'/'.$message->getWebhookUrlSuccess(),
-            'webhook_url_failure' => $this->apiUrl.'/'.$message->getWebhookUrlFailure(),
+            'webhook_url_success' => $this->apiUrl . '/' . $message->getWebhookUrlSuccess(),
+            'webhook_url_failure' => $this->apiUrl . '/' . $message->getWebhookUrlFailure(),
         ];
 
         return [

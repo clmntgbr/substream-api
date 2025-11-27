@@ -9,6 +9,8 @@ use App\Domain\Notification\Repository\NotificationRepository;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Utils\Slugify;
+use Exception;
+use RuntimeException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -26,13 +28,13 @@ class CreateNotificationCommandHandler
         $stream = $this->streamRepository->findByUuid($command->getContextId());
 
         if (null === $stream) {
-            throw new \Exception($command->getContextId()->toRfc4122());
+            throw new Exception($command->getContextId()->toRfc4122());
         }
 
         $originalFileName = $stream->getOriginalFileName();
 
         if (null === $originalFileName) {
-            throw new \RuntimeException('file name is required');
+            throw new RuntimeException('file name is required');
         }
 
         $contextMessage = Slugify::slug($originalFileName);

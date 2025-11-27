@@ -13,8 +13,10 @@ use App\Domain\OAuth\Gateway\OAuthServiceInterface;
 use App\Domain\OAuth\ValueObject\CodeChallenge;
 use App\Domain\User\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Token\AccessToken;
+use RuntimeException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GithubOAuthService implements OAuthServiceInterface
@@ -68,7 +70,7 @@ class GithubOAuthService implements OAuthServiceInterface
         }
 
         if (null === $email) {
-            throw new \RuntimeException('Email is required');
+            throw new RuntimeException('Email is required');
         }
 
         /** @var User $user */
@@ -96,7 +98,7 @@ class GithubOAuthService implements OAuthServiceInterface
         try {
             $response = $this->httpClient->request('GET', 'https://api.github.com/user/emails', [
                 'headers' => [
-                    'Authorization' => 'Bearer '.$accessToken,
+                    'Authorization' => 'Bearer ' . $accessToken,
                     'Accept' => 'application/vnd.github+json',
                     'X-GitHub-Api-Version' => '2022-11-28',
                 ],
@@ -105,7 +107,7 @@ class GithubOAuthService implements OAuthServiceInterface
             $emails = $response->toArray();
 
             $realEmails = array_filter($emails, function ($email) {
-                return !str_contains($email['email'], '@users.noreply.github.com');
+                return ! str_contains($email['email'], '@users.noreply.github.com');
             });
 
             foreach ($realEmails as $emailData) {
@@ -120,12 +122,12 @@ class GithubOAuthService implements OAuthServiceInterface
                 }
             }
 
-            if (!empty($realEmails)) {
+            if (! empty($realEmails)) {
                 return reset($realEmails)['email'];
             }
 
             return null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

@@ -132,7 +132,7 @@ dotenv:
 	$(SYMFONY) debug:dotenv
 
 php-cs-fixer:
-	$(PHP_CONT) ./vendor/bin/php-cs-fixer fix src --rules=@Symfony --verbose --diff
+	$(PHP_CONT) ./vendor/bin/php-cs-fixer fix src --verbose --diff
 
 php-stan:
 	$(PHP_CONT) ./vendor/bin/phpstan analyse src -l $(or $(level), 8) --memory-limit=-1

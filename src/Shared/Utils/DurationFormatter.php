@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Utils;
 
+use function sprintf;
+
 class DurationFormatter
 {
     public static function format(?int $milliseconds): ?string

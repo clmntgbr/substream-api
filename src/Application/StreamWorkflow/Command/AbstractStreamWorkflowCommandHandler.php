@@ -11,11 +11,16 @@ use App\Domain\Task\Repository\TaskRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use App\Shared\Application\Bus\CoreBusInterface;
+use Exception;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Throwable;
 
 use function Safe\json_encode;
+use function sprintf;
 
 abstract class AbstractStreamWorkflowCommandHandler
 {
@@ -36,8 +41,8 @@ abstract class AbstractStreamWorkflowCommandHandler
 
     protected function apply(Stream $stream, WorkflowTransitionEnum $transition): void
     {
-        if (!$this->canApply($stream, $transition)) {
-            throw new \InvalidArgumentException(sprintf('Transition "%s" cannot be applied to stream "%s"', $transition->value, $stream->getId()));
+        if (! $this->canApply($stream, $transition)) {
+            throw new InvalidArgumentException(sprintf('Transition "%s" cannot be applied to stream "%s"', $transition->value, $stream->getId()));
         }
 
         $this->streamsStateMachine->apply($stream, $transition->value);
@@ -84,12 +89,12 @@ abstract class AbstractStreamWorkflowCommandHandler
 
             $taskId = $task->getId();
             if (null === $taskId) {
-                throw new \RuntimeException('Task ID is required');
+                throw new RuntimeException('Task ID is required');
             }
 
             $message = $this->createMessage($stream, $task);
             $this->coreBus->dispatch($message);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error(sprintf('Workflow transition failed during %s', $this->getWorkflowActionName()), [
                 'stream_id' => (string) $streamId,
                 'error' => $e->getMessage(),
@@ -98,7 +103,7 @@ abstract class AbstractStreamWorkflowCommandHandler
 
             $this->markStreamAsFailed($stream);
             $this->streamRepository->saveAndFlush($stream);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error(sprintf('Unexpected error during %s', $this->getWorkflowActionName()), [
                 'stream_id' => (string) $streamId,
                 'error' => $e->getMessage(),

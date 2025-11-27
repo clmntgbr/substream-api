@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Subscription\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -16,6 +18,7 @@ use App\Presentation\Controller\Subscription\GetBillingPortalUrlController;
 use App\Presentation\Controller\Subscription\GetSubscriptionController;
 use App\Presentation\Controller\Subscription\UpdateSubscriptionController;
 use App\Presentation\Controller\Subscription\UpdateSubscriptionPreviewController;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -67,11 +70,11 @@ class Subscription
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['subscription:read'])]
-    private \DateTimeInterface $startDate;
+    private DateTimeInterface $startDate;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Groups(['subscription:read'])]
-    private ?\DateTimeInterface $endDate = null;
+    private ?DateTimeInterface $endDate = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $subscriptionId = null;
@@ -102,7 +105,7 @@ class Subscription
     public static function create(
         User $user,
         Plan $plan,
-        \DateTimeInterface $startDate,
+        DateTimeInterface $startDate,
         string $status,
         bool $autoRenew = true,
         ?string $subscriptionId = null,
@@ -152,24 +155,24 @@ class Subscription
         return $this;
     }
 
-    public function getStartDate(): \DateTimeInterface
+    public function getStartDate(): DateTimeInterface
     {
         return $this->startDate;
     }
 
-    public function setStartDate(\DateTimeInterface $startDate): self
+    public function setStartDate(DateTimeInterface $startDate): self
     {
         $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getEndDate(): ?DateTimeInterface
     {
         return $this->endDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $endDate): self
+    public function setEndDate(?DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
 
@@ -273,13 +276,13 @@ class Subscription
     }
 
     #[Groups(['subscription:read'])]
-    public function getCreatedAt(): \DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
     #[Groups(['subscription:read'])]
-    public function getUpdatedAt(): \DateTimeInterface
+    public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updatedAt;
     }

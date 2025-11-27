@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Payment\Command;
 
 use App\Shared\Application\Command\AsynchronousPriorityInterface;
+use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class CreateCheckoutCommand implements AsynchronousPriorityInterface
@@ -36,7 +37,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getCheckoutSessionId(): string
     {
         if (null === $this->checkoutSessionId) {
-            throw new \Exception('Checkout session ID is required');
+            throw new Exception('Checkout session ID is required');
         }
 
         return $this->checkoutSessionId;
@@ -45,7 +46,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getUserId(): string
     {
         if (null === $this->userId) {
-            throw new \Exception('User ID is required');
+            throw new Exception('User ID is required');
         }
 
         return $this->userId;
@@ -54,7 +55,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getUserEmail(): string
     {
         if (null === $this->userEmail) {
-            throw new \Exception('User email is required');
+            throw new Exception('User email is required');
         }
 
         return $this->userEmail;
@@ -63,7 +64,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getPlanId(): string
     {
         if (null === $this->planId) {
-            throw new \Exception('Plan ID is required');
+            throw new Exception('Plan ID is required');
         }
 
         return $this->planId;
@@ -72,7 +73,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getStripeCustomerId(): string
     {
         if (null === $this->stripeCustomerId) {
-            throw new \Exception('Stripe customer ID is required');
+            throw new Exception('Stripe customer ID is required');
         }
 
         return $this->stripeCustomerId;
@@ -81,7 +82,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getSubscriptionId(): string
     {
         if (null === $this->subscriptionId) {
-            throw new \Exception('Subscription ID is required');
+            throw new Exception('Subscription ID is required');
         }
 
         return $this->subscriptionId;
@@ -90,7 +91,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getStripeInvoiceId(): string
     {
         if (null === $this->stripeInvoiceId) {
-            throw new \Exception('Stripe invoice ID is required');
+            throw new Exception('Stripe invoice ID is required');
         }
 
         return $this->stripeInvoiceId;
@@ -99,7 +100,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getPaymentStatus(): string
     {
         if (null === $this->paymentStatus) {
-            throw new \Exception('Payment status is required');
+            throw new Exception('Payment status is required');
         }
 
         return $this->paymentStatus;
@@ -108,7 +109,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getAmount(): string
     {
         if (null === $this->amount) {
-            throw new \Exception('Amount is required');
+            throw new Exception('Amount is required');
         }
 
         return $this->amount;
@@ -117,7 +118,7 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
     public function getCurrency(): string
     {
         if (null === $this->currency) {
-            throw new \Exception('Currency is required');
+            throw new Exception('Currency is required');
         }
 
         return $this->currency;

@@ -12,7 +12,9 @@ use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
@@ -55,11 +57,11 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
             $resizeFileName = $stream->getResizeFileName();
 
             if (null === $subtitleAssFileName) {
-                throw new \RuntimeException('Subtitle ASS file name is required');
+                throw new RuntimeException('Subtitle ASS file name is required');
             }
 
             if (null === $resizeFileName) {
-                throw new \RuntimeException('Resize file name is required');
+                throw new RuntimeException('Resize file name is required');
             }
 
             $this->commandBus->dispatch(new EmbedVideoCommand(
@@ -67,7 +69,7 @@ final class ResizeVideoSuccessWebhookConsumer implements ConsumerInterface
                 subtitleAssFileName: $subtitleAssFileName,
                 resizeFileName: $resizeFileName,
             ));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error resizing video', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),

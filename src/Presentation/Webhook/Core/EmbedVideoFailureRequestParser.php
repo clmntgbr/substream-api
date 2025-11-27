@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Presentation\Webhook\Core;
 
 use App\Domain\Core\Dto\EmbedVideoFailure;
+use Exception;
+use SensitiveParameter;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,14 +39,14 @@ final class EmbedVideoFailureRequestParser extends AbstractRequestParser
     /**
      * @throws JsonException
      */
-    protected function doParse(Request $request, #[\SensitiveParameter] string $secret): RemoteEvent
+    protected function doParse(Request $request, #[SensitiveParameter] string $secret): RemoteEvent
     {
         $authToken = $request->headers->get('X-Authentication-Token');
         if ($authToken !== $secret) {
             throw new RejectWebhookException(Response::HTTP_UNAUTHORIZED, 'Invalid authentication token.');
         }
 
-        if (!$request->getPayload()->has('name') || !$request->getPayload()->has('task_id')) {
+        if (! $request->getPayload()->has('name') || ! $request->getPayload()->has('task_id')) {
             throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Request payload does not contain required fields.');
         }
 
@@ -55,7 +57,7 @@ final class EmbedVideoFailureRequestParser extends AbstractRequestParser
         try {
             $payload = $request->getPayload();
             $data = $this->denormalizer->denormalize($payload->all(), EmbedVideoFailure::class);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Invalid payload');
         }
 

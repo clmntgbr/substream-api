@@ -11,6 +11,7 @@ use App\Domain\Stream\Enum\StreamStatusEnum;
 use App\Domain\Stream\Repository\StreamRepository;
 use App\Domain\Workflow\Enum\WorkflowTransitionEnum;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
@@ -48,7 +49,7 @@ final class EmbedVideoFailureWebhookConsumer implements ConsumerInterface
         try {
             $this->apply($stream, WorkflowTransitionEnum::EMBEDDING_VIDEO_FAILED);
             $this->streamRepository->saveAndFlush($stream);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error embedding video', [
                 'stream_id' => $response->getStreamId(),
                 'error' => $e->getMessage(),

@@ -12,13 +12,15 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Uid\Uuid;
 
+use function sprintf;
+
 /**
  * @extends AbstractRepository<User>
  *
  * @method User|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
- * @method User[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
+ * @method User[] findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, ?int $limit = null, ?int $offset = null)
  * @method User|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
- * @method User[]    findAll()
+ * @method User[] findAll()
  */
 class UserRepository extends AbstractRepository implements PasswordUpgraderInterface
 {
@@ -32,7 +34,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
         }
 

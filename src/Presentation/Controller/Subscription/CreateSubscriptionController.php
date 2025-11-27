@@ -9,6 +9,7 @@ use App\Domain\Plan\Repository\PlanRepository;
 use App\Domain\Subscription\Dto\CreateSubscriptionPayload;
 use App\Domain\User\Entity\User;
 use App\Shared\Application\Bus\CommandBusInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,7 @@ class CreateSubscriptionController extends AbstractController
     public function __invoke(#[MapRequestPayload()] CreateSubscriptionPayload $createSubscription, #[CurrentUser] User $user): JsonResponse
     {
         if ($user->getActiveSubscription()->isPaidSubscription()) {
-            throw new \Exception('User already has a paid subscription');
+            throw new Exception('User already has a paid subscription');
         }
 
         $plan = $this->planRepository->findByUuid(Uuid::fromString($createSubscription->getPlanId()));
@@ -42,7 +43,7 @@ class CreateSubscriptionController extends AbstractController
         }
 
         if ($plan->isFree()) {
-            throw new \Exception('You cannot create a subscription for a free plan');
+            throw new Exception('You cannot create a subscription for a free plan');
         }
 
         $checkoutUrl = $this->commandBus->dispatch(new CreateStripeCheckoutSessionCommand(

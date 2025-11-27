@@ -8,10 +8,14 @@ use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Command\AsynchronousInterface;
 use App\Shared\Application\Command\AsynchronousPriorityInterface;
 use App\Shared\Application\Command\SynchronousInterface;
+use Exception;
+use RuntimeException;
 use Safe\DateTimeImmutable;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+
+use function sprintf;
 
 class CommandBus implements CommandBusInterface
 {
@@ -36,7 +40,7 @@ class CommandBus implements CommandBusInterface
             return $this->dispatchAsynchronous($command);
         }
 
-        throw new \RuntimeException('The message must implement SynchronousInterface or AsynchronousInterface or AsynchronousPriorityInterface.');
+        throw new RuntimeException('The message must implement SynchronousInterface or AsynchronousInterface or AsynchronousPriorityInterface.');
     }
 
     private function dispatchSynchronous(object $command): mixed
@@ -47,7 +51,7 @@ class CommandBus implements CommandBusInterface
             $previousException = $exception->getPrevious();
 
             while (null !== $previousException) {
-                if ($previousException instanceof \Exception) {
+                if ($previousException instanceof Exception) {
                     throw $previousException;
                 }
 
@@ -65,8 +69,8 @@ class CommandBus implements CommandBusInterface
 
         $handledStamp = $envelope->last(HandledStamp::class);
 
-        if (!$handledStamp) {
-            throw new \RuntimeException(sprintf('No handler found for command of type "%s".', $command::class));
+        if (! $handledStamp) {
+            throw new RuntimeException(sprintf('No handler found for command of type "%s".', $command::class));
         }
 
         return $handledStamp->getResult();

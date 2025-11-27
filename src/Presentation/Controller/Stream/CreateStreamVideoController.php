@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Throwable;
 
 #[AsController]
 class CreateStreamVideoController extends AbstractController
@@ -34,10 +35,14 @@ class CreateStreamVideoController extends AbstractController
     }
 
     public function __invoke(
-        #[MapUploadedFile] UploadedFile $video,
-        #[MapUploadedFile] UploadedFile $thumbnail,
-        #[CurrentUser] User $user,
-        #[MapRequestPayload()] CreateStreamVideoPayload $payload,
+        #[MapUploadedFile]
+        UploadedFile $video,
+        #[MapUploadedFile]
+        UploadedFile $thumbnail,
+        #[CurrentUser]
+        User $user,
+        #[MapRequestPayload()]
+        CreateStreamVideoPayload $payload,
     ): JsonResponse {
         try {
             $this->fileValidator->validateVideo($video);
@@ -62,7 +67,7 @@ class CreateStreamVideoController extends AbstractController
                     'stream' => $this->normalizer->normalize($stream, null, ['groups' => ['stream:read', 'option:read']]),
                 ],
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
 
             return new JsonResponse([

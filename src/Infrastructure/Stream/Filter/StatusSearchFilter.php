@@ -10,6 +10,8 @@ use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\Query\Expr\Comparison;
 use Doctrine\ORM\QueryBuilder;
 
+use function is_array;
+
 final class StatusSearchFilter implements FilterInterface
 {
     public function apply(
@@ -28,7 +30,7 @@ final class StatusSearchFilter implements FilterInterface
         }
 
         $alias = $queryBuilder->getRootAliases()[0];
-        $field = $alias.'.'.$property;
+        $field = $alias . '.' . $property;
         $values = is_array($value) ? $value : explode(',', $value);
 
         $includeExpressions = [];
@@ -63,6 +65,11 @@ final class StatusSearchFilter implements FilterInterface
         $this->applyFilters($queryBuilder, $includeExpressions, $excludeExpressions);
     }
 
+    public function getDescription(string $resourceClass): array
+    {
+        return [];
+    }
+
     private function createIncludeExpression(
         QueryBuilder $queryBuilder,
         QueryNameGeneratorInterface $queryNameGenerator,
@@ -73,14 +80,14 @@ final class StatusSearchFilter implements FilterInterface
         $parameterName = $queryNameGenerator->generateParameterName($property);
 
         if ('failed' === strtolower($value)) {
-            $queryBuilder->setParameter($parameterName, '%'.$value.'%');
+            $queryBuilder->setParameter($parameterName, '%' . $value . '%');
 
-            return $queryBuilder->expr()->like($field, ':'.$parameterName);
+            return $queryBuilder->expr()->like($field, ':' . $parameterName);
         }
 
         $queryBuilder->setParameter($parameterName, $value);
 
-        return $queryBuilder->expr()->eq($field, ':'.$parameterName);
+        return $queryBuilder->expr()->eq($field, ':' . $parameterName);
     }
 
     private function createExcludeExpression(
@@ -97,14 +104,14 @@ final class StatusSearchFilter implements FilterInterface
         $parameterName = $queryNameGenerator->generateParameterName($property);
 
         if ('failed' === strtolower($value)) {
-            $queryBuilder->setParameter($parameterName, '%'.$value.'%');
+            $queryBuilder->setParameter($parameterName, '%' . $value . '%');
 
-            return $queryBuilder->expr()->notLike($field, ':'.$parameterName);
+            return $queryBuilder->expr()->notLike($field, ':' . $parameterName);
         }
 
         $queryBuilder->setParameter($parameterName, $value);
 
-        return $queryBuilder->expr()->neq($field, ':'.$parameterName);
+        return $queryBuilder->expr()->neq($field, ':' . $parameterName);
     }
 
     private function applyFilters(
@@ -112,17 +119,12 @@ final class StatusSearchFilter implements FilterInterface
         array $includeExpressions,
         array $excludeExpressions,
     ): void {
-        if (!empty($includeExpressions)) {
+        if (! empty($includeExpressions)) {
             $queryBuilder->andWhere($queryBuilder->expr()->orX(...$includeExpressions));
         }
 
         foreach (array_filter($excludeExpressions) as $expression) {
             $queryBuilder->andWhere($expression);
         }
-    }
-
-    public function getDescription(string $resourceClass): array
-    {
-        return [];
     }
 }

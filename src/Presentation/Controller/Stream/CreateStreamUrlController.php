@@ -26,8 +26,10 @@ class CreateStreamUrlController extends AbstractController
     }
 
     public function __invoke(
-        #[MapRequestPayload()] CreateStreamUrlPayload $payload,
-        #[CurrentUser] User $user,
+        #[MapRequestPayload()]
+        CreateStreamUrlPayload $payload,
+        #[CurrentUser]
+        User $user,
     ): JsonResponse {
         /** @var Stream $stream */
         $stream = $this->commandBus->dispatch(

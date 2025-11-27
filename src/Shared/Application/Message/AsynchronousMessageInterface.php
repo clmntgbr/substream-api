@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\Message;
 
+use JsonSerializable;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 
-interface AsynchronousMessageInterface extends \JsonSerializable
+interface AsynchronousMessageInterface extends JsonSerializable
 {
     /**
      * @return array<int, AmqpStamp>

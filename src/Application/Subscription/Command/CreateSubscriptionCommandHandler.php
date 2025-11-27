@@ -8,8 +8,11 @@ use App\Domain\Plan\Repository\PlanRepository;
 use App\Domain\Subscription\Entity\Subscription;
 use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
+use RuntimeException;
 use Safe\DateTime;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+use function sprintf;
 
 #[AsMessageHandler]
 class CreateSubscriptionCommandHandler
@@ -25,7 +28,7 @@ class CreateSubscriptionCommandHandler
         $plan = $this->planRepository->findOneBy(['reference' => $command->getPlanReference()]);
 
         if (null === $plan) {
-            throw new \RuntimeException(sprintf('Plan not found: %s', $command->getPlanReference()));
+            throw new RuntimeException(sprintf('Plan not found: %s', $command->getPlanReference()));
         }
 
         $subscription = Subscription::create(

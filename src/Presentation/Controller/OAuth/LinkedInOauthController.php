@@ -8,6 +8,7 @@ use App\Domain\OAuth\Dto\LinkedIn\LinkedInExchangeTokenPayload;
 use App\Domain\User\Entity\User;
 use App\Infrastructure\OAuth\Linkedin\LinkedInOAuthService;
 use App\Shared\Domain\Response\Response;
+use Exception;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +33,7 @@ class LinkedInOauthController extends AbstractController
             $data = $this->linkedInOAuthService->connect();
 
             return Response::successResponse($data);
-        } catch (\Exception) {
+        } catch (Exception) {
             return Response::errorResponse('Could not connect to LinkedIn');
         }
     }
@@ -51,7 +52,7 @@ class LinkedInOauthController extends AbstractController
                 ],
                 status: JsonResponse::HTTP_OK
             );
-        } catch (\Exception) {
+        } catch (Exception) {
             return Response::errorResponse('Could not exchange token');
         }
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\OAuth\Dto\Google;
 
 use App\Domain\OAuth\Dto\ExchangeTokenPayloadInterface;
+use RuntimeException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class GoogleExchangeTokenPayload implements ExchangeTokenPayloadInterface
@@ -20,7 +21,7 @@ class GoogleExchangeTokenPayload implements ExchangeTokenPayloadInterface
     public function getCode(): string
     {
         if (null === $this->code) {
-            throw new \RuntimeException('Code is required');
+            throw new RuntimeException('Code is required');
         }
 
         return $this->code;
@@ -29,7 +30,7 @@ class GoogleExchangeTokenPayload implements ExchangeTokenPayloadInterface
     public function getState(): string
     {
         if (null === $this->state) {
-            throw new \RuntimeException('State is required');
+            throw new RuntimeException('State is required');
         }
 
         return $this->state;

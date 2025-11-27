@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presentation\Controller\Payment;
 
 use App\Domain\Payment\Repository\PaymentRepository;
@@ -20,7 +22,7 @@ class GetPaymentsInformationsController extends AbstractController
         $payments = $this->paymentRepository->getPaymentStatsByUser($user);
 
         return new JsonResponse([
-            'amount' => $payments['amount'] / 100,
+            'amount' => $payments['amount'],
             'count' => $payments['count'],
         ]);
     }

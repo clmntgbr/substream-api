@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Bus;
 
 use App\Shared\Application\Bus\QueryBusInterface;
+use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+
+use function sprintf;
 
 class QueryBus implements QueryBusInterface
 {
@@ -22,8 +25,8 @@ class QueryBus implements QueryBusInterface
         $envelope = $this->queryBus->dispatch($query);
         $handledStamp = $envelope->last(HandledStamp::class);
 
-        if (!$handledStamp) {
-            throw new \RuntimeException(sprintf('No handler found for query of type "%s".', $query::class));
+        if (! $handledStamp) {
+            throw new RuntimeException(sprintf('No handler found for query of type "%s".', $query::class));
         }
 
         return $handledStamp->getResult();

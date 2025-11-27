@@ -27,7 +27,8 @@ class RegisterController extends AbstractController
     }
 
     public function __invoke(
-        #[MapRequestPayload()] RegisterPayload $payload,
+        #[MapRequestPayload()]
+        RegisterPayload $payload,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateUserCommand(
@@ -35,7 +36,7 @@ class RegisterController extends AbstractController
             plainPassword: $payload->getPlainPassword(),
             firstname: $payload->getFirstname(),
             lastname: $payload->getLastname(),
-            picture: $this->backendUrl.'/uploads/avatar.jpg',
+            picture: $this->backendUrl . '/uploads/avatar.jpg',
         ));
 
         $token = $this->jwtManager->create($user);
