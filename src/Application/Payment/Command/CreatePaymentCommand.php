@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Payment\Command;
 
-use App\Shared\Application\Command\AsynchronousPriorityInterface;
+use App\Shared\Application\Command\AsynchronousInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
-final class CreatePaymentCommand implements AsynchronousPriorityInterface
+final class CreatePaymentCommand implements AsynchronousInterface
 {
     public function __construct(
         private string $customerId,
@@ -56,6 +57,8 @@ final class CreatePaymentCommand implements AsynchronousPriorityInterface
 
     public function getStamps(): array
     {
-        return [];
+        return [
+            new DelayStamp(15 * 1000),
+        ];
     }
 }

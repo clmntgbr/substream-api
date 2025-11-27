@@ -23,14 +23,6 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
         private ?string $stripeCustomerId,
         #[Assert\NotBlank]
         private ?string $subscriptionId,
-        #[Assert\NotBlank]
-        private ?string $stripeInvoiceId,
-        #[Assert\NotBlank]
-        private ?string $paymentStatus,
-        #[Assert\NotBlank]
-        private ?string $amount,
-        #[Assert\NotBlank]
-        private ?string $currency,
     ) {
     }
 
@@ -88,42 +80,6 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
         return $this->subscriptionId;
     }
 
-    public function getStripeInvoiceId(): string
-    {
-        if (null === $this->stripeInvoiceId) {
-            throw new Exception('Stripe invoice ID is required');
-        }
-
-        return $this->stripeInvoiceId;
-    }
-
-    public function getPaymentStatus(): string
-    {
-        if (null === $this->paymentStatus) {
-            throw new Exception('Payment status is required');
-        }
-
-        return $this->paymentStatus;
-    }
-
-    public function getAmount(): string
-    {
-        if (null === $this->amount) {
-            throw new Exception('Amount is required');
-        }
-
-        return $this->amount;
-    }
-
-    public function getCurrency(): string
-    {
-        if (null === $this->currency) {
-            throw new Exception('Currency is required');
-        }
-
-        return $this->currency;
-    }
-
     public function jsonSerialize(): array
     {
         return [
@@ -133,10 +89,6 @@ final class CreateCheckoutCommand implements AsynchronousPriorityInterface
             'planId' => $this->planId,
             'stripeCustomerId' => $this->stripeCustomerId,
             'subscriptionId' => $this->subscriptionId,
-            'stripeInvoiceId' => $this->stripeInvoiceId,
-            'paymentStatus' => $this->paymentStatus,
-            'amount' => $this->amount,
-            'currency' => $this->currency,
         ];
     }
 

@@ -8,6 +8,7 @@ use App\Domain\Payment\Entity\Payment;
 use App\Domain\Payment\Repository\PaymentRepository;
 use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
+use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -17,6 +18,7 @@ class CreatePaymentCommandHandler
     public function __construct(
         private SubscriptionRepository $subscriptionRepository,
         private PaymentRepository $paymentRepository,
+        private MercurePublisherInterface $mercurePublisher,
     ) {
     }
 
@@ -51,6 +53,6 @@ class CreatePaymentCommandHandler
         $this->subscriptionRepository->saveAndFlush($subscription);
         $this->paymentRepository->saveAndFlush($payment);
 
-        // TODO: Send an email to the user to inform them that their subscription has been paid
+        $this->mercurePublisher->refreshPayments($subscription->getUser());
     }
 }

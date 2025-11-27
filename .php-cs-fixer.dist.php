@@ -38,7 +38,6 @@ return (new PhpCsFixer\Config())
         'blank_line_after_namespace' => true,
         'no_blank_lines_after_class_opening' => true,
         'no_blank_lines_after_phpdoc' => true,
-        'single_blank_line_before_namespace' => true,
         
         // Opérateurs
         'binary_operator_spaces' => [
@@ -53,8 +52,8 @@ return (new PhpCsFixer\Config())
         'lowercase_cast' => true,
         'modernize_types_casting' => true,
         
-        // Fonctions
-        'function_typehint_space' => true,
+        // Fonctions et types
+        'type_declaration_spaces' => true,
         'return_type_declaration' => ['space_before' => 'none'],
         'method_argument_space' => [
             'on_multiline' => 'ensure_fully_multiline',
@@ -90,7 +89,7 @@ return (new PhpCsFixer\Config())
                 'method_private',
             ],
         ],
-        'visibility_required' => [
+        'modifier_keywords' => [
             'elements' => ['property', 'method', 'const'],
         ],
         'self_accessor' => true,
@@ -135,7 +134,6 @@ return (new PhpCsFixer\Config())
                 'extra',
                 'throw',
                 'use',
-                'use_trait',
             ],
         ],
         'single_quote' => true,

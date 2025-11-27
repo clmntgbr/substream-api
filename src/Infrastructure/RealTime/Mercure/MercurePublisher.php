@@ -98,6 +98,17 @@ class MercurePublisher implements MercurePublisherInterface
         $this->publish($user, $data);
     }
 
+    public function refreshPayments(User $user, ?string $context = null): void
+    {
+        $data = json_encode([
+            'type' => 'payments.refresh',
+            'userId' => $user->getId(),
+            'context' => $context,
+        ]);
+
+        $this->publish($user, $data);
+    }
+
     private function publish(User $user, string $data): void
     {
         $update = new Update(

@@ -22,8 +22,8 @@ class GetPaymentsInformationsController extends AbstractController
         $payments = $this->paymentRepository->getPaymentStatsByUser($user);
 
         return new JsonResponse([
-            'amount' => $payments['amount'],
-            'count' => $payments['count'],
+            'amount' => $payments['amount'] ?? 0,
+            'count' => $payments['count'] ?? 0,
         ]);
     }
 }
