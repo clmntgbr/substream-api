@@ -32,9 +32,10 @@ final class InvoicePaidWebhookConsumer implements ConsumerInterface
         $createPaymentCommand = new CreatePaymentCommand(
             customerId: $stripeObject->customer,
             subscriptionId: $stripeObject->parent->subscription_details->subscription,
-            amount: $stripeObject->amount_paid,
+            amount: (int) $stripeObject->amount_paid,
             currency: $stripeObject->currency,
             invoiceId: $stripeObject->id,
+            invoiceUrl: $stripeObject->hosted_invoice_url,
             paymentStatus: $stripeObject->status,
         );
 

@@ -4,7 +4,6 @@ namespace App\Domain\Subscription\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Domain\Payment\Entity\Payment;
 use App\Domain\Plan\Entity\Plan;
@@ -31,10 +30,6 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     order: ['createdAt' => 'DESC'],
     operations: [
-        new GetCollection(
-            normalizationContext: ['groups' => ['subscription:read', 'plan:read', 'payment:read']],
-        ),
-        new Get(),
         new Post(
             uriTemplate: '/subscription/create',
             controller: CreateSubscriptionController::class,

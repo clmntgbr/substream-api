@@ -2,7 +2,7 @@
 
 namespace App\Application\Payment\RemoteEvent;
 
-use App\Application\Payment\Command\CreatePaymentCommand;
+use App\Application\Payment\Command\CreatePaymentFailedCommand;
 use App\Shared\Application\Bus\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Stripe\StripeObject;
@@ -29,17 +29,12 @@ final class InvoiceFailedWebhookConsumer implements ConsumerInterface
         /** @var StripeObject $stripeObject */
         $stripeObject = $payload->data->object;
 
-        $this->logger->info(json_encode($stripeObject, JSON_PRETTY_PRINT));
-
-        $createPaymentCommand = new CreatePaymentCommand(
+        $createPaymentFailedCommand = new CreatePaymentFailedCommand(
             customerId: $stripeObject->customer,
             subscriptionId: $stripeObject->parent->subscription_details->subscription,
-            amount: $stripeObject->amount_paid,
-            currency: $stripeObject->currency,
             invoiceId: $stripeObject->id,
-            paymentStatus: $stripeObject->status,
         );
 
-        $this->commandBus->dispatch($createPaymentCommand);
+        $this->commandBus->dispatch($createPaymentFailedCommand);
     }
 }

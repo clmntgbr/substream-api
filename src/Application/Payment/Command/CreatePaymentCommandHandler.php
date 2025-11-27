@@ -35,10 +35,11 @@ class CreatePaymentCommandHandler
             return;
         }
 
-        $payment = Payment::create(
+        $payment = Payment::createFromStripe(
             subscription: $subscription,
             customerId: $command->getCustomerId(),
             invoiceId: $command->getInvoiceId(),
+            invoiceUrl: $command->getInvoiceUrl(),
             paymentStatus: $command->getPaymentStatus(),
             currency: $command->getCurrency(),
             amount: $command->getAmount(),

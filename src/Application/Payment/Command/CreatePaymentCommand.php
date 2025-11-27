@@ -12,9 +12,10 @@ final class CreatePaymentCommand implements AsynchronousPriorityInterface
         private string $customerId,
         private string $subscriptionId,
         private string $invoiceId,
+        private string $invoiceUrl,
         private string $paymentStatus,
         private string $currency,
-        private string $amount,
+        private int $amount,
     ) {
     }
 
@@ -33,6 +34,11 @@ final class CreatePaymentCommand implements AsynchronousPriorityInterface
         return $this->invoiceId;
     }
 
+    public function getInvoiceUrl(): string
+    {
+        return $this->invoiceUrl;
+    }
+
     public function getPaymentStatus(): string
     {
         return $this->paymentStatus;
@@ -43,7 +49,7 @@ final class CreatePaymentCommand implements AsynchronousPriorityInterface
         return $this->currency;
     }
 
-    public function getAmount(): string
+    public function getAmount(): int
     {
         return $this->amount;
     }

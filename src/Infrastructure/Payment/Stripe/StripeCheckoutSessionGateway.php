@@ -56,11 +56,13 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
     public function update(Plan $plan, User $user): Subscription
     {
         $subscription = $user->getActiveSubscription();
+        $currentPlan = $subscription->getPlan();
+
         $stripe = new StripeClient($this->stripeApiSecretKey);
 
         $currentItemId = $this->getCurrentItemId($user);
 
-        return $stripe->subscriptions->update($subscription->getSubscriptionId(), [
+        $options = [
             'items' => [[
                 'id' => $currentItemId,
                 'price' => $plan->getStripePriceId(),
@@ -68,7 +70,13 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
             'proration_behavior' => 'always_invoice',
             'billing_cycle_anchor' => 'unchanged',
             'cancel_at_period_end' => false,
-        ]);
+        ];
+
+        if ($currentPlan->getInterval() !== $plan->getInterval()) {
+            $options['billing_cycle_anchor'] = 'now';
+        }
+
+        return $stripe->subscriptions->update($subscription->getSubscriptionId(), $options);
     }
 
     private function getCurrentItemId(User $user): string
@@ -86,11 +94,13 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
     public function preview(Plan $plan, User $user): Preview
     {
         $subscription = $user->getActiveSubscription();
+        $currentPlan = $subscription->getPlan();
+
         $stripe = new StripeClient($this->stripeApiSecretKey);
 
         $currentItemId = $this->getCurrentItemId($user);
 
-        $preview = $stripe->invoices->createPreview([
+        $options = [
             'customer' => $user->getStripeCustomerId(),
             'subscription' => $subscription->getSubscriptionId(),
             'subscription_details' => [
@@ -103,7 +113,13 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
                 'proration_behavior' => 'always_invoice',
                 'billing_cycle_anchor' => 'unchanged',
             ],
-        ]);
+        ];
+
+        if ($currentPlan->getInterval() !== $plan->getInterval()) {
+            $options['subscription_details']['billing_cycle_anchor'] = 'now';
+        }
+
+        $preview = $stripe->invoices->createPreview($options);
 
         return new Preview(
             amountDue: $preview->amount_due / 100,

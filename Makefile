@@ -79,9 +79,6 @@ db:
 	$(SYMFONY) doctrine:database:create
 	$(SYMFONY) doctrine:schema:update -f
 	$(SYMFONY) hautelook:fixtures:load -n
-	$(SYMFONY) fos:elastica:delete
-	$(SYMFONY) fos:elastica:create
-	$(SYMFONY) fos:elastica:populate
 
 jwt:
 	$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists

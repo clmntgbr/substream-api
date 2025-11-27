@@ -38,6 +38,7 @@ security:
         - { path: ^/api/auth/login, roles: PUBLIC_ACCESS, methods: POST }
         - { path: ^/api/auth/register, roles: PUBLIC_ACCESS, methods: POST }
         - { path: ^/api/status, roles: PUBLIC_ACCESS, methods: GET }
+        - { path: ^/api/plans, roles: PUBLIC_ACCESS, methods: GET }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api, roles: ROLE_USER }
 
