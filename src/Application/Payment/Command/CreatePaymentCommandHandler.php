@@ -6,10 +6,12 @@ namespace App\Application\Payment\Command;
 
 use App\Domain\Payment\Entity\Payment;
 use App\Domain\Payment\Repository\PaymentRepository;
+use App\Domain\Plan\Repository\PlanRepository;
 use App\Domain\Subscription\Enum\SubscriptionStatusEnum;
 use App\Domain\Subscription\Repository\SubscriptionRepository;
 use App\Infrastructure\RealTime\Mercure\MercurePublisherInterface;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -18,6 +20,8 @@ class CreatePaymentCommandHandler
     public function __construct(
         private SubscriptionRepository $subscriptionRepository,
         private PaymentRepository $paymentRepository,
+        private PlanRepository $planRepository,
+        private LoggerInterface $logger,
         private MercurePublisherInterface $mercurePublisher,
     ) {
     }
@@ -38,6 +42,16 @@ class CreatePaymentCommandHandler
             return;
         }
 
+        $plan = $this->planRepository->findOneBy(['stripePriceId' => $command->getStripePriceId()]);
+
+        if (null === $plan) {
+            $this->logger->error('Plan not found', [
+                'stripePriceId' => $command->getStripePriceId(),
+            ]);
+
+            return;
+        }
+
         $payment = Payment::createFromStripe(
             subscription: $subscription,
             customerId: $command->getCustomerId(),
@@ -46,6 +60,7 @@ class CreatePaymentCommandHandler
             paymentStatus: $command->getPaymentStatus(),
             currency: $command->getCurrency(),
             amount: $command->getAmount(),
+            plan: $plan,
         );
 
         $subscription->setStatus(SubscriptionStatusEnum::ACTIVE->value);

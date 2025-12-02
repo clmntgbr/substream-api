@@ -111,9 +111,9 @@ class StripeCheckoutSessionGateway implements StripeCheckoutSessionGatewayInterf
         $preview = $stripe->invoices->createPreview($options);
 
         return new Preview(
-            amountDue: $preview->amount_due / 100,
-            credit: $this->getCredit($preview) / 100,
-            debit: $this->getDebit($preview) / 100,
+            amountDue: $preview->amount_due,
+            credit: $this->getCredit($preview),
+            debit: $this->getDebit($preview),
             currency: $preview->currency,
             nextBillingDate: date('Y-m-d H:i:s', $preview->period_end),
         );

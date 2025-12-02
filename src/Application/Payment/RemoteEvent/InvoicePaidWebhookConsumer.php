@@ -39,6 +39,7 @@ final class InvoicePaidWebhookConsumer implements ConsumerInterface
             invoiceId: $stripeObject->id,
             invoiceUrl: $stripeObject->hosted_invoice_url,
             paymentStatus: $stripeObject->status,
+            stripePriceId: $stripeObject->lines->data[0]->pricing->price_details->price ?? null,
         );
 
         $this->commandBus->dispatch($createPaymentCommand);

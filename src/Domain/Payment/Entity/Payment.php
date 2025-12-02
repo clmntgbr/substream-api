@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Domain\Payment\Enum\PaymentProviderEnum;
 use App\Domain\Payment\Repository\PaymentRepository;
+use App\Domain\Plan\Entity\Plan;
 use App\Domain\Subscription\Entity\Subscription;
 use App\Domain\Trait\UuidTrait;
 use App\Presentation\Controller\Payment\GetPaymentsInformationsController;
@@ -18,6 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
+
+use function sprintf;
 
 #[ORM\Entity(repositoryClass: PaymentRepository::class)]
 #[ApiResource(
@@ -63,6 +66,10 @@ class Payment
     #[Groups(['payment:read'])]
     private int $amount;
 
+    #[ORM\ManyToOne(targetEntity: Plan::class)]
+    #[Groups(['payment:read'])]
+    private ?Plan $plan;
+
     #[ORM\ManyToOne(targetEntity: Subscription::class)]
     #[ORM\JoinColumn(nullable: false)]
     private Subscription $subscription;
@@ -80,6 +87,7 @@ class Payment
         string $paymentStatus,
         string $currency,
         int $amount,
+        ?Plan $plan = null,
     ): self {
         $payment = new self();
         $payment->subscription = $subscription;
@@ -89,6 +97,7 @@ class Payment
         $payment->paymentStatus = $paymentStatus;
         $payment->currency = $currency;
         $payment->amount = $amount;
+        $payment->plan = $plan;
         $payment->provider = PaymentProviderEnum::STRIPE->value;
 
         return $payment;
@@ -154,8 +163,8 @@ class Payment
     }
 
     #[Groups(['payment:read'])]
-    public function getPlanName(): string
+    public function getPlanName(): ?string
     {
-        return $this->subscription->getPlan()->getName();
+        return sprintf('%s %s', $this->plan?->getName(), $this->plan?->isFree() ? '(Free)' : $this->plan->getInterval());
     }
 }

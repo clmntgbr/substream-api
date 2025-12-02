@@ -17,6 +17,7 @@ final class CreatePaymentCommand implements AsynchronousInterface
         private string $paymentStatus,
         private string $currency,
         private int $amount,
+        private ?string $stripePriceId = null,
     ) {
     }
 
@@ -53,6 +54,11 @@ final class CreatePaymentCommand implements AsynchronousInterface
     public function getAmount(): int
     {
         return $this->amount;
+    }
+
+    public function getStripePriceId(): ?string
+    {
+        return $this->stripePriceId;
     }
 
     public function getStamps(): array
